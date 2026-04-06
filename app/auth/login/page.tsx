@@ -7,18 +7,6 @@ export const metadata: Metadata = { title: 'Sign In' }
 export default function LoginPage() {
   return (
     <div className="relative min-h-screen bg-[#fcf9f8] text-[#323233] overflow-hidden">
-      {/* Right decorative panel */}
-      <div className="fixed top-0 right-0 w-1/3 h-screen pointer-events-none opacity-40 mix-blend-multiply overflow-hidden z-0">
-        <div className="absolute inset-0 bg-gradient-to-bl from-[#9df5bd]/20 to-transparent" />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkHnBSiQIOPQz5D0p4pCzmI1lvs22KPjQButjwkWS7ANSnqLPIA-Y8jNuc4nRUmhJFwNbjmSIEkUzobxE8Wlc4zXbulJsVxtM2maDnM3aOfkfw2bH6ZHAsFMwVEN69zDmN2Ijfz0o-1ikYFTVAUqWBcMrsgkoGotartoc1RHqn1XOODJu5XiORNpMtHgqw8ZZX1RMNniJZGxmtX33m1zumSi5HRLIBiSjZRNHsNmEAt6qxst0wthIawr8A4qv-5myJBWzLGIExoGI"
-          alt=""
-          aria-hidden="true"
-          className="object-cover h-full w-full grayscale opacity-20 translate-x-20"
-        />
-      </div>
-
       {/* Main content */}
       <main className="relative z-10 min-h-screen flex items-center justify-center pt-20 pb-12 px-4">
         <div className="w-full max-w-md space-y-12">
