@@ -3,11 +3,11 @@
 import { revalidatePath } from 'next/cache'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 
-export async function deletePost(postId: string) {
+export async function deletePost(postId: string): Promise<void> {
   const supabase = await createServerSupabaseClient()
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Unauthorized' }
+  if (!user) return
 
   // Verify the post belongs to this author
   const { data: post } = await supabase
@@ -16,10 +16,9 @@ export async function deletePost(postId: string) {
     .eq('id', postId)
     .single()
 
-  if (!post || post.author_id !== user.id) return { error: 'Forbidden' }
+  if (!post || post.author_id !== user.id) return
 
-  const { error } = await supabase.from('posts').delete().eq('id', postId)
-  if (error) return { error: error.message }
+  await supabase.from('posts').delete().eq('id', postId)
 
   revalidatePath('/dashboard')
   revalidatePath('/')
