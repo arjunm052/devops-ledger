@@ -1,12 +1,14 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { updateProfile } from '@/actions/profile'
 import { uploadAvatar } from '@/actions/avatar'
+import { updatePassword } from '@/actions/password'
+import { createChangePasswordSchema, type ChangePasswordInput } from '@/lib/validations/auth'
 import {
   Dialog,
   DialogContent,
@@ -69,6 +71,7 @@ interface ProfileSettingsFormProps {
 export function ProfileSettingsForm({ profile, email, role, createdAt, linkedProviders }: ProfileSettingsFormProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Profile')
   const [isSaving, setIsSaving] = useState(false)
+  const [isSavingPassword, setIsSavingPassword] = useState(false)
   const [avatarDialogOpen, setAvatarDialogOpen] = useState(false)
   const [avatarMode, setAvatarMode] = useState<'upload' | 'link'>('upload')
   const [isUploading, setIsUploading] = useState(false)
@@ -94,6 +97,45 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
   const bioValue = watch('bio') ?? ''
   const avatarUrlValue = watch('avatarUrl') ?? ''
   const fullNameValue = watch('fullName') ?? ''
+
+  const requiresCurrentPassword = linkedProviders.includes('email')
+  const changePasswordSchema = useMemo(
+    () => createChangePasswordSchema(requiresCurrentPassword),
+    [requiresCurrentPassword]
+  )
+
+  const passwordForm = useForm<ChangePasswordInput>({
+    resolver: zodResolver(changePasswordSchema),
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      confirmNewPassword: '',
+    },
+  })
+
+  const {
+    register: registerPassword,
+    handleSubmit: handlePasswordSubmit,
+    reset: resetPasswordForm,
+    formState: { errors: passwordErrors },
+  } = passwordForm
+
+  const onPasswordSubmit = async (values: ChangePasswordInput) => {
+    setIsSavingPassword(true)
+    try {
+      const result = await updatePassword(values)
+      if ('error' in result) {
+        toast.error(result.error)
+      } else {
+        toast.success('Password updated successfully.')
+        resetPasswordForm()
+      }
+    } catch {
+      toast.error('Something went wrong. Please try again.')
+    } finally {
+      setIsSavingPassword(false)
+    }
+  }
 
   const onSubmit = async (values: ProfileFormValues) => {
     setIsSaving(true)
@@ -222,21 +264,74 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
         ) : activeTab === 'Security' ? (
           <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
             <div>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[var(--color-heading)] mb-4">Change Password</h3>
-              <p className="text-sm text-[var(--color-body)] mb-4">Only available for email/password accounts.</p>
-              <div className="space-y-4 max-w-md">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[var(--color-heading)] mb-2">
+                {requiresCurrentPassword ? 'Change password' : 'Set a password'}
+              </h3>
+              <p className="text-sm text-[var(--color-body)] mb-4">
+                {requiresCurrentPassword
+                  ? 'Use a strong password you do not reuse on other sites.'
+                  : 'Add a password so you can sign in with your email and password in addition to Google or GitHub.'}
+              </p>
+              {requiresCurrentPassword && (
+                <p className="text-xs text-[var(--color-muted-text)] mb-4">
+                  Only use magic links? If you have never set a password, use <strong>Forgot password</strong> on the
+                  login page once, then you can change it here.
+                </p>
+              )}
+              <form onSubmit={handlePasswordSubmit(onPasswordSubmit)} noValidate className="space-y-4 max-w-md">
+                {requiresCurrentPassword && (
+                  <div>
+                    <label className={labelBase} htmlFor="settings-current-password">
+                      Current password
+                    </label>
+                    <input
+                      id="settings-current-password"
+                      type="password"
+                      autoComplete="current-password"
+                      className={inputBase}
+                      {...registerPassword('currentPassword')}
+                    />
+                    {passwordErrors.currentPassword && (
+                      <p className={errorBase}>{passwordErrors.currentPassword.message}</p>
+                    )}
+                  </div>
+                )}
                 <div>
-                  <label className={labelBase}>New Password</label>
-                  <input type="password" placeholder="Enter new password" className={inputBase} disabled />
+                  <label className={labelBase} htmlFor="settings-new-password">
+                    New password
+                  </label>
+                  <input
+                    id="settings-new-password"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputBase}
+                    {...registerPassword('newPassword')}
+                  />
+                  {passwordErrors.newPassword && <p className={errorBase}>{passwordErrors.newPassword.message}</p>}
                 </div>
                 <div>
-                  <label className={labelBase}>Confirm Password</label>
-                  <input type="password" placeholder="Confirm new password" className={inputBase} disabled />
+                  <label className={labelBase} htmlFor="settings-confirm-password">
+                    Confirm new password
+                  </label>
+                  <input
+                    id="settings-confirm-password"
+                    type="password"
+                    autoComplete="new-password"
+                    className={inputBase}
+                    {...registerPassword('confirmNewPassword')}
+                  />
+                  {passwordErrors.confirmNewPassword && (
+                    <p className={errorBase}>{passwordErrors.confirmNewPassword.message}</p>
+                  )}
                 </div>
-                <button type="button" className="px-4 py-2 rounded-lg bg-muted text-sm text-[var(--color-body)] cursor-not-allowed" disabled>
-                  Update Password (Coming Soon)
+                <button
+                  type="submit"
+                  disabled={isSavingPassword}
+                  className="px-4 py-2 rounded-lg bg-[#0045ad] text-white text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {isSavingPassword ? 'Saving…' : requiresCurrentPassword ? 'Update password' : 'Set password'}
                 </button>
-              </div>
+              </form>
             </div>
           </div>
         ) : activeTab === 'Notifications' ? (
