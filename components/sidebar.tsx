@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { NewsletterForm } from '@/components/newsletter-form'
 
 interface SidebarProps {
   tags: { id: string; name: string; slug: string }[]
@@ -54,6 +55,16 @@ export function Sidebar({ tags }: SidebarProps) {
         >
           Learn more &rarr;
         </Link>
+      </section>
+      {/* Newsletter */}
+      <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
+        <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-2">
+          Curated Inbox
+        </h3>
+        <p className="font-[family-name:var(--font-newsreader)] text-sm text-[#40484f] mb-3">
+          The best DevOps insights, delivered weekly.
+        </p>
+        <NewsletterForm />
       </section>
     </aside>
   )
