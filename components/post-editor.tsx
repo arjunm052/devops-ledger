@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition, useCallback } from 'react'
+import { useState, useTransition, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
@@ -245,6 +245,12 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
+  // Autosave state (edit mode only)
+  const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [, forceUpdate] = useState(0)
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({ codeBlock: false }),
@@ -276,6 +282,57 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
     },
     []
   )
+
+  // Autosave: debounce 30s on title/content/excerpt/coverImageUrl changes (edit mode only)
+  const scheduleAutoSave = useCallback(() => {
+    if (!isEditing || !initialData) return
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
+    autoSaveTimerRef.current = setTimeout(async () => {
+      if (!title.trim()) return
+      setAutoSaveStatus('saving')
+      try {
+        await updatePost(initialData.id, {
+          title: title.trim(),
+          content: editor?.getJSON() ?? {},
+          excerpt: excerpt.trim() || null,
+          cover_image_url: coverImageUrl.trim() || null,
+          tag_ids: selectedTagIds,
+          status,
+        })
+        setLastSaved(new Date())
+        setAutoSaveStatus('saved')
+      } catch {
+        setAutoSaveStatus('idle')
+      }
+    }, 30000)
+  }, [isEditing, initialData, title, excerpt, coverImageUrl, selectedTagIds, status, editor])
+
+  // Trigger autosave schedule when key fields change
+  useEffect(() => {
+    if (!isEditing) return
+    scheduleAutoSave()
+    return () => {
+      if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, excerpt, coverImageUrl])
+
+  // Tick every 30s to refresh relative time display
+  useEffect(() => {
+    const interval = setInterval(() => forceUpdate((n) => n + 1), 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  function autoSaveLabel(): string | null {
+    if (autoSaveStatus === 'saving') return 'Saving...'
+    if (autoSaveStatus === 'saved' && lastSaved) {
+      const diffMs = Date.now() - lastSaved.getTime()
+      const diffMin = Math.floor(diffMs / 60000)
+      if (diffMin < 1) return 'Saved just now'
+      return `Saved ${diffMin} min ago`
+    }
+    return null
+  }
 
   const handleSave = useCallback(
     (targetStatus: 'draft' | 'published') => {
@@ -338,6 +395,11 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
               {error}
             </span>
           )}
+          {isEditing && autoSaveLabel() && (
+            <span className="text-xs text-[#70787f] font-[family-name:var(--font-inter)]">
+              {autoSaveLabel()}
+            </span>
+          )}
           <button
             type="button"
             disabled={isPending}
@@ -361,8 +423,34 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
       <div className="flex gap-0 max-w-[1400px] mx-auto">
         {/* Main editor column */}
         <div className="flex-1 min-w-0 bg-white min-h-[calc(100vh-3.5rem)]">
+          {/* Cover image input */}
+          <div className="px-10 pt-10 pb-2">
+            <input
+              type="url"
+              value={coverImageUrl}
+              onChange={(e) => setCoverImageUrl(e.target.value)}
+              placeholder="Paste cover image URL (e.g., https://...)"
+              className={[
+                'w-full px-4 py-2 rounded-full text-sm bg-[#d5e3fc]',
+                'border-none outline-none placeholder:text-[#70787f]',
+                'text-[#0f1f40] font-[family-name:var(--font-inter)]',
+              ].join(' ')}
+            />
+            {coverImageUrl && (
+              <div className="mt-3 rounded-xl overflow-hidden aspect-video bg-[#d5e3fc]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={coverImageUrl}
+                  alt="Cover preview"
+                  className="w-full h-full object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                />
+              </div>
+            )}
+          </div>
+
           {/* Title input */}
-          <div className="px-10 pt-10 pb-4">
+          <div className="px-10 pt-6 pb-4">
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
