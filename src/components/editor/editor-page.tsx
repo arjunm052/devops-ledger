@@ -483,7 +483,7 @@ export default function PostEditor({
           />
         </div>
       ) : (
-        <div className="mx-auto max-w-[720px] px-4 pb-24 pt-8 sm:px-6">
+        <div className="mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-6">
           {/* Cover image */}
           <CoverImageField
             imageUrl={coverImageUrl}
