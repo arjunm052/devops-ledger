@@ -3,6 +3,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { createNotification } from '@/actions/notifications'
 
 const commentSchema = z.object({
   postId: z.string().uuid(),
@@ -26,6 +27,12 @@ export async function createComment(input: z.infer<typeof commentSchema>, slug: 
   })
 
   if (error) return { error: error.message }
+
+  const { data: postData } = await supabase.from('posts').select('author_id').eq('id', parsed.data.postId).single()
+  if (postData) {
+    await createNotification(postData.author_id, user.id, 'comment', parsed.data.postId)
+  }
+
   revalidatePath(`/${slug}`)
   return { success: true }
 }

@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { createNotification } from '@/actions/notifications'
 
 export async function toggleFollow(authorId: string, path: string) {
   const supabase = await createServerSupabaseClient()
@@ -28,6 +29,7 @@ export async function toggleFollow(authorId: string, path: string) {
     await (supabase as any)
       .from('follows')
       .insert({ follower_id: user.id, following_id: authorId })
+    await createNotification(authorId, user.id, 'follow')
     revalidatePath(path)
     return { following: true }
   }

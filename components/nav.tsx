@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { UserMenu } from '@/components/user-menu'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { getNotifications, getUnreadCount } from '@/actions/notifications'
+import { NotificationsDropdown } from '@/components/notifications-dropdown'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -23,6 +25,12 @@ export async function Nav() {
       .eq('id', user.id)
       .single()
     isAuthor = profile?.role === 'author'
+  }
+
+  let notifications: Awaited<ReturnType<typeof getNotifications>> = []
+  let unreadCount = 0
+  if (user) {
+    ;[notifications, unreadCount] = await Promise.all([getNotifications(10), getUnreadCount()])
   }
 
   return (
@@ -95,6 +103,10 @@ export async function Nav() {
               </svg>
               Write
             </Link>
+          )}
+
+          {user && (
+            <NotificationsDropdown notifications={notifications} unreadCount={unreadCount} />
           )}
 
           {user ? (

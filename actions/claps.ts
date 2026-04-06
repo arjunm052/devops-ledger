@@ -2,6 +2,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { createNotification } from '@/actions/notifications'
 
 export async function clapForPost(postId: string, slug: string) {
   const supabase = await createServerSupabaseClient()
@@ -26,6 +27,11 @@ export async function clapForPost(postId: string, slug: string) {
     await supabase
       .from('claps')
       .insert({ post_id: postId, user_id: user.id, count: 1 })
+  }
+
+  const { data: postData } = await supabase.from('posts').select('author_id').eq('id', postId).single()
+  if (postData) {
+    await createNotification(postData.author_id, user.id, 'clap', postId)
   }
 
   revalidatePath(`/${slug}`)
