@@ -9,7 +9,7 @@ interface Notification {
   read: boolean
   created_at: string | null
   post_id: string | null
-  actor: { full_name: string | null; username: string; avatar_url: string | null }
+  actor: { full_name: string | null; username: string | null; avatar_url: string | null }
 }
 
 interface NotificationsDropdownProps {
@@ -22,7 +22,7 @@ export function NotificationsDropdown({ notifications, unreadCount }: Notificati
   const [isPending, startTransition] = useTransition()
 
   function getMessage(n: Notification) {
-    const name = n.actor.full_name ?? n.actor.username
+    const name = n.actor.full_name ?? n.actor.username ?? 'Someone'
     switch (n.type) {
       case 'comment': return `${name} commented on your post`
       case 'follow': return `${name} started following you`
@@ -86,7 +86,7 @@ export function NotificationsDropdown({ notifications, unreadCount }: Notificati
                     }`}
                   >
                     <span className="w-8 h-8 rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-xs font-medium text-[#0045ad] shrink-0 mt-0.5">
-                      {(n.actor.full_name ?? n.actor.username).charAt(0).toUpperCase()}
+                      {(n.actor.full_name ?? n.actor.username ?? '?').charAt(0).toUpperCase()}
                     </span>
                     <div>
                       <p className="font-[family-name:var(--font-inter)] text-sm text-[#0d1c2e] dark:text-[#eaf1ff]">

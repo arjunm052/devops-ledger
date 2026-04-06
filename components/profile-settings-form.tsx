@@ -1,23 +1,26 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
 import { updateProfile } from '@/actions/profile'
+import { uploadAvatar } from '@/actions/avatar'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import type { Database } from '@/lib/supabase/types'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
-// ── Zod schema ─────────────────────────────────────────────────────────────
+// ── Zod schema (username removed — immutable) ──────────────────────────────
 const profileSchema = z.object({
   fullName: z.string().max(100, 'Max 100 characters').optional().or(z.literal('')),
-  username: z
-    .string()
-    .min(3, 'At least 3 characters')
-    .max(30, 'Max 30 characters')
-    .regex(/^[a-z0-9_-]+$/, 'Lowercase letters, numbers, hyphens, underscores only'),
   bio: z.string().max(160, 'Max 160 characters').optional().or(z.literal('')),
   website: z
     .string()
@@ -34,7 +37,7 @@ const TABS = ['Profile', 'Account', 'Security', 'Notifications', 'Membership'] a
 type Tab = (typeof TABS)[number]
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
-function getInitials(name: string | null, username: string): string {
+function getInitials(name: string | null, username: string | null): string {
   if (name) {
     return name
       .split(' ')
@@ -43,7 +46,7 @@ function getInitials(name: string | null, username: string): string {
       .toUpperCase()
       .slice(0, 2)
   }
-  return username.slice(0, 2).toUpperCase()
+  return (username ?? '').slice(0, 2).toUpperCase()
 }
 
 // ── Input style helpers ──────────────────────────────────────────────────────
@@ -59,23 +62,29 @@ interface ProfileSettingsFormProps {
   email: string
   role: string
   createdAt: string
+  linkedProviders: string[]
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
-export function ProfileSettingsForm({ profile, email, role, createdAt }: ProfileSettingsFormProps) {
+export function ProfileSettingsForm({ profile, email, role, createdAt, linkedProviders }: ProfileSettingsFormProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Profile')
   const [isSaving, setIsSaving] = useState(false)
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false)
+  const [avatarMode, setAvatarMode] = useState<'upload' | 'link'>('upload')
+  const [isUploading, setIsUploading] = useState(false)
+  const [linkInput, setLinkInput] = useState('')
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       fullName: profile.full_name ?? '',
-      username: profile.username ?? '',
       bio: profile.bio ?? '',
       website: profile.website ?? '',
       avatarUrl: profile.avatar_url ?? '',
@@ -85,14 +94,12 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
   const bioValue = watch('bio') ?? ''
   const avatarUrlValue = watch('avatarUrl') ?? ''
   const fullNameValue = watch('fullName') ?? ''
-  const usernameValue = watch('username') ?? ''
 
   const onSubmit = async (values: ProfileFormValues) => {
     setIsSaving(true)
     try {
       const result = await updateProfile({
         fullName: values.fullName ?? '',
-        username: values.username,
         bio: values.bio ?? '',
         website: values.website ?? '',
         avatarUrl: values.avatarUrl ?? '',
@@ -110,8 +117,48 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
     }
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const result = await uploadAvatar(formData)
+      if ('error' in result) {
+        toast.error(result.error)
+      } else {
+        setValue('avatarUrl', result.url, { shouldDirty: true })
+        toast.success('Photo uploaded!')
+        setAvatarDialogOpen(false)
+      }
+    } catch {
+      toast.error('Upload failed. Please try again.')
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  function handleLinkSubmit() {
+    if (!linkInput.trim()) return
+    try {
+      new URL(linkInput)
+    } catch {
+      toast.error('Please enter a valid URL')
+      return
+    }
+    setValue('avatarUrl', linkInput.trim(), { shouldDirty: true })
+    setLinkInput('')
+    setAvatarDialogOpen(false)
+    toast.success('Photo URL updated!')
+  }
+
+  const isGoogleLinked = linkedProviders.includes('google')
+  const isGithubLinked = linkedProviders.includes('github')
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f8f9ff' }}>
+    <div className="min-h-screen bg-[#f8f9ff]">
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         {/* Page heading */}
@@ -266,29 +313,106 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                   )}
                 </div>
 
-                {/* Avatar URL input + hint */}
-                <div className="flex-1">
-                  <label className={labelBase} htmlFor="avatarUrl">
-                    Photo URL
-                  </label>
-                  <input
-                    id="avatarUrl"
-                    type="url"
-                    placeholder="https://example.com/photo.jpg"
-                    className={inputBase}
-                    style={{ fontFamily: 'var(--font-inter)' }}
-                    {...register('avatarUrl')}
-                  />
-                  {errors.avatarUrl && (
-                    <p className={errorBase}>{errors.avatarUrl.message}</p>
-                  )}
-                  <p
-                    className="text-xs text-[#6b7a99] mt-1.5"
+                {/* Change photo button + dialog */}
+                <Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
+                  <DialogTrigger
+                    className="text-sm font-medium text-[#0045ad] hover:text-[#1a5dd5] transition-colors"
                     style={{ fontFamily: 'var(--font-inter)' }}
                   >
-                    Paste a public image URL (JPEG, PNG, WebP recommended).
-                  </p>
-                </div>
+                    Change photo
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle style={{ fontFamily: 'var(--font-space-grotesk)' }}>
+                        Update Profile Photo
+                      </DialogTitle>
+                    </DialogHeader>
+
+                    {/* Tab toggle */}
+                    <div className="flex gap-1 bg-muted p-1 rounded-lg mb-4" style={{ fontFamily: 'var(--font-inter)' }}>
+                      <button
+                        type="button"
+                        onClick={() => setAvatarMode('upload')}
+                        className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                          avatarMode === 'upload'
+                            ? 'bg-white text-[#0045ad] shadow-sm'
+                            : 'text-[#6b7a99] hover:text-[#1a1a2e]'
+                        }`}
+                      >
+                        Upload Photo
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAvatarMode('link')}
+                        className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
+                          avatarMode === 'link'
+                            ? 'bg-white text-[#0045ad] shadow-sm'
+                            : 'text-[#6b7a99] hover:text-[#1a1a2e]'
+                        }`}
+                      >
+                        Paste Link
+                      </button>
+                    </div>
+
+                    {avatarMode === 'upload' ? (
+                      <div className="space-y-4">
+                        <div
+                          className="border-2 border-dashed border-[#bfc7d0] rounded-xl p-8 text-center cursor-pointer hover:border-[#0045ad] transition-colors"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7a99" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-3">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+                          </svg>
+                          <p className="text-sm text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                            {isUploading ? 'Uploading...' : 'Click to select an image'}
+                          </p>
+                          <p className="text-xs text-[#6b7a99] mt-1">JPEG, PNG, WebP. Max 2MB.</p>
+                        </div>
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleFileUpload}
+                          disabled={isUploading}
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-4" style={{ fontFamily: 'var(--font-inter)' }}>
+                        <div>
+                          <label className={labelBase}>Image URL</label>
+                          <input
+                            type="url"
+                            placeholder="https://example.com/photo.jpg"
+                            className={inputBase}
+                            value={linkInput}
+                            onChange={(e) => setLinkInput(e.target.value)}
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleLinkSubmit}
+                          className="w-full py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                          style={{ background: 'linear-gradient(to right, #0045ad, #1a5dd5)' }}
+                        >
+                          Save
+                        </button>
+                      </div>
+                    )}
+                  </DialogContent>
+                </Dialog>
+
+                {/* Remove button */}
+                {avatarUrlValue && (
+                  <button
+                    type="button"
+                    onClick={() => setValue('avatarUrl', '', { shouldDirty: true })}
+                    className="text-sm font-medium text-red-500 hover:text-red-600 transition-colors"
+                    style={{ fontFamily: 'var(--font-inter)' }}
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
             </section>
 
@@ -320,14 +444,14 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                   )}
                 </div>
 
-                {/* Username */}
+                {/* Username (read-only) */}
                 <div>
                   <label className={labelBase} htmlFor="username">
                     Username
                   </label>
-                  <div className="flex items-stretch rounded-lg overflow-hidden bg-[#d5e3fc] border-b-2 border-transparent focus-within:border-[#0045ad] transition-colors">
+                  <div className="flex items-stretch rounded-lg overflow-hidden bg-[#d5e3fc]/60 border-b-2 border-transparent">
                     <span
-                      className="flex items-center px-3 text-sm text-[#4a5568] bg-[#c3d7f9] select-none shrink-0"
+                      className="flex items-center px-3 text-sm text-[#4a5568] bg-[#c3d7f9]/60 select-none shrink-0"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       @
@@ -335,20 +459,18 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                     <input
                       id="username"
                       type="text"
-                      placeholder="your-handle"
-                      className="flex-1 bg-transparent px-3 py-3 text-[#1a1a2e] text-sm outline-none placeholder:text-[#6b7a99]"
+                      value={profile.username ?? ''}
+                      className="flex-1 bg-transparent px-3 py-3 text-[#1a1a2e] text-sm outline-none cursor-not-allowed opacity-70"
                       style={{ fontFamily: 'var(--font-inter)' }}
-                      {...register('username')}
+                      disabled
+                      readOnly
                     />
                   </div>
-                  {errors.username && (
-                    <p className={errorBase}>{errors.username.message}</p>
-                  )}
                   <p
                     className="text-xs text-[#6b7a99] mt-1.5"
                     style={{ fontFamily: 'var(--font-inter)' }}
                   >
-                    thedevopsledger.com/@{usernameValue}
+                    Username cannot be changed after creation.
                   </p>
                 </div>
 
@@ -374,7 +496,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                   <textarea
                     id="bio"
                     rows={4}
-                    placeholder="Tell readers a bit about yourself…"
+                    placeholder="Tell readers a bit about yourself..."
                     className={`${inputBase} resize-none`}
                     style={{ fontFamily: 'var(--font-newsreader)' }}
                     {...register('bio')}
@@ -416,85 +538,63 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                 className="text-sm text-[#6b7a99] mb-5"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
-                Link third-party accounts for faster sign-in.
+                Third-party accounts linked to your profile.
               </p>
 
               <div className="space-y-3">
                 {/* Google */}
                 <div className="flex items-center justify-between bg-[#eef3fd] rounded-xl px-5 py-4">
                   <div className="flex items-center gap-3">
-                    {/* Google icon */}
                     <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Google">
-                      <path
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                        fill="#4285F4"
-                      />
-                      <path
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                        fill="#34A853"
-                      />
-                      <path
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                        fill="#FBBC05"
-                      />
-                      <path
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                        fill="#EA4335"
-                      />
+                      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+                      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                     </svg>
                     <div>
-                      <p
-                        className="text-sm font-medium text-[#1a1a2e]"
-                        style={{ fontFamily: 'var(--font-inter)' }}
-                      >
+                      <p className="text-sm font-medium text-[#1a1a2e]" style={{ fontFamily: 'var(--font-inter)' }}>
                         Google
                       </p>
-                      <p
-                        className="text-xs text-[#6b7a99]"
-                        style={{ fontFamily: 'var(--font-inter)' }}
-                      >
-                        Sign in with your Google account
+                      <p className="text-xs text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                        {isGoogleLinked ? 'Connected via Google sign-in' : 'Sign in with your Google account'}
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="text-xs font-semibold text-[#0045ad] hover:text-[#1a5dd5] transition-colors"
-                    style={{ fontFamily: 'var(--font-inter)' }}
-                  >
-                    Connect
-                  </button>
+                  {isGoogleLinked ? (
+                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Not linked
+                    </span>
+                  )}
                 </div>
 
                 {/* GitHub */}
                 <div className="flex items-center justify-between bg-[#eef3fd] rounded-xl px-5 py-4">
                   <div className="flex items-center gap-3">
-                    {/* GitHub icon */}
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="#1a1a2e" aria-label="GitHub">
                       <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
                     </svg>
                     <div>
-                      <p
-                        className="text-sm font-medium text-[#1a1a2e]"
-                        style={{ fontFamily: 'var(--font-inter)' }}
-                      >
+                      <p className="text-sm font-medium text-[#1a1a2e]" style={{ fontFamily: 'var(--font-inter)' }}>
                         GitHub
                       </p>
-                      <p
-                        className="text-xs text-[#6b7a99]"
-                        style={{ fontFamily: 'var(--font-inter)' }}
-                      >
-                        Sign in with your GitHub account
+                      <p className="text-xs text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                        {isGithubLinked ? 'Connected via GitHub sign-in' : 'Sign in with your GitHub account'}
                       </p>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    className="text-xs font-semibold text-[#0045ad] hover:text-[#1a5dd5] transition-colors"
-                    style={{ fontFamily: 'var(--font-inter)' }}
-                  >
-                    Connect
-                  </button>
+                  {isGithubLinked ? (
+                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Connected
+                    </span>
+                  ) : (
+                    <span className="text-xs font-semibold text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      Not linked
+                    </span>
+                  )}
                 </div>
               </div>
             </section>
@@ -523,7 +623,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt }: Profile
                     >
                       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
                     </svg>
-                    Saving…
+                    Saving...
                   </>
                 ) : (
                   'Save Changes'

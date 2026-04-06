@@ -19,8 +19,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   try {
     const profile = await getProfileByUsername(username)
     return {
-      title: profile.full_name ?? profile.username,
-      description: profile.bio ?? `Posts by ${profile.full_name ?? profile.username}`,
+      title: profile.full_name ?? profile.username ?? '',
+      description: profile.bio ?? `Posts by ${profile.full_name ?? profile.username ?? ''}`,
     }
   } catch {
     return { title: 'Author Not Found' }
@@ -58,14 +58,14 @@ export default async function AuthorProfilePage({ params }: PageProps) {
           {profile.avatar_url ? (
             <Image
               src={profile.avatar_url}
-              alt={profile.full_name ?? profile.username}
+              alt={profile.full_name ?? profile.username ?? ''}
               width={120}
               height={120}
               className="rounded-full w-[120px] h-[120px] object-cover mb-5"
             />
           ) : (
             <span className="w-[120px] h-[120px] rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-4xl font-medium text-[#0045ad] mb-5">
-              {(profile.full_name ?? profile.username).charAt(0).toUpperCase()}
+              {(profile.full_name ?? profile.username ?? '').charAt(0).toUpperCase()}
             </span>
           )}
 
@@ -164,7 +164,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
                   readingTimeMins={post.reading_time_mins}
                   publishedAt={post.published_at}
                   author={{
-                    username: post.author.username,
+                    username: post.author.username ?? '',
                     fullName: post.author.full_name,
                     avatarUrl: post.author.avatar_url,
                   }}

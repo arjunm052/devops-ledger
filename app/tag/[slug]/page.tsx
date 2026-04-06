@@ -77,7 +77,7 @@ export default async function TagPage({ params }: TagPageProps) {
                 readingTimeMins={post.reading_time_mins}
                 publishedAt={post.published_at}
                 author={{
-                  username: post.author.username,
+                  username: post.author.username ?? '',
                   fullName: post.author.full_name,
                   avatarUrl: post.author.avatar_url,
                 }}

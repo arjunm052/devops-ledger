@@ -26,6 +26,9 @@ export default async function SettingsPage() {
     redirect('/auth/login')
   }
 
+  // Extract linked OAuth providers from user identities
+  const linkedProviders = (user.identities ?? []).map((i) => i.provider)
+
   return (
     <div className="bg-[#f8f9ff] min-h-screen">
       <ProfileSettingsForm
@@ -33,6 +36,7 @@ export default async function SettingsPage() {
         email={user.email ?? ''}
         role={profile.role ?? 'reader'}
         createdAt={profile.created_at}
+        linkedProviders={linkedProviders}
       />
     </div>
   )

@@ -78,7 +78,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     readingTimeMins={post.reading_time_mins}
                     publishedAt={post.published_at}
                     author={{
-                      username: post.author.username,
+                      username: post.author.username ?? '',
                       fullName: post.author.full_name,
                       avatarUrl: post.author.avatar_url,
                     }}
