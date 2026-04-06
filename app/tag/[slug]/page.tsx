@@ -1,9 +1,9 @@
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { getPostsByTag } from '@/lib/queries/posts'
-import { getAllTags } from '@/lib/queries/tags'
+import { getTagStats, getRelatedTags, getTopWritersForTag } from '@/lib/queries/tags'
 import { getBookmarkStatuses } from '@/actions/bookmarks'
 import ArticleCard from '@/components/article-card'
-import { Sidebar } from '@/components/sidebar'
 
 interface TagPageProps {
   params: Promise<{ slug: string }>
@@ -34,7 +34,11 @@ export default async function TagPage({ params }: TagPageProps) {
     notFound()
   }
 
-  const tags = await getAllTags()
+  const [tagStats, relatedTags, topWriters] = await Promise.all([
+    getTagStats(tag.id),
+    getRelatedTags(tag.id),
+    getTopWritersForTag(tag.id),
+  ])
   const bookmarks = await getBookmarkStatuses(posts.map((p) => p.id))
 
   return (
@@ -51,7 +55,7 @@ export default async function TagPage({ params }: TagPageProps) {
           </p>
         )}
         <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-2">
-          {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+          {tagStats.postCount} {tagStats.postCount === 1 ? 'Post' : 'Posts'} &middot; {tagStats.authorCount} {tagStats.authorCount === 1 ? 'Writer' : 'Writers'}
         </p>
       </div>
 
@@ -92,7 +96,41 @@ export default async function TagPage({ params }: TagPageProps) {
           )}
         </div>
         <div className="hidden lg:block w-80">
-          <Sidebar tags={tags} />
+          <aside className="sticky top-20 space-y-4">
+            {relatedTags.length > 0 && (
+              <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">Related Topics</h3>
+                <div className="flex flex-wrap gap-2">
+                  {relatedTags.map((t) => (
+                    <Link key={t.id} href={`/tag/${t.slug}`} className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors">{t.name}</Link>
+                  ))}
+                </div>
+              </section>
+            )}
+            {topWriters.length > 0 && (
+              <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">Top Writers</h3>
+                <div className="space-y-3">
+                  {topWriters.map((writer) => (
+                    <Link key={writer.id} href={`/author/${writer.username}`} className="flex items-center gap-3 group">
+                      <span className="w-8 h-8 rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-xs font-medium text-[#0045ad] shrink-0">
+                        {(writer.full_name ?? writer.username).charAt(0).toUpperCase()}
+                      </span>
+                      <div>
+                        <span className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#0d1c2e] group-hover:text-[#0045ad] transition-colors">{writer.full_name ?? writer.username}</span>
+                        <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">{writer.count} post{writer.count !== 1 ? 's' : ''}</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+            <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-2">The Weekly Deploy</h3>
+              <p className="font-[family-name:var(--font-newsreader)] text-sm text-[#40484f] mb-3">Curated DevOps insights, delivered weekly.</p>
+              <p className="text-xs text-[#70787f] italic">Coming soon</p>
+            </section>
+          </aside>
         </div>
       </div>
     </div>
