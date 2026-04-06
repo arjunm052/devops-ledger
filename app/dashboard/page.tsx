@@ -72,7 +72,7 @@ function formatCount(n: number) {
 }
 
 interface DashboardPageProps {
-  searchParams: Promise<{ filter?: string }>
+  searchParams: Promise<{ filter?: string; page?: string }>
 }
 
 export default async function DashboardPage({ searchParams }: DashboardPageProps) {
@@ -112,11 +112,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const draftsCount = allPosts.filter((p) => p.status === 'draft').length
 
   // Tab filter
-  const { filter = 'all' } = await searchParams
+  const { filter = 'all', page: pageStr = '1' } = await searchParams
+  const page = Math.max(1, parseInt(pageStr, 10) || 1)
+  const perPage = 10
   const filteredPosts =
     filter === 'published' ? allPosts.filter((p) => p.status === 'published')
     : filter === 'drafts'    ? allPosts.filter((p) => p.status === 'draft')
     : allPosts
+
+  const totalFiltered = filteredPosts.length
+  const totalPages = Math.ceil(totalFiltered / perPage)
+  const paginatedPosts = filteredPosts.slice((page - 1) * perPage, page * perPage)
 
   const tabClass = (tab: string) =>
     tab === (filter || 'all')
@@ -234,7 +240,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredPosts.map((post, idx) => {
+                    {paginatedPosts.map((post, idx) => {
                       const clapCount = post.claps.reduce(
                         (s: number, c: { count: number | null }) => s + (c.count ?? 0), 0
                       )
@@ -315,10 +321,28 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
               {/* Pagination footer */}
               <div className="px-8 py-6 bg-muted/30">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#40484f]" style={{ fontFamily: 'var(--font-inter)' }}>
-                    Showing {filteredPosts.length} of {totalPosts} post{totalPosts !== 1 ? 's' : ''}
+                <div className="flex items-center justify-between" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span className="text-sm text-[#40484f]">
+                    Showing {Math.min((page - 1) * perPage + 1, totalFiltered)}–{Math.min(page * perPage, totalFiltered)} of {totalFiltered} post{totalFiltered !== 1 ? 's' : ''}
                   </span>
+                  <div className="flex items-center gap-2">
+                    {page > 1 && (
+                      <Link
+                        href={`/dashboard?filter=${filter}&page=${page - 1}`}
+                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[#40484f] hover:bg-[#dae2ff] transition-colors"
+                      >
+                        &larr; Prev
+                      </Link>
+                    )}
+                    {page < totalPages && (
+                      <Link
+                        href={`/dashboard?filter=${filter}&page=${page + 1}`}
+                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[#40484f] hover:bg-[#dae2ff] transition-colors"
+                      >
+                        Next &rarr;
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             </>
