@@ -28,7 +28,12 @@ export default async function SettingsPage() {
 
   return (
     <div className="bg-[#f8f9ff] min-h-screen">
-      <ProfileSettingsForm profile={profile} />
+      <ProfileSettingsForm
+        profile={profile}
+        email={user.email ?? ''}
+        role={profile.role ?? 'reader'}
+        createdAt={profile.created_at}
+      />
     </div>
   )
 }

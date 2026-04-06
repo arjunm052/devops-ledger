@@ -56,10 +56,13 @@ const errorBase = 'text-xs text-red-500 mt-1'
 // ── Props ────────────────────────────────────────────────────────────────────
 interface ProfileSettingsFormProps {
   profile: Profile
+  email: string
+  role: string
+  createdAt: string
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
-export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
+export function ProfileSettingsForm({ profile, email, role, createdAt }: ProfileSettingsFormProps) {
   const [activeTab, setActiveTab] = useState<Tab>('Profile')
   const [isSaving, setIsSaving] = useState(false)
 
@@ -82,6 +85,7 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
   const bioValue = watch('bio') ?? ''
   const avatarUrlValue = watch('avatarUrl') ?? ''
   const fullNameValue = watch('fullName') ?? ''
+  const usernameValue = watch('username') ?? ''
 
   const onSubmit = async (values: ProfileFormValues) => {
     setIsSaving(true)
@@ -149,37 +153,84 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
         </div>
 
         {/* Tab content */}
-        {activeTab !== 'Profile' ? (
-          <div
-            className="flex flex-col items-center justify-center py-20 text-center"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            <div className="w-12 h-12 rounded-full bg-[#d5e3fc] flex items-center justify-center mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#0045ad"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <line x1="12" y1="8" x2="12" y2="12" />
-                <line x1="12" y1="16" x2="12.01" y2="16" />
-              </svg>
+        {activeTab === 'Account' ? (
+          <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
+            <div>
+              <label className={labelBase}>Email Address</label>
+              <p className="text-sm text-[#0d1c2e] mt-1">{email}</p>
+              <p className="text-xs text-[#70787f] mt-1">Contact support to change your email</p>
             </div>
-            <h2
-              className="text-lg font-semibold text-[#1a1a2e] mb-2"
-              style={{ fontFamily: 'var(--font-space-grotesk)' }}
-            >
-              Coming soon
-            </h2>
-            <p className="text-sm text-[#6b7a99]">
-              {activeTab} settings will be available in a future update.
-            </p>
+            <div className="pt-6 border-t border-[#bfc7d0]/20">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-red-600 mb-2">Danger Zone</h3>
+              <p className="text-sm text-[#40484f] mb-4">Deactivating your account will permanently remove all your data. This action cannot be undone.</p>
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition-colors"
+                onClick={() => alert('Please contact support to deactivate your account.')}
+              >
+                Deactivate Account
+              </button>
+            </div>
+          </div>
+        ) : activeTab === 'Security' ? (
+          <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
+            <div>
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Change Password</h3>
+              <p className="text-sm text-[#40484f] mb-4">Only available for email/password accounts.</p>
+              <div className="space-y-4 max-w-md">
+                <div>
+                  <label className={labelBase}>New Password</label>
+                  <input type="password" placeholder="Enter new password" className={inputBase} disabled />
+                </div>
+                <div>
+                  <label className={labelBase}>Confirm Password</label>
+                  <input type="password" placeholder="Confirm new password" className={inputBase} disabled />
+                </div>
+                <button type="button" className="px-4 py-2 rounded-lg bg-muted text-sm text-[#40484f] cursor-not-allowed" disabled>
+                  Update Password (Coming Soon)
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : activeTab === 'Notifications' ? (
+          <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
+            <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Email Notifications</h3>
+            <div className="space-y-4">
+              {[
+                { label: 'New comments on your posts', description: 'Get notified when someone comments on your articles' },
+                { label: 'New followers', description: 'Get notified when someone follows you' },
+                { label: 'Weekly digest', description: 'Receive a weekly summary of your post performance' },
+              ].map((item) => (
+                <div key={item.label} className="flex items-start justify-between py-3">
+                  <div>
+                    <p className="text-sm font-medium text-[#0d1c2e]">{item.label}</p>
+                    <p className="text-xs text-[#70787f] mt-0.5">{item.description}</p>
+                  </div>
+                  <button type="button" className="w-10 h-6 rounded-full bg-[#dae2ff] relative cursor-not-allowed" disabled>
+                    <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white shadow transition-transform" />
+                  </button>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-[#70787f] italic">Notification preferences coming soon</p>
+          </div>
+        ) : activeTab === 'Membership' ? (
+          <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
+            <div>
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Membership</h3>
+              <div className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)] space-y-4">
+                <div className="flex justify-between">
+                  <span className="text-sm text-[#40484f]">Role</span>
+                  <span className="text-sm font-medium text-[#0d1c2e] capitalize">{role}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm text-[#40484f]">Member since</span>
+                  <span className="text-sm font-medium text-[#0d1c2e]">
+                    {new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -293,6 +344,12 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
                   {errors.username && (
                     <p className={errorBase}>{errors.username.message}</p>
                   )}
+                  <p
+                    className="text-xs text-[#6b7a99] mt-1.5"
+                    style={{ fontFamily: 'var(--font-inter)' }}
+                  >
+                    thedevopsledger.com/@{usernameValue}
+                  </p>
                 </div>
 
                 {/* Bio */}
@@ -443,7 +500,7 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
             </section>
 
             {/* ── Action buttons ──────────────────────────────────────────── */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-2">
+            <div className="flex items-center pt-2">
               <button
                 type="submit"
                 disabled={isSaving || !isDirty}
@@ -471,19 +528,6 @@ export function ProfileSettingsForm({ profile }: ProfileSettingsFormProps) {
                 ) : (
                   'Save Changes'
                 )}
-              </button>
-
-              <button
-                type="button"
-                className="text-sm font-medium text-[#c0392b] hover:text-[#922b21] underline underline-offset-4 transition-colors"
-                style={{ fontFamily: 'var(--font-inter)' }}
-                onClick={() => {
-                  if (window.confirm('Are you sure you want to deactivate your account? This action cannot be undone.')) {
-                    // Deactivate action not yet implemented
-                  }
-                }}
-              >
-                Deactivate account
               </button>
             </div>
           </form>
