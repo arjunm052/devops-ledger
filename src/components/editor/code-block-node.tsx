@@ -70,9 +70,9 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
 
   return (
     <NodeViewWrapper className="code-block-wrapper my-4">
-      <div className="overflow-hidden rounded-lg border border-[rgba(255,255,255,0.08)] bg-[#0d1117]">
+      <div className="overflow-hidden rounded-lg border border-[#3e4451] bg-[#282c34]">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] px-3 py-1.5">
+        <div className="flex items-center justify-between border-b border-[#3e4451] bg-[#21252b] px-3 py-1.5">
           <div className="flex items-center gap-2">
             {editingFilename ? (
               <input
@@ -80,7 +80,7 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
                 type="text"
                 defaultValue={filename}
                 placeholder="filename.ext"
-                className="bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#c9d1d9] outline-none placeholder:text-[#484f58]"
+                className="bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#abb2bf] outline-none placeholder:text-[#636d83]"
                 autoFocus
                 onBlur={(e) => {
                   updateAttributes({ filename: e.target.value || null })
@@ -98,7 +98,7 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
               <button
                 type="button"
                 onClick={() => setEditingFilename(true)}
-                className="font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#c9d1d9] hover:text-[#58a6ff]"
+                className="font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#abb2bf] hover:text-[#61afef]"
                 contentEditable={false}
               >
                 {filename || 'Add filename\u2026'}
@@ -106,13 +106,13 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
             )}
           </div>
           <div className="flex items-center gap-3" contentEditable={false}>
-            <span className="rounded-md bg-[rgba(255,255,255,0.06)] px-2 py-0.5 font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#8b949e]">
+            <span className="rounded-md bg-[#3e4451] px-2 py-0.5 font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#7f848e]">
               {displayLang}
             </span>
             <button
               type="button"
               onClick={copyCode}
-              className="flex items-center gap-1 text-[11px] text-[#58a6ff] transition-colors hover:text-[#79c0ff]"
+              className="flex items-center gap-1 text-[11px] text-[#61afef] transition-colors hover:text-[#528bff]"
             >
               {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
               {copied ? 'Copied!' : 'Copy'}
@@ -122,7 +122,7 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
         {/* Code area with line numbers */}
         <div className="flex overflow-x-auto p-4">
           <div
-            className="select-none pr-4 text-right font-[family-name:var(--font-jetbrains-mono)] text-xs leading-[1.7] text-[#484f58]"
+            className="select-none pr-4 text-right font-[family-name:var(--font-jetbrains-mono)] text-xs leading-[1.7] text-[#636d83]"
             contentEditable={false}
             aria-hidden
           >
@@ -132,7 +132,7 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
           </div>
           <NodeViewContent<'code'>
             as="code"
-            className="flex-1 font-[family-name:var(--font-jetbrains-mono)] text-sm leading-[1.7] text-[#c9d1d9] outline-none"
+            className="flex-1 font-[family-name:var(--font-jetbrains-mono)] text-sm leading-[1.7] text-[#abb2bf] outline-none"
           />
         </div>
       </div>
