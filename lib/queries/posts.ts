@@ -108,3 +108,26 @@ export async function searchPosts(query: string, limit = 10) {
   if (error) throw error
   return data
 }
+
+export async function getPostsByAuthor(authorId: string, limit = 6, offset = 0) {
+  const supabase = await createServerSupabaseClient()
+
+  const { data, error, count } = await supabase
+    .from('posts')
+    .select(
+      `
+      id, title, slug, excerpt, cover_image_url, reading_time_mins, published_at, created_at,
+      author:profiles!posts_author_id_fkey ( id, full_name, username, avatar_url ),
+      tags:post_tags ( tag:tags ( id, name, slug ) ),
+      claps ( count )
+      `,
+      { count: 'exact' }
+    )
+    .eq('author_id', authorId)
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
+    .range(offset, offset + limit - 1)
+
+  if (error) throw error
+  return { posts: data, total: count ?? 0 }
+}
