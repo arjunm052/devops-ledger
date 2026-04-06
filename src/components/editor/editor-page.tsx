@@ -532,6 +532,7 @@ export default function PostEditor({
                 'prose-pre:bg-transparent prose-pre:p-0',
                 '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm [&_pre_code]:rounded-none',
                 '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#abb2bf] [&_.code-block-wrapper_code]:text-sm [&_.code-block-wrapper_code]:rounded-none',
+                '[&_.code-block-wrapper_code]:before:content-none [&_.code-block-wrapper_code]:after:content-none',
                 // Blockquote
                 'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)] prose-blockquote:font-[family-name:var(--font-newsreader)]',
                 // Task lists

@@ -49,6 +49,8 @@ export function createEditorExtensions(
     CodeBlockCustom.configure({
       lowlight,
       defaultLanguage: null,
+      // Avoid language-* classes on <code>; prevents any theme/CSS from surfacing the label
+      languageClassPrefix: null,
       enableTabIndentation: true,
       exitOnTripleEnter: true,
       exitOnArrowDown: true,
