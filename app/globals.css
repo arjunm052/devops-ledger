@@ -131,7 +131,7 @@
 
 /* Dark mode overrides for hardcoded Stitch design colors */
 :is(.dark *) {
-  /* Text colors */
+  /* Text colors — main Stitch palette */
   &.text-\[\#0d1c2e\] { color: #eaf1ff; }
   &.text-\[\#40484f\] { color: #afcae0; }
   &.text-\[\#70787f\] { color: #8899a6; }
@@ -139,15 +139,31 @@
   &.text-\[\#0045ad\] { color: #b2c5ff; }
   &.text-\[\#704200\] { color: #ffb86c; }
 
+  /* Text colors — settings page palette */
+  &.text-\[\#1a1a2e\] { color: #eaf1ff; }
+  &.text-\[\#6b7a99\] { color: #8899a6; }
+  &.text-\[\#4a5568\] { color: #8899a6; }
+
   /* Background colors */
   &.bg-white { background-color: oklch(0.22 0.02 250); }
   &.bg-\[\#dae2ff\] { background-color: rgba(26, 93, 213, 0.2); }
   &.bg-\[\#d5e3fc\] { background-color: rgba(26, 93, 213, 0.15); }
   &.bg-\[\#eff4ff\] { background-color: oklch(0.2 0.02 250); }
   &.bg-\[\#ffdcbc\] { background-color: rgba(112, 66, 0, 0.3); }
+  &.bg-\[\#f8f9ff\] { background-color: oklch(0.15 0.02 250); }
+  &.bg-\[\#eef3fd\] { background-color: rgba(26, 93, 213, 0.1); }
+  &.bg-\[\#c3d7f9\]\/60 { background-color: rgba(26, 93, 213, 0.15); }
+
+  /* Input background in dark mode */
+  &.bg-\[\#d5e3fc\] { background-color: rgba(26, 93, 213, 0.15); }
+
+  /* Border colors */
+  &.border-\[\#e2eaf7\] { border-color: rgba(191, 199, 208, 0.15); }
 
   /* Hover overrides */
   &.hover\:bg-\[\#c4d0f5\]:hover { background-color: rgba(26, 93, 213, 0.3); }
+  &.hover\:text-\[\#1a1a2e\]:hover { color: #eaf1ff; }
+  &.hover\:text-\[\#1a5dd5\]:hover { color: #b2c5ff; }
 
   /* Shadow overrides — reduce opacity in dark mode */
   &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.06\)\] {
@@ -162,4 +178,10 @@
 
   /* Border/divider colors */
   &.bg-\[\#bfc7d0\]\/30 { background-color: rgba(191, 199, 208, 0.1); }
+
+  /* SVG fill overrides for dark mode */
+  & svg[fill="#1a1a2e"] { fill: #eaf1ff; }
+  & svg line[stroke="#6b7a99"],
+  & svg path[stroke="#6b7a99"],
+  & svg polyline[stroke="#6b7a99"] { stroke: #8899a6; }
 }
