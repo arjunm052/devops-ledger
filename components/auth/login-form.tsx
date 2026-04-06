@@ -1,11 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { loginSchema, type LoginInput } from '@/lib/validations/auth'
 import { signInWithEmail } from '@/actions/auth'
 
@@ -28,21 +26,93 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div className="space-y-1">
-        <Label htmlFor="email">Email</Label>
-        <Input id="email" type="email" {...register('email')} />
-        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+    <div className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-6">
+          {/* Email floating label */}
+          <div className="relative">
+            <input
+              id="email"
+              type="email"
+              placeholder=" "
+              {...register('email')}
+              className="peer w-full bg-transparent border-0 border-b-2 border-[#b2b2b1] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#056d41] transition-colors text-[#323233]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            />
+            <label
+              htmlFor="email"
+              className="absolute left-0 -top-3.5 text-[#5f5f5f] text-xs transition-all
+                peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5
+                peer-focus:-top-3.5 peer-focus:text-[#056d41] peer-focus:text-xs cursor-text"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              Email address
+            </label>
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Password floating label */}
+          <div className="relative">
+            <input
+              id="password"
+              type="password"
+              placeholder=" "
+              {...register('password')}
+              className="peer w-full bg-transparent border-0 border-b-2 border-[#b2b2b1] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#056d41] transition-colors text-[#323233]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            />
+            <label
+              htmlFor="password"
+              className="absolute left-0 -top-3.5 text-[#5f5f5f] text-xs transition-all
+                peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5
+                peer-focus:-top-3.5 peer-focus:text-[#056d41] peer-focus:text-xs cursor-text"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              Password
+            </label>
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+        </div>
+
+        {serverError && (
+          <p className="text-sm text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+            {serverError}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-[#056d41] text-[#e7ffeb] py-4 rounded-full font-semibold hover:bg-[#006038] transition-all shadow-lg shadow-[#056d41]/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ fontFamily: 'var(--font-inter)' }}
+        >
+          {loading ? 'Signing in…' : 'Continue to The Ledger'}
+        </button>
+      </form>
+
+      {/* Sign up link */}
+      <div className="text-center">
+        <p
+          className="italic text-[#5f5f5f]"
+          style={{ fontFamily: 'var(--font-newsreader)' }}
+        >
+          No account?{' '}
+          <Link
+            href="/auth/login"
+            className="text-[#056d41] font-bold not-italic hover:underline underline-offset-4"
+          >
+            Create one
+          </Link>
+        </p>
       </div>
-      <div className="space-y-1">
-        <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" {...register('password')} />
-        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
-      </div>
-      {serverError && <p className="text-sm text-destructive">{serverError}</p>}
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Signing in\u2026' : 'Sign In'}
-      </Button>
-    </form>
+    </div>
   )
 }

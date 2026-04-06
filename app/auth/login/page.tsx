@@ -6,41 +6,66 @@ export const metadata: Metadata = { title: 'Sign In' }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/30 px-4">
-      <div className="w-full max-w-sm">
-        <div className="rounded-xl border border-border/50 bg-white/80 backdrop-blur-sm p-8 shadow-lg space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="font-[family-name:var(--font-newsreader)] text-3xl font-bold tracking-tight">
-              The Ledger
+    <div className="relative min-h-screen bg-[#fcf9f8] text-[#323233] overflow-hidden">
+      {/* Right decorative panel */}
+      <div className="fixed top-0 right-0 w-1/3 h-screen pointer-events-none opacity-40 mix-blend-multiply overflow-hidden z-0">
+        <div className="absolute inset-0 bg-gradient-to-bl from-[#9df5bd]/20 to-transparent" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkHnBSiQIOPQz5D0p4pCzmI1lvs22KPjQButjwkWS7ANSnqLPIA-Y8jNuc4nRUmhJFwNbjmSIEkUzobxE8Wlc4zXbulJsVxtM2maDnM3aOfkfw2bH6ZHAsFMwVEN69zDmN2Ijfz0o-1ikYFTVAUqWBcMrsgkoGotartoc1RHqn1XOODJu5XiORNpMtHgqw8ZZX1RMNniJZGxmtX33m1zumSi5HRLIBiSjZRNHsNmEAt6qxst0wthIawr8A4qv-5myJBWzLGIExoGI"
+          alt=""
+          aria-hidden="true"
+          className="object-cover h-full w-full grayscale opacity-20 translate-x-20"
+        />
+      </div>
+
+      {/* Main content */}
+      <main className="relative z-10 min-h-screen flex items-center justify-center pt-20 pb-12 px-4">
+        <div className="w-full max-w-md space-y-12">
+          {/* Heading */}
+          <div className="text-center space-y-4">
+            <h1
+              className="text-4xl md:text-5xl font-bold tracking-tight leading-tight"
+              style={{ fontFamily: 'var(--font-newsreader)' }}
+            >
+              Join the conversation.
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Sign in to join the conversation
+            <p
+              className="text-sm tracking-wide text-[#5f5f5f]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              Enter your details to create an account or sign in.
             </p>
           </div>
 
-          <OAuthButtons />
+          {/* Card */}
+          <div className="bg-white p-8 md:p-12 rounded-xl shadow-2xl shadow-black/5 space-y-8 border border-[#b2b2b1]/10">
+            <OAuthButtons />
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border/60" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="bg-white/80 px-3 text-muted-foreground">
-                or continue with email
+            {/* OR divider */}
+            <div className="relative flex py-2 items-center">
+              <div className="flex-grow border-t border-[#b2b2b1]/30" />
+              <span
+                className="flex-shrink mx-4 text-xs text-[#7b7b7a] tracking-widest uppercase"
+                style={{ fontFamily: 'var(--font-inter)' }}
+              >
+                Or
               </span>
+              <div className="flex-grow border-t border-[#b2b2b1]/30" />
             </div>
+
+            <LoginForm />
           </div>
 
-          <LoginForm />
+          {/* Privacy notice */}
+          <p
+            className="text-center text-[10px] uppercase tracking-widest text-[#7b7b7a] leading-relaxed max-w-xs mx-auto"
+            style={{ fontFamily: 'var(--font-inter)' }}
+          >
+            By signing in, you agree to our Terms of Service and acknowledge that our Privacy Policy applies to you.
+          </p>
         </div>
-
-        <p className="text-center text-sm text-muted-foreground mt-6">
-          No account?{' '}
-          <a href="/auth/login" className="text-primary font-medium hover:underline underline-offset-4">
-            Sign up
-          </a>
-        </p>
-      </div>
+      </main>
     </div>
   )
 }
