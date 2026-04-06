@@ -118,7 +118,7 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="mt-6 flex items-center gap-4">
         <Avatar>
           {author?.avatar_url ? (
-            <AvatarImage src={author.avatar_url} alt={authorName} />
+            <AvatarImage src={author.avatar_url} alt="" />
           ) : (
             <AvatarFallback>{authorInitial}</AvatarFallback>
           )}

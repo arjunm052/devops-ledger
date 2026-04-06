@@ -74,7 +74,7 @@ function CommentItem({
       <div className="flex gap-3">
         <Avatar size="sm">
           {comment.author.avatarUrl ? (
-            <AvatarImage src={comment.author.avatarUrl} alt={displayName} />
+            <AvatarImage src={comment.author.avatarUrl} alt="" />
           ) : (
             <AvatarFallback>{initials}</AvatarFallback>
           )}

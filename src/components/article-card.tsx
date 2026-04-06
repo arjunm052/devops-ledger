@@ -62,7 +62,7 @@ export default function ArticleCard({
             {author.avatarUrl ? (
               <Image
                 src={author.avatarUrl}
-                alt={author.fullName ?? author.username}
+                alt=""
                 width={20}
                 height={20}
                 className="rounded-full"

@@ -46,9 +46,10 @@ export default async function AboutPage() {
         {profile.avatar_url ? (
           <Image
             src={profile.avatar_url}
-            alt={profile.full_name ?? profile.username ?? ''}
+            alt=""
             width={120}
             height={120}
+            priority
             className="rounded-full w-[120px] h-[120px] object-cover mb-5 shrink-0"
           />
         ) : (
