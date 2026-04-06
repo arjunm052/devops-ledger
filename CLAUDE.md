@@ -42,7 +42,7 @@ Requires `.env.local` with: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_AN
 - Path alias: `@/*` maps to project root
 - Form validation: React Hook Form + Zod schemas in `lib/validations/`
 - UI components: shadcn/ui in `components/ui/` — do not edit these directly
-- Tailwind CSS 4 uses CSS-first config in `app/globals.css` with `@theme inline` and OKLch colors
+- Tailwind CSS 4 uses CSS-first config in `src/app/globals.css` with `@theme inline` and OKLch colors
 - Tests use Vitest + React Testing Library + jsdom (config in `vitest.config.ts`)
 - Deployed on Vercel
 

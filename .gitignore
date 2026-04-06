@@ -44,6 +44,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+# supabase cli (linked project cache — not migrations)
+supabase/.temp/
+
+# claude code (local settings; do not commit)
+.claude/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
