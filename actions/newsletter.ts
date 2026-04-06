@@ -11,7 +11,7 @@ export async function subscribeToNewsletter(email: string): Promise<{ success: t
 
   const supabase = await createServerSupabaseClient()
 
-  const { error } = await (supabase as any)
+  const { error } = await supabase
     .from('newsletter_subscribers')
     .upsert({ email: parsed.data }, { onConflict: 'email' })
 

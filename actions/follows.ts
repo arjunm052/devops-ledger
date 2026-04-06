@@ -10,7 +10,7 @@ export async function toggleFollow(authorId: string, path: string) {
   if (!user) return { error: 'Must be signed in to follow' }
   if (user.id === authorId) return { error: 'Cannot follow yourself' }
 
-  const { data: existing } = await (supabase as any)
+  const { data: existing } = await supabase
     .from('follows')
     .select('follower_id')
     .eq('follower_id', user.id)
@@ -18,7 +18,7 @@ export async function toggleFollow(authorId: string, path: string) {
     .maybeSingle()
 
   if (existing) {
-    await (supabase as any)
+    await supabase
       .from('follows')
       .delete()
       .eq('follower_id', user.id)
@@ -26,7 +26,7 @@ export async function toggleFollow(authorId: string, path: string) {
     revalidatePath(path)
     return { following: false }
   } else {
-    await (supabase as any)
+    await supabase
       .from('follows')
       .insert({ follower_id: user.id, following_id: authorId })
     await createNotification(authorId, user.id, 'follow')
@@ -40,7 +40,7 @@ export async function getFollowStatus(authorId: string): Promise<boolean> {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return false
 
-  const { data } = await (supabase as any)
+  const { data } = await supabase
     .from('follows')
     .select('follower_id')
     .eq('follower_id', user.id)
@@ -53,7 +53,7 @@ export async function getFollowStatus(authorId: string): Promise<boolean> {
 export async function getFollowerCount(authorId: string): Promise<number> {
   const supabase = await createServerSupabaseClient()
 
-  const { count } = await (supabase as any)
+  const { count } = await supabase
     .from('follows')
     .select('follower_id', { count: 'exact', head: true })
     .eq('following_id', authorId)

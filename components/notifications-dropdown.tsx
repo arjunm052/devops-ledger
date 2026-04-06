@@ -7,7 +7,7 @@ interface Notification {
   id: string
   type: string
   read: boolean
-  created_at: string
+  created_at: string | null
   post_id: string | null
   actor: { full_name: string | null; username: string; avatar_url: string | null }
 }
@@ -93,7 +93,7 @@ export function NotificationsDropdown({ notifications, unreadCount }: Notificati
                         {getMessage(n)}
                       </p>
                       <span className="text-xs text-[#70787f]">
-                        {new Date(n.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        {new Date(n.created_at ?? '').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                       </span>
                     </div>
                   </button>
