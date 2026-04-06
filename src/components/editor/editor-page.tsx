@@ -526,12 +526,13 @@ export default function PostEditor({
                 'prose-strong:text-[var(--color-heading)]',
                 // Links
                 'prose-a:text-[var(--color-link)] hover:prose-a:text-[var(--color-link-hover)]',
-                // Inline code
+                // Inline code (only code NOT inside pre)
                 'prose-code:text-[#e8b87a] prose-code:bg-[rgba(232,184,122,0.1)] prose-code:border prose-code:border-[rgba(232,184,122,0.15)] prose-code:rounded-md prose-code:px-1.5 prose-code:py-0.5 prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none',
+                // Code blocks — reset code-inside-pre to not inherit inline code styling
+                'prose-pre:bg-transparent prose-pre:p-0',
+                '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm [&_pre_code]:rounded-none',
                 // Blockquote
                 'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)] prose-blockquote:font-[family-name:var(--font-newsreader)]',
-                // Code blocks
-                'prose-pre:bg-transparent prose-pre:p-0',
                 // Task lists
                 '[&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-0',
                 '[&_ul[data-type=taskList]_li]:flex [&_ul[data-type=taskList]_li]:gap-2 [&_ul[data-type=taskList]_li]:items-start',

@@ -33,23 +33,29 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
     if (detectionTimer.current) clearTimeout(detectionTimer.current)
     detectionTimer.current = setTimeout(() => {
       const text = node.textContent
-      if (!text || text.length < 8) {
+      // Only auto-detect for multi-line content with enough text
+      // Short one-liners produce unreliable results
+      const lines = text.split('\n').filter(Boolean).length
+      if (!text || text.length < 30 || lines < 2) {
         setDetectedLang(null)
         return
       }
       try {
         const result = lowlight.highlightAuto(text)
-        // lowlight.highlightAuto returns the best match with relevance score
-        // The detected language is in result.data.language
-        const lang = (result as { data?: { language?: string } }).data?.language
-        if (lang) {
+        const data = result as { data?: { language?: string }; relevance?: number }
+        const lang = data.data?.language
+        const relevance = data.relevance ?? 0
+        // Only accept detection with a meaningful relevance score
+        if (lang && relevance >= 5) {
           setDetectedLang(lang)
           updateAttributes({ language: lang })
+        } else {
+          setDetectedLang(null)
         }
       } catch {
         // Ignore detection errors
       }
-    }, 600)
+    }, 800)
     return () => {
       if (detectionTimer.current) clearTimeout(detectionTimer.current)
     }
