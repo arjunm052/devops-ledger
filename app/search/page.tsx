@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const posts = q ? await searchPosts(q) : null
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen">
+    <div className="min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <Suspense>

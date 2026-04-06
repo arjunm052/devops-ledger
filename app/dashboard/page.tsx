@@ -124,7 +124,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
       : 'px-6 py-1.5 rounded-full text-[#40484f] hover:text-[#0045ad] transition-colors text-sm font-medium'
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen">
+    <div className="min-h-screen">
       <main className="max-w-6xl mx-auto pt-12 pb-20 px-6">
 
         {/* Header */}
@@ -193,7 +193,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <div className="bg-white rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
 
           {/* Table header with tabs */}
-          <div className="p-8 bg-[#eff4ff]">
+          <div className="p-8 bg-muted/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <h2
                 className="text-2xl font-bold text-[#0d1c2e]"
@@ -224,7 +224,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <div className="overflow-x-auto">
                 <table className="w-full text-left" style={{ fontFamily: 'var(--font-inter)' }}>
                   <thead>
-                    <tr className="bg-[#eff4ff]/60 text-xs font-bold uppercase tracking-widest text-[#40484f]">
+                    <tr className="bg-muted text-xs font-bold uppercase tracking-widest text-[#40484f]">
                       <th className="px-8 py-4 font-semibold">Post Title</th>
                       <th className="px-6 py-4 font-semibold">Status</th>
                       <th className="px-6 py-4 font-semibold">Tags</th>
@@ -240,7 +240,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       )
                       const isPublished = post.status === 'published'
                       return (
-                        <tr key={post.id} className={`transition-colors group ${idx % 2 === 0 ? 'bg-white' : 'bg-[#eff4ff]/40'} hover:bg-[#eff4ff]`}>
+                        <tr key={post.id} className={`transition-colors group ${idx % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50`}>
                           <td className="px-8 py-6">
                             <div
                               className={`font-bold text-lg line-clamp-1 ${isPublished ? 'text-[#0d1c2e]' : 'text-[#40484f]/80'}`}
@@ -287,7 +287,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Link
                                 href={`/dashboard/edit/${post.id}`}
-                                className="p-2 hover:bg-[#eff4ff] rounded-full transition-colors text-[#40484f]"
+                                className="p-2 hover:bg-muted rounded-full transition-colors text-[#40484f]"
                                 title="Edit"
                               >
                                 <IconEdit />
@@ -314,7 +314,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
 
               {/* Pagination footer */}
-              <div className="px-8 py-6 bg-[#eff4ff]/40">
+              <div className="px-8 py-6 bg-muted/30">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-[#40484f]" style={{ fontFamily: 'var(--font-inter)' }}>
                     Showing {filteredPosts.length} of {totalPosts} post{totalPosts !== 1 ? 's' : ''}

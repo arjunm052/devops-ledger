@@ -20,7 +20,7 @@ export default async function AboutPage() {
 
   if (!profile) {
     return (
-      <div className="bg-[#eff4ff] min-h-screen">
+      <div className="min-h-screen">
         <div className="max-w-3xl mx-auto px-4 py-16 text-center">
           <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[#0d1c2e] mb-4">
             About
@@ -39,7 +39,7 @@ export default async function AboutPage() {
   ])
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen">
+    <div className="min-h-screen">
     <div className="max-w-3xl mx-auto px-4 py-12">
       {/* Author Profile */}
       <div className="flex flex-col items-center text-center mb-12">

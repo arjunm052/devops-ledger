@@ -36,7 +36,7 @@ export default async function TagPage({ params }: TagPageProps) {
   const tags = await getAllTags()
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen">
+    <div className="min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero */}
       <div className="mb-8">

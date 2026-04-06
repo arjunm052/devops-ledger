@@ -7,7 +7,7 @@ export default async function HomePage() {
   const [posts, tags] = await Promise.all([getPublishedPosts(), getAllTags()])
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen">
+    <div className="min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="flex gap-8">
         <div className="flex-1 space-y-4">

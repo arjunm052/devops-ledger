@@ -84,7 +84,7 @@ export default async function ArticlePage({ params }: PageProps) {
   const authorInitial = authorName.charAt(0).toUpperCase()
 
   return (
-    <div className="bg-[#eff4ff] min-h-screen py-10">
+    <div className="min-h-screen py-10">
     <article className="mx-auto max-w-3xl px-6">
       {/* Cover image */}
       {post.cover_image_url && (
@@ -154,12 +154,12 @@ export default async function ArticlePage({ params }: PageProps) {
       </div>
 
       {/* Claps */}
-      <div className="mt-10 flex justify-center bg-[#eff4ff] rounded-xl py-6">
+      <div className="mt-10 flex justify-center bg-muted/50 rounded-xl py-6">
         <ClapButton postId={post.id} slug={slug} initialCount={totalClaps} />
       </div>
 
       {/* Comments */}
-      <div className="mt-8 bg-[#eff4ff] rounded-xl p-6">
+      <div className="mt-8 bg-muted/50 rounded-xl p-6">
         <CommentSection
           postId={post.id}
           slug={slug}
