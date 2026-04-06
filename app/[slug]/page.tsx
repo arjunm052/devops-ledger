@@ -3,7 +3,10 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { getPostBySlug } from '@/lib/queries/posts'
+import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TiptapRenderer from '@/components/tiptap-renderer'
+import { ClapButton } from '@/components/clap-button'
+import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 
@@ -41,11 +44,34 @@ export default async function ArticlePage({ params }: PageProps) {
     notFound()
   }
 
+  const supabase = await createServerSupabaseClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   const author = post.author as { id: string; full_name: string | null; username: string; avatar_url: string | null; bio: string | null } | null
   const tags = (post.tags as { tag: { id: string; name: string; slug: string } | null }[] | null) ?? []
   const claps = post.claps as { count: number }[] | null
+  const rawComments = (post.comments ?? []) as {
+    id: string
+    body: string
+    created_at: string
+    parent_id: string | null
+    author: { id: string; full_name: string | null; username: string; avatar_url: string | null }
+  }[]
 
   const totalClaps = claps?.reduce((sum, c) => sum + c.count, 0) ?? 0
+
+  const comments = rawComments.map((c) => ({
+    id: c.id,
+    body: c.body,
+    createdAt: c.created_at,
+    parentId: c.parent_id,
+    author: {
+      id: c.author.id,
+      username: c.author.username,
+      fullName: c.author.full_name,
+      avatarUrl: c.author.avatar_url,
+    },
+  }))
 
   const formattedDate = post.published_at
     ? new Date(post.published_at).toLocaleDateString('en-US', {
@@ -123,9 +149,20 @@ export default async function ArticlePage({ params }: PageProps) {
         <TiptapRenderer content={post.content} />
       </div>
 
-      {/* Placeholder sections for claps and comments (Task 7) */}
-      <div id="claps" />
-      <div id="comments" />
+      {/* Claps */}
+      <div className="mt-10 flex justify-center border-t border-b border-border py-6">
+        <ClapButton postId={post.id} slug={slug} initialCount={totalClaps} />
+      </div>
+
+      {/* Comments */}
+      <div className="mt-10">
+        <CommentSection
+          postId={post.id}
+          slug={slug}
+          comments={comments}
+          currentUserId={user?.id ?? null}
+        />
+      </div>
     </article>
   )
 }
