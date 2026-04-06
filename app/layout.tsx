@@ -24,7 +24,17 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: { default: 'The DevOps Ledger', template: '%s | The DevOps Ledger' },
-  description: 'Engineering insights, architecture deep-dives, and DevOps patterns.',
+  description: 'Engineering insights, architecture deep-dives, and DevOps patterns from the trenches.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'https://thedevopsledger.com'),
+  openGraph: {
+    type: 'website',
+    siteName: 'The DevOps Ledger',
+    title: 'The DevOps Ledger',
+    description: 'Engineering insights, architecture deep-dives, and DevOps patterns from the trenches.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
