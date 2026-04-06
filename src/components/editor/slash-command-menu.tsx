@@ -261,9 +261,11 @@ const SlashCommandMenu = forwardRef<SlashCommandMenuRef, SlashCommandMenuProps>(
     const containerRef = useRef<HTMLDivElement>(null)
 
     // Reset selection when items change
+    const itemsLen = items.length
     useEffect(() => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedIndex(0)
-    }, [items])
+    }, [itemsLen])
 
     // Scroll selected item into view
     useEffect(() => {
