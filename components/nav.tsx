@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { UserMenu } from '@/components/user-menu'
+import { ThemeToggle } from '@/components/theme-toggle'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -51,6 +52,7 @@ export async function Nav() {
 
         {/* Right side: search + write + auth */}
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <Link
             href="/search"
             className="text-[#40484f] transition-colors hover:text-[#0045ad]"
