@@ -1,26 +1,27 @@
 'use client'
 
-import { useState, useTransition, useCallback, useRef, useEffect } from 'react'
+import {
+  useState,
+  useTransition,
+  useCallback,
+  useRef,
+  useEffect,
+} from 'react'
 import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
-import { useEditor, EditorContent } from '@tiptap/react'
-import StarterKit from '@tiptap/starter-kit'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
-import Image from '@tiptap/extension-image'
-import Link from '@tiptap/extension-link'
-import { Table } from '@tiptap/extension-table'
-import { TableRow } from '@tiptap/extension-table-row'
-import { TableHeader } from '@tiptap/extension-table-header'
-import { TableCell } from '@tiptap/extension-table-cell'
-import Youtube from '@tiptap/extension-youtube'
-import Typography from '@tiptap/extension-typography'
-import Placeholder from '@tiptap/extension-placeholder'
-import { common, createLowlight } from 'lowlight'
+import { useEditor, EditorContent, type Editor } from '@tiptap/react'
+import { BubbleMenu } from '@tiptap/react/menus'
+import { toast } from 'sonner'
+import { createEditorExtensions } from '@/lib/tiptap/editor-extensions'
 import { createPost, updatePost } from '@/actions/posts'
+import { uploadPostImage } from '@/actions/post-images'
+import { CoverImageField } from '@/components/article-editor/cover-image-field'
+import { ArticlePreviewPane, type AuthorPreview } from '@/components/article-editor/article-preview-pane'
+import { StorySettingsDialog } from '@/components/article-editor/story-settings-dialog'
+import { getImageFileFromDataTransfer } from '@/components/article-editor/image-clipboard'
+import { Button } from '@/components/ui/button'
+import { Settings2, Eye, PenLine } from 'lucide-react'
 
-const lowlight = createLowlight(common)
-
-// ---- Tag type ----
 interface Tag {
   id: string
   name: string
@@ -28,8 +29,9 @@ interface Tag {
   description: string | null
 }
 
-interface PostEditorProps {
+export interface PostEditorProps {
   allTags: Tag[]
+  authorPreview: AuthorPreview
   initialData?: {
     id: string
     title: string
@@ -41,7 +43,6 @@ interface PostEditorProps {
   }
 }
 
-// ---- Toolbar icon helpers ----
 function ToolbarBtn({
   onClick,
   active,
@@ -62,7 +63,7 @@ function ToolbarBtn({
       }}
       title={title}
       className={[
-        'p-1.5 rounded transition-colors',
+        'rounded p-1.5 transition-colors',
         active
           ? 'bg-[#0045ad]/10 text-[#0045ad]'
           : 'text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)] hover:text-[var(--color-link)]',
@@ -74,17 +75,17 @@ function ToolbarBtn({
 }
 
 function Separator() {
-  return <div className="w-px h-5 bg-[var(--color-border-subtle)] mx-1 self-center" />
+  return <div className="mx-1 h-5 w-px self-center bg-[var(--color-border-subtle)]" />
 }
 
-// ---- Toolbar ----
-function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null }) {
+function EditorToolbar({
+  editor,
+  onPickImageFile,
+}: {
+  editor: Editor | null
+  onPickImageFile: () => void
+}) {
   if (!editor) return null
-
-  const addImage = () => {
-    const url = window.prompt('Image URL:')
-    if (url) editor.chain().focus().setImage({ src: url }).run()
-  }
 
   const setLink = () => {
     const prev = editor.getAttributes('link').href as string | undefined
@@ -97,41 +98,52 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null
     }
   }
 
+  const addImageFromUrl = () => {
+    const url = window.prompt('Image URL:')
+    if (url) editor.chain().focus().setImage({ src: url }).run()
+  }
+
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-4 py-2 border-b border-[var(--color-border-subtle)] bg-[var(--color-surface)] sticky top-0 z-10">
-      {/* Text style */}
+    <div className="flex flex-wrap items-center gap-0.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface)] px-2 py-1.5">
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleBold().run()}
         active={editor.isActive('bold')}
         title="Bold"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h8a4 4 0 0 1 0 8H6V4zm0 8h9a4 4 0 0 1 0 8H6v-8z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 4h8a4 4 0 0 1 0 8H6V4zm0 8h9a4 4 0 0 1 0 8H6v-8z" />
+        </svg>
       </ToolbarBtn>
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleItalic().run()}
         active={editor.isActive('italic')}
         title="Italic"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.182 4h7v2h-3.3l-4.564 12H13v2H6v-2h3.3L13.764 6H11V4z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.182 4h7v2h-3.3l-4.564 12H13v2H6v-2h3.3L13.764 6H11V4z" />
+        </svg>
       </ToolbarBtn>
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleStrike().run()}
         active={editor.isActive('strike')}
         title="Strikethrough"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/><path d="M16 6C16 6 14.5 4 12 4C9.5 4 7 5.5 7 8C7 10 8.5 11 12 11C15.5 11 17 12 17 14C17 16.5 14.5 18 12 18C9.5 18 8 16 8 16"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="5" y1="12" x2="19" y2="12" />
+          <path d="M16 6C16 6 14.5 4 12 4C9.5 4 7 5.5 7 8C7 10 8.5 11 12 11C15.5 11 17 12 17 14C17 16.5 14.5 18 12 18C9.5 18 8 16 8 16" />
+        </svg>
       </ToolbarBtn>
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleCode().run()}
         active={editor.isActive('code')}
         title="Inline code"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <polyline points="16 18 22 12 16 6" />
+          <polyline points="8 6 2 12 8 18" />
+        </svg>
       </ToolbarBtn>
-
       <Separator />
-
-      {/* Headings */}
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         active={editor.isActive('heading', { level: 2 })}
@@ -146,144 +158,173 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null
       >
         <span className="text-xs font-bold leading-none">H3</span>
       </ToolbarBtn>
-
       <Separator />
-
-      {/* Lists */}
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         active={editor.isActive('bulletList')}
         title="Bullet list"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="9" y1="6" x2="20" y2="6"/><line x1="9" y1="12" x2="20" y2="12"/><line x1="9" y1="18" x2="20" y2="18"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="9" y1="6" x2="20" y2="6" />
+          <line x1="9" y1="12" x2="20" y2="12" />
+          <line x1="9" y1="18" x2="20" y2="18" />
+          <circle cx="4" cy="6" r="1" fill="currentColor" />
+          <circle cx="4" cy="12" r="1" fill="currentColor" />
+          <circle cx="4" cy="18" r="1" fill="currentColor" />
+        </svg>
       </ToolbarBtn>
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleOrderedList().run()}
         active={editor.isActive('orderedList')}
         title="Ordered list"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="10" y1="6" x2="21" y2="6"/><line x1="10" y1="12" x2="21" y2="12"/><line x1="10" y1="18" x2="21" y2="18"/><path d="M4 6h1v4M4 6H3M3 10h2"/><path d="M3 18h2a1 1 0 0 1 0 2H3M3 14h2a1 1 0 0 1 0 2H3"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="10" y1="6" x2="21" y2="6" />
+          <line x1="10" y1="12" x2="21" y2="12" />
+          <line x1="10" y1="18" x2="21" y2="18" />
+          <path d="M4 6h1v4M4 6H3M3 10h2" />
+          <path d="M3 18h2a1 1 0 0 1 0 2H3M3 14h2a1 1 0 0 1 0 2H3" />
+        </svg>
       </ToolbarBtn>
-
       <Separator />
-
-      {/* Block types */}
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
         active={editor.isActive('blockquote')}
         title="Blockquote"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M14.017 18L14.017 10.609C14.017 4.905 17.748 1.039 23 0L23.995 2.151C21.563 3.068 20 5.789 20 8H24V18H14.017ZM0 18V10.609C0 4.905 3.748 1.038 9 0L9.996 2.151C7.563 3.068 6 5.789 6 8H9.983L9.983 18L0 18Z"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M14.017 18L14.017 10.609C14.017 4.905 17.748 1.039 23 0L23.995 2.151C21.563 3.068 20 5.789 20 8H24V18H14.017ZM0 18V10.609C0 4.905 3.748 1.038 9 0L9.996 2.151C7.563 3.068 6 5.789 6 8H9.983L9.983 18L0 18Z" />
+        </svg>
       </ToolbarBtn>
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         active={editor.isActive('codeBlock')}
         title="Code block"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="9 9 6 12 9 15"/><polyline points="15 9 18 12 15 15"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <polyline points="9 9 6 12 9 15" />
+          <polyline points="15 9 18 12 15 15" />
+        </svg>
       </ToolbarBtn>
-
       <Separator />
-
-      {/* Link & Image */}
-      <ToolbarBtn
-        onClick={setLink}
-        active={editor.isActive('link')}
-        title="Link"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      <ToolbarBtn onClick={setLink} active={editor.isActive('link')} title="Link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </svg>
       </ToolbarBtn>
-      <ToolbarBtn
-        onClick={addImage}
-        active={false}
-        title="Image"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <ToolbarBtn onClick={onPickImageFile} active={false} title="Upload image">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <polyline points="17 8 12 3 7 8" />
+          <line x1="12" y1="3" x2="12" y2="15" />
+        </svg>
       </ToolbarBtn>
-
+      <ToolbarBtn onClick={addImageFromUrl} active={false} title="Image from URL">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <polyline points="21 15 16 10 5 21" />
+        </svg>
+      </ToolbarBtn>
       <Separator />
-
-      {/* HR */}
       <ToolbarBtn
         onClick={() => editor.chain().focus().setHorizontalRule().run()}
         active={false}
         title="Horizontal rule"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
       </ToolbarBtn>
     </div>
   )
 }
 
-// ---- Tag chip ----
-function TagChip({ name, onRemove }: { name: string; onRemove: () => void }) {
-  return (
-    <span className="inline-flex items-center gap-1 bg-[var(--color-input-bg)] text-[#0045ad] text-xs font-medium px-2.5 py-1 rounded-full">
-      {name}
-      <button
-        type="button"
-        onClick={onRemove}
-        className="hover:text-[var(--color-link-hover)] transition-colors leading-none"
-        aria-label={`Remove ${name}`}
-      >
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </span>
-  )
-}
-
-// ---- Main component ----
-export default function PostEditor({ allTags, initialData }: PostEditorProps) {
+export default function PostEditor({
+  allTags,
+  authorPreview,
+  initialData,
+}: PostEditorProps) {
   const router = useRouter()
   const isEditing = !!initialData
+  const inlineImageInputRef = useRef<HTMLInputElement>(null)
+  const insertImageFromFileRef = useRef<(file: File) => void>(() => {})
 
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [excerpt, setExcerpt] = useState(initialData?.excerpt ?? '')
-  const [coverImageUrl, setCoverImageUrl] = useState(initialData?.cover_image_url ?? '')
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialData?.tagIds ?? [])
-  const [status, setStatus] = useState<'draft' | 'published'>(initialData?.status ?? 'draft')
+  const [coverImageUrl, setCoverImageUrl] = useState(
+    initialData?.cover_image_url ?? ''
+  )
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(
+    initialData?.tagIds ?? []
+  )
+  const [status, setStatus] = useState<'draft' | 'published'>(
+    initialData?.status ?? 'draft'
+  )
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [mode, setMode] = useState<'write' | 'preview'>('write')
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
-  // Autosave state (edit mode only)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
-  const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle')
+  const [autoSaveStatus, setAutoSaveStatus] = useState<
+    'idle' | 'saving' | 'saved'
+  >('idle')
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [, forceUpdate] = useState(0)
 
   const editor = useEditor({
-    extensions: [
-      StarterKit.configure({ codeBlock: false }),
-      CodeBlockLowlight.configure({ lowlight }),
-      Image,
-      Link.configure({ openOnClick: false }),
-      Table.configure({ resizable: false }),
-      TableRow,
-      TableHeader,
-      TableCell,
-      Youtube.configure({ inline: false }),
-      Typography,
-      Placeholder.configure({
-        placeholder: 'Write your article here…',
-      }),
-    ],
+    extensions: createEditorExtensions({
+      placeholder: 'Write your article here…',
+      linkOpenOnClick: false,
+    }),
     content: initialData?.content ?? '',
     editable: true,
     immediatelyRender: false,
+    editorProps: {
+      handlePaste(_view, event) {
+        const file = getImageFileFromDataTransfer(event.clipboardData)
+        if (!file) return false
+        event.preventDefault()
+        insertImageFromFileRef.current(file)
+        return true
+      },
+    },
   })
 
-  const toggleTag = useCallback(
-    (tagId: string) => {
-      setSelectedTagIds((prev) => {
-        if (prev.includes(tagId)) return prev.filter((id) => id !== tagId)
-        if (prev.length >= 5) return prev
-        return [...prev, tagId]
-      })
+  const insertImageFromFile = useCallback(
+    async (file: File) => {
+      const ed = editor
+      if (!ed) return
+      const fd = new FormData()
+      fd.set('file', file)
+      const result = await uploadPostImage(fd)
+      if ('error' in result) {
+        toast.error(result.error)
+        return
+      }
+      ed.chain().focus().setImage({ src: result.url }).run()
+      toast.success('Image inserted')
     },
-    []
+    [editor]
   )
 
-  // Autosave: debounce 30s on title/content/excerpt/coverImageUrl changes (edit mode only)
+  useEffect(() => {
+    insertImageFromFileRef.current = (file: File) => {
+      void insertImageFromFile(file)
+    }
+  }, [insertImageFromFile])
+
+  const toggleTag = useCallback((tagId: string) => {
+    setSelectedTagIds((prev) => {
+      if (prev.includes(tagId)) return prev.filter((id) => id !== tagId)
+      if (prev.length >= 5) return prev
+      return [...prev, tagId]
+    })
+  }, [])
+
   const scheduleAutoSave = useCallback(() => {
     if (!isEditing || !initialData) return
     if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
@@ -305,9 +346,17 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
         setAutoSaveStatus('idle')
       }
     }, 30000)
-  }, [isEditing, initialData, title, excerpt, coverImageUrl, selectedTagIds, status, editor])
+  }, [
+    isEditing,
+    initialData,
+    title,
+    excerpt,
+    coverImageUrl,
+    selectedTagIds,
+    status,
+    editor,
+  ])
 
-  // Trigger autosave schedule when key fields change
   useEffect(() => {
     if (!isEditing) return
     scheduleAutoSave()
@@ -315,9 +364,17 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
       if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current)
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [title, excerpt, coverImageUrl])
+  }, [title, excerpt, coverImageUrl, isEditing])
 
-  // Tick every 30s to refresh relative time display
+  useEffect(() => {
+    if (!isEditing || !editor) return
+    const onUpd = () => scheduleAutoSave()
+    editor.on('update', onUpd)
+    return () => {
+      editor.off('update', onUpd)
+    }
+  }, [isEditing, editor, scheduleAutoSave])
+
   useEffect(() => {
     const interval = setInterval(() => forceUpdate((n) => n + 1), 30000)
     return () => clearInterval(interval)
@@ -369,112 +426,290 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
           router.push('/dashboard')
           router.refresh()
         } catch (err) {
-          setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
+          setError(
+            err instanceof Error
+              ? err.message
+              : 'Something went wrong. Please try again.'
+          )
         }
       })
     },
-    [title, excerpt, coverImageUrl, selectedTagIds, editor, isEditing, initialData, router]
+    [
+      title,
+      excerpt,
+      coverImageUrl,
+      selectedTagIds,
+      editor,
+      isEditing,
+      initialData,
+      router,
+    ]
   )
 
-  const selectedTags = allTags.filter((t) => selectedTagIds.includes(t.id))
-  const unselectedTags = allTags.filter((t) => !selectedTagIds.includes(t.id))
+  const previewTags = allTags.filter((t) => selectedTagIds.includes(t.id))
+
+  const onInlineImageSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]
+    e.target.value = ''
+    if (f) void insertImageFromFile(f)
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-page-bg)]">
-      {/* Top nav bar */}
-      <nav className="sticky top-0 z-20 bg-[var(--color-surface)] border-b border-[var(--color-border-subtle)] flex items-center justify-between px-6 h-14">
-        <NextLink
-          href="/dashboard"
-          className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0045ad] tracking-tight"
-        >
-          The Ledger
-        </NextLink>
-        <div className="flex items-center gap-3">
-          {error && (
-            <span className="text-sm text-red-500 font-[family-name:var(--font-inter)]">
-              {error}
-            </span>
-          )}
-          {isEditing && autoSaveLabel() && (
-            <span className="text-xs text-[var(--color-muted-text)] font-[family-name:var(--font-inter)]">
+      <nav className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-[var(--color-border-subtle)] bg-[var(--color-surface)]/95 px-4 backdrop-blur-md sm:px-6">
+        <div className="flex min-w-0 items-center gap-3">
+          <NextLink
+            href="/dashboard"
+            className="shrink-0 font-[family-name:var(--font-space-grotesk)] text-lg font-bold tracking-tight text-[#0045ad]"
+          >
+            The Ledger
+          </NextLink>
+          <span className="hidden truncate font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)] sm:inline max-w-[12rem] md:max-w-xs">
+            {title.trim() || 'Untitled'}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+          {isEditing && autoSaveLabel() ? (
+            <span className="hidden text-xs text-[var(--color-muted-text)] font-[family-name:var(--font-inter)] sm:inline">
               {autoSaveLabel()}
             </span>
-          )}
+          ) : null}
+
+          <div className="flex rounded-lg border border-[var(--color-border-subtle)] p-0.5">
+            <button
+              type="button"
+              onClick={() => setMode('write')}
+              className={[
+                'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium font-[family-name:var(--font-inter)] sm:px-3 sm:text-sm',
+                mode === 'write'
+                  ? 'bg-[#0045ad] text-white'
+                  : 'text-[var(--color-muted-text)] hover:text-[var(--color-heading)]',
+              ].join(' ')}
+            >
+              <PenLine className="size-3.5 sm:size-4" />
+              <span className="hidden sm:inline">Write</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('preview')}
+              className={[
+                'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium font-[family-name:var(--font-inter)] sm:px-3 sm:text-sm',
+                mode === 'preview'
+                  ? 'bg-[#0045ad] text-white'
+                  : 'text-[var(--color-muted-text)] hover:text-[var(--color-heading)]',
+              ].join(' ')}
+            >
+              <Eye className="size-3.5 sm:size-4" />
+              <span className="hidden sm:inline">Preview</span>
+            </button>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="hidden gap-1.5 font-[family-name:var(--font-inter)] sm:flex"
+            onClick={() => setSettingsOpen(true)}
+          >
+            <Settings2 className="size-4" />
+            Settings
+          </Button>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-sm"
+            className="sm:hidden"
+            onClick={() => setSettingsOpen(true)}
+            aria-label="Story settings"
+          >
+            <Settings2 className="size-4" />
+          </Button>
+
+          {error ? (
+            <span className="hidden max-w-[10rem] truncate text-xs text-red-500 font-[family-name:var(--font-inter)] lg:inline">
+              {error}
+            </span>
+          ) : null}
+
           <button
             type="button"
             disabled={isPending}
-            onClick={() => { setStatus('draft'); handleSave('draft') }}
-            className="px-4 py-1.5 rounded-lg text-sm font-medium font-[family-name:var(--font-inter)] text-[#0045ad] border border-[#0045ad]/25 hover:bg-[var(--color-surface-dim)] transition-colors disabled:opacity-50"
+            onClick={() => {
+              setStatus('draft')
+              handleSave('draft')
+            }}
+            className="rounded-lg border border-[#0045ad]/25 px-3 py-1.5 text-sm font-medium text-[#0045ad] transition-colors hover:bg-[var(--color-surface-dim)] disabled:opacity-50 font-[family-name:var(--font-inter)]"
           >
-            {isPending && status === 'draft' ? 'Saving…' : 'Save Draft'}
+            {isPending && status === 'draft' ? 'Saving…' : 'Save draft'}
           </button>
           <button
             type="button"
             disabled={isPending}
-            onClick={() => { setStatus('published'); handleSave('published') }}
-            className="px-4 py-1.5 rounded-lg text-sm font-medium font-[family-name:var(--font-inter)] text-white bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] hover:opacity-90 transition-opacity disabled:opacity-50"
+            onClick={() => {
+              setStatus('published')
+              handleSave('published')
+            }}
+            className="rounded-lg bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 font-[family-name:var(--font-inter)]"
           >
             {isPending && status === 'published' ? 'Publishing…' : 'Publish'}
           </button>
         </div>
       </nav>
 
-      {/* Two-column layout */}
-      <div className="flex gap-0 max-w-[1400px] mx-auto">
-        {/* Main editor column */}
-        <div className="flex-1 min-w-0 bg-[var(--color-surface)] min-h-[calc(100vh-3.5rem)]">
-          {/* Cover image input */}
-          <div className="px-10 pt-10 pb-2">
-            <input
-              type="url"
-              value={coverImageUrl}
-              onChange={(e) => setCoverImageUrl(e.target.value)}
-              placeholder="Paste cover image URL (e.g., https://...)"
-              className={[
-                'w-full px-4 py-2 rounded-full text-sm bg-[var(--color-input-bg)]',
-                'border-none outline-none placeholder:text-[var(--color-muted-text)]',
-                'text-[var(--color-heading)] font-[family-name:var(--font-inter)]',
-              ].join(' ')}
-            />
-            {coverImageUrl && (
-              <div className="mt-3 rounded-xl overflow-hidden aspect-video bg-[var(--color-input-bg)]">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={coverImageUrl}
-                  alt="Cover preview"
-                  className="w-full h-full object-cover"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                />
-              </div>
-            )}
-          </div>
+      <input
+        ref={inlineImageInputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        aria-hidden
+        onChange={onInlineImageSelected}
+      />
 
-          {/* Title input */}
-          <div className="px-10 pt-6 pb-4">
+      <StorySettingsDialog
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        coverImageUrl={coverImageUrl}
+        onCoverImageUrlChange={setCoverImageUrl}
+        excerpt={excerpt}
+        onExcerptChange={setExcerpt}
+        status={status}
+        onStatusChange={setStatus}
+        allTags={allTags}
+        selectedTagIds={selectedTagIds}
+        onToggleTag={toggleTag}
+        error={error}
+      />
+
+      {mode === 'preview' ? (
+        <div className="py-10">
+          <ArticlePreviewPane
+            title={title}
+            coverImageUrl={coverImageUrl.trim()}
+            content={editor?.getJSON() ?? {}}
+            tags={previewTags.map((t) => ({ name: t.name, slug: t.slug }))}
+            author={authorPreview}
+          />
+        </div>
+      ) : (
+        <div className="mx-auto max-w-[680px] px-4 pb-24 pt-8 sm:px-6">
+          <CoverImageField
+            imageUrl={coverImageUrl}
+            onImageUrl={setCoverImageUrl}
+            disabled={isPending}
+          />
+
+          <div className="mt-8">
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Article Title…"
+              placeholder="Title"
               rows={2}
-              className={[
-                'w-full resize-none bg-transparent border-none outline-none',
-                'font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[var(--color-heading)]',
-                'placeholder:text-[var(--color-muted-text)] leading-tight',
-              ].join(' ')}
+              className="w-full resize-none border-none bg-transparent font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight text-[var(--color-heading)] outline-none placeholder:text-[var(--color-muted-text)]"
             />
           </div>
 
-          {/* Tiptap toolbar + editor */}
-          <EditorToolbar editor={editor} />
-          <div className="px-10 py-8">
+          <div className="mt-4">
+            <EditorToolbar
+              editor={editor}
+              onPickImageFile={() => inlineImageInputRef.current?.click()}
+            />
+          </div>
+
+          <div className="relative mt-4">
+            {editor ? (
+              <BubbleMenu
+                editor={editor}
+                options={{ placement: 'top' }}
+                shouldShow={({ editor: ed, state }) => {
+                  const { from, to } = state.selection
+                  if (from === to) return false
+                  if (ed.isActive('codeBlock')) return false
+                  return true
+                }}
+              >
+                <div className="flex items-center gap-0.5 rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-surface)] px-1 py-1 shadow-lg">
+                  <ToolbarBtn
+                    onClick={() =>
+                      editor.chain().focus().toggleBold().run()
+                    }
+                    active={editor.isActive('bold')}
+                    title="Bold"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 4h8a4 4 0 0 1 0 8H6V4zm0 8h9a4 4 0 0 1 0 8H6v-8z" />
+                    </svg>
+                  </ToolbarBtn>
+                  <ToolbarBtn
+                    onClick={() =>
+                      editor.chain().focus().toggleItalic().run()
+                    }
+                    active={editor.isActive('italic')}
+                    title="Italic"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M11.182 4h7v2h-3.3l-4.564 12H13v2H6v-2h3.3L13.764 6H11V4z" />
+                    </svg>
+                  </ToolbarBtn>
+                  <ToolbarBtn
+                    onClick={() =>
+                      editor
+                        .chain()
+                        .focus()
+                        .toggleHeading({ level: 2 })
+                        .run()
+                    }
+                    active={editor.isActive('heading', { level: 2 })}
+                    title="H2"
+                  >
+                    <span className="text-[10px] font-bold">H2</span>
+                  </ToolbarBtn>
+                  <ToolbarBtn
+                    onClick={() => {
+                      const prev = editor.getAttributes('link').href as
+                        | string
+                        | undefined
+                      const url = window.prompt('Link URL:', prev ?? '')
+                      if (url === null) return
+                      if (url === '') {
+                        editor
+                          .chain()
+                          .focus()
+                          .extendMarkRange('link')
+                          .unsetLink()
+                          .run()
+                      } else {
+                        editor
+                          .chain()
+                          .focus()
+                          .extendMarkRange('link')
+                          .setLink({ href: url })
+                          .run()
+                      }
+                    }}
+                    active={editor.isActive('link')}
+                    title="Link"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                  </ToolbarBtn>
+                </div>
+              </BubbleMenu>
+            ) : null}
+
             <EditorContent
               editor={editor}
               className={[
-                'prose prose-lg max-w-none min-h-[60vh] focus:outline-none',
+                'tiptap-editor-root prose prose-lg max-w-none min-h-[50vh] focus:outline-none',
                 'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[var(--color-heading)]',
                 'prose-p:font-[family-name:var(--font-newsreader)] prose-p:text-[var(--color-body)]',
-                'prose-pre:bg-slate-900 prose-pre:text-slate-100',
+                'prose-pre:bg-transparent prose-pre:p-0',
                 '[&_.tiptap]:outline-none',
+                '[&_.tiptap_pre.hljs]:rounded-lg [&_.tiptap_pre.hljs]:border [&_.tiptap_pre.hljs]:border-[var(--color-border-subtle)] [&_.tiptap_pre.hljs]:bg-[oklch(0.2_0.02_250)] [&_.tiptap_pre.hljs]:p-4',
+                '[&_.tiptap_pre.hljs_code]:bg-transparent [&_.tiptap_pre.hljs_code]:p-0 [&_.tiptap_pre.hljs_code]:font-mono [&_.tiptap_pre.hljs_code]:text-sm',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:text-[var(--color-muted-text)]',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:float-left',
@@ -484,172 +719,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
             />
           </div>
         </div>
-
-        {/* Right sidebar */}
-        <aside className="w-[320px] shrink-0 bg-[var(--color-surface-dim)] min-h-[calc(100vh-3.5rem)] border-l border-[var(--color-border-subtle)]">
-          <div className="sticky top-14 p-6 space-y-6 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
-
-            {/* Cover image */}
-            <section>
-              <label
-                className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]"
-              >
-                Cover Image URL
-              </label>
-              <input
-                type="url"
-                value={coverImageUrl}
-                onChange={(e) => setCoverImageUrl(e.target.value)}
-                placeholder="https://…"
-                className={[
-                  'w-full px-3 py-2 rounded-lg text-sm bg-[var(--color-input-bg)] text-[var(--color-heading)]',
-                  'border-b-2 border-transparent focus:border-[#0045ad]',
-                  'outline-none transition-colors placeholder:text-[var(--color-muted-text)]',
-                  'font-[family-name:var(--font-inter)]',
-                ].join(' ')}
-              />
-              {coverImageUrl && (
-                <div className="mt-2 rounded-lg overflow-hidden aspect-video bg-[var(--color-input-bg)]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={coverImageUrl}
-                    alt="Cover preview"
-                    className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
-                  />
-                </div>
-              )}
-            </section>
-
-            {/* Tags */}
-            <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
-                Tags{' '}
-                <span className="normal-case font-normal tracking-normal text-[var(--color-muted-text)]">
-                  ({selectedTagIds.length}/5)
-                </span>
-              </label>
-
-              {/* Selected tags as chips */}
-              {selectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {selectedTags.map((tag) => (
-                    <TagChip
-                      key={tag.id}
-                      name={tag.name}
-                      onRemove={() => toggleTag(tag.id)}
-                    />
-                  ))}
-                </div>
-              )}
-
-              {/* Unselected tags to pick */}
-              {selectedTagIds.length < 5 && unselectedTags.length > 0 && (
-                <div className="flex flex-wrap gap-1.5">
-                  {unselectedTags.map((tag) => (
-                    <button
-                      key={tag.id}
-                      type="button"
-                      onClick={() => toggleTag(tag.id)}
-                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--color-muted-text)] border border-[var(--color-border-subtle)] hover:bg-[var(--color-input-bg)] hover:text-[var(--color-link)] hover:border-[#1a5dd5]/30 transition-colors font-[family-name:var(--font-inter)]"
-                    >
-                      + {tag.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {allTags.length === 0 && (
-                <p className="text-xs text-[var(--color-muted-text)] font-[family-name:var(--font-inter)]">
-                  No tags available.
-                </p>
-              )}
-            </section>
-
-            {/* Excerpt */}
-            <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
-                Excerpt
-              </label>
-              <textarea
-                value={excerpt}
-                onChange={(e) => setExcerpt(e.target.value.slice(0, 300))}
-                placeholder="A short summary of your article…"
-                rows={4}
-                className={[
-                  'w-full px-3 py-2 rounded-lg text-sm bg-[var(--color-input-bg)] text-[var(--color-heading)]',
-                  'border-b-2 border-transparent focus:border-[#0045ad]',
-                  'outline-none transition-colors resize-none placeholder:text-[var(--color-muted-text)]',
-                  'font-[family-name:var(--font-newsreader)]',
-                ].join(' ')}
-              />
-              <div className="text-right text-[10px] text-[var(--color-muted-text)] mt-1 font-[family-name:var(--font-inter)]">
-                {excerpt.length}/300
-              </div>
-            </section>
-
-            {/* Status */}
-            <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
-                Status
-              </label>
-              <div className="flex rounded-lg overflow-hidden border border-[var(--color-border-subtle)] font-[family-name:var(--font-inter)]">
-                <button
-                  type="button"
-                  onClick={() => setStatus('draft')}
-                  className={[
-                    'flex-1 py-2 text-sm font-medium transition-colors',
-                    status === 'draft'
-                      ? 'bg-[#0045ad] text-white'
-                      : 'bg-[var(--color-surface)] text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)]',
-                  ].join(' ')}
-                >
-                  Draft
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStatus('published')}
-                  className={[
-                    'flex-1 py-2 text-sm font-medium transition-colors',
-                    status === 'published'
-                      ? 'bg-[#0045ad] text-white'
-                      : 'bg-[var(--color-surface)] text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)]',
-                  ].join(' ')}
-                >
-                  Published
-                </button>
-              </div>
-            </section>
-
-            {/* Error message */}
-            {error && (
-              <div className="bg-red-50 text-red-600 text-sm rounded-lg px-3 py-2 font-[family-name:var(--font-inter)]">
-                {error}
-              </div>
-            )}
-
-            {/* Action buttons */}
-            <div className="space-y-2 pt-2">
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => handleSave('published')}
-                className="w-full py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] hover:opacity-90 transition-opacity disabled:opacity-50 font-[family-name:var(--font-inter)]"
-              >
-                {isPending && status === 'published' ? 'Publishing…' : 'Publish'}
-              </button>
-              <button
-                type="button"
-                disabled={isPending}
-                onClick={() => handleSave('draft')}
-                className="w-full py-2.5 rounded-lg text-sm font-semibold text-[#0045ad] border border-[#0045ad]/25 hover:bg-[var(--color-input-bg)] transition-colors disabled:opacity-50 font-[family-name:var(--font-inter)]"
-              >
-                {isPending && status === 'draft' ? 'Saving…' : 'Save Draft'}
-              </button>
-            </div>
-
-          </div>
-        </aside>
-      </div>
+      )}
     </div>
   )
 }

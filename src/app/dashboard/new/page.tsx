@@ -17,13 +17,22 @@ export default async function NewArticlePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('role')
+    .select('role, full_name, username, avatar_url')
     .eq('id', user.id)
     .maybeSingle()
 
-  if (profile?.role !== 'author') redirect('/dashboard')
+  if (!profile || profile.role !== 'author') redirect('/dashboard')
 
   const allTags = await getAllTags()
 
-  return <PostEditor allTags={allTags} />
+  return (
+    <PostEditor
+      allTags={allTags}
+      authorPreview={{
+        fullName: profile.full_name,
+        username: profile.username ?? '',
+        avatarUrl: profile.avatar_url,
+      }}
+    />
+  )
 }
