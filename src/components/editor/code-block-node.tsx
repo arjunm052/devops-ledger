@@ -14,39 +14,46 @@ const LANGUAGE_NAMES: Record<string, string> = {
   xml: 'XML', ruby: 'Ruby', php: 'PHP', c: 'C', cpp: 'C++',
 }
 
-export function CodeBlockNodeView({ node, updateAttributes, extension }: NodeViewProps) {
+export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false)
   const [editingFilename, setEditingFilename] = useState(false)
+  const [detectedLang, setDetectedLang] = useState<string | null>(null)
   const filenameRef = useRef<HTMLInputElement>(null)
   const detectionTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const userSetLang = useRef(false)
 
-  const language = node.attrs.language || extension.options.defaultLanguage || ''
+  const language = node.attrs.language || ''
   const filename = node.attrs.filename || ''
-  const displayLang = LANGUAGE_NAMES[language] || language || 'Plain Text'
+  const effectiveLang = language || detectedLang || ''
+  const displayLang = LANGUAGE_NAMES[effectiveLang] || effectiveLang || 'Plain Text'
 
-  // Auto-detect language on content change
+  // Auto-detect language on content change (only if user hasn't manually set one)
   useEffect(() => {
-    if (node.attrs.language) return
+    if (userSetLang.current) return
     if (detectionTimer.current) clearTimeout(detectionTimer.current)
     detectionTimer.current = setTimeout(() => {
       const text = node.textContent
-      if (!text || text.length < 10) return
+      if (!text || text.length < 8) {
+        setDetectedLang(null)
+        return
+      }
       try {
         const result = lowlight.highlightAuto(text)
-        if (result.data && typeof result.data === 'object' && 'language' in result.data) {
-          const detected = (result.data as { language: string }).language
-          if (detected && detected !== language) {
-            updateAttributes({ language: detected })
-          }
+        // lowlight.highlightAuto returns the best match with relevance score
+        // The detected language is in result.data.language
+        const lang = (result as { data?: { language?: string } }).data?.language
+        if (lang) {
+          setDetectedLang(lang)
+          updateAttributes({ language: lang })
         }
       } catch {
         // Ignore detection errors
       }
-    }, 500)
+    }, 600)
     return () => {
       if (detectionTimer.current) clearTimeout(detectionTimer.current)
     }
-  }, [node.textContent, node.attrs.language, language, updateAttributes])
+  }, [node.textContent, updateAttributes])
 
   const copyCode = useCallback(() => {
     navigator.clipboard.writeText(node.textContent).then(() => {

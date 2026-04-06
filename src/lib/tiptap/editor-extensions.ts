@@ -48,7 +48,7 @@ export function createEditorExtensions(
     }),
     CodeBlockCustom.configure({
       lowlight,
-      defaultLanguage: 'typescript',
+      defaultLanguage: null,
       enableTabIndentation: true,
       exitOnTripleEnter: true,
       exitOnArrowDown: true,

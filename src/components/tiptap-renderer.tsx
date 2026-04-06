@@ -25,7 +25,7 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
         'prose-li:font-[family-name:var(--font-newsreader)] prose-li:text-[var(--color-body)]',
         'prose-strong:text-[var(--color-heading)]',
         'prose-a:text-[var(--color-link)] hover:prose-a:text-[var(--color-link-hover)]',
-        'prose-code:text-[#f0abfc] prose-code:bg-[rgba(240,171,252,0.1)] prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-sm prose-code:before:content-none prose-code:after:content-none',
+        'prose-code:text-[#e8b87a] prose-code:bg-[rgba(232,184,122,0.1)] prose-code:border prose-code:border-[rgba(232,184,122,0.15)] prose-code:rounded-md prose-code:px-1.5 prose-code:py-0.5 prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none',
         'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)]',
         'prose-pre:bg-transparent prose-pre:p-0',
         // Task lists
