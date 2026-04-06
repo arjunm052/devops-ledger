@@ -6,6 +6,7 @@ import { getPostBySlug } from '@/lib/queries/posts'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TiptapRenderer from '@/components/tiptap-renderer'
 import { ClapButton } from '@/components/clap-button'
+import { ShareButton } from '@/components/share-button'
 import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
@@ -157,8 +158,9 @@ export default async function ArticlePage({ params }: PageProps) {
       </div>
 
       {/* Claps */}
-      <div className="mt-10 flex justify-center bg-muted/50 rounded-xl py-6">
+      <div className="mt-10 flex justify-center items-center gap-4 bg-muted/50 rounded-xl py-6">
         <ClapButton postId={post.id} slug={slug} initialCount={totalClaps} />
+        <ShareButton title={post.title} url={`${process.env.NEXT_PUBLIC_APP_URL ?? ''}/${slug}`} />
       </div>
 
       {/* Comments */}
