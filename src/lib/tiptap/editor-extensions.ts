@@ -1,6 +1,5 @@
 import type { Extensions } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import { Table } from '@tiptap/extension-table'
@@ -10,27 +9,36 @@ import { TableCell } from '@tiptap/extension-table-cell'
 import Youtube from '@tiptap/extension-youtube'
 import Typography from '@tiptap/extension-typography'
 import Placeholder from '@tiptap/extension-placeholder'
+import CharacterCount from '@tiptap/extension-character-count'
+import TaskList from '@tiptap/extension-task-list'
+import TaskItem from '@tiptap/extension-task-item'
+import Underline from '@tiptap/extension-underline'
+import Highlight from '@tiptap/extension-highlight'
 import { common, createLowlight } from 'lowlight'
 import dockerfile from 'highlight.js/lib/languages/dockerfile'
 import nginx from 'highlight.js/lib/languages/nginx'
+import yaml from 'highlight.js/lib/languages/yaml'
+import ini from 'highlight.js/lib/languages/ini'
+import powershell from 'highlight.js/lib/languages/powershell'
+
+import { CodeBlockCustom } from './code-block-custom'
+import { Callout } from './callout-extension'
+import { TableOfContents } from './toc-extension'
 
 const lowlight = createLowlight(common)
 lowlight.register('dockerfile', dockerfile)
 lowlight.register('nginx', nginx)
+lowlight.register('yaml', yaml)
+lowlight.register('ini', ini)
+lowlight.register('powershell', powershell)
 
 export { lowlight }
 
 export interface CreateEditorExtensionsOptions {
-  /** When set, adds Placeholder extension */
   placeholder?: string
-  /** Passed to Link.configure */
   linkOpenOnClick: boolean
 }
 
-/**
- * Shared Tiptap extensions for the post editor and read-only renderer.
- * Keeps lowlight languages and code-block options in sync.
- */
 export function createEditorExtensions(
   options: CreateEditorExtensionsOptions
 ): Extensions {
@@ -38,7 +46,7 @@ export function createEditorExtensions(
     StarterKit.configure({
       codeBlock: false,
     }),
-    CodeBlockLowlight.configure({
+    CodeBlockCustom.configure({
       lowlight,
       defaultLanguage: 'typescript',
       enableTabIndentation: true,
@@ -60,6 +68,13 @@ export function createEditorExtensions(
     TableCell,
     Youtube.configure({ inline: false }),
     Typography,
+    CharacterCount,
+    TaskList,
+    TaskItem.configure({ nested: true }),
+    Underline,
+    Highlight.configure({ multicolor: false }),
+    Callout,
+    TableOfContents,
   ]
 
   if (options.placeholder !== undefined) {
