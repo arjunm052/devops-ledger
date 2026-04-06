@@ -33,17 +33,44 @@ import { Settings2, Eye, PenLine } from 'lucide-react'
 
 /**
  * Clean up non-standard HTML from LLM outputs before Tiptap parses it.
- * Strips wrapper divs, normalises code blocks, removes inline styles, etc.
+ * ChatGPT uses CodeMirror-based code blocks with deeply nested divs
+ * instead of standard <pre><code>. This normalises them.
  */
 function cleanLlmHtml(html: string): string {
-  return (
-    html
-      // ChatGPT wraps code blocks in <pre><code class="!whitespace-pre ...">
-      // Strip the Tailwind bang-classes so Tiptap's CodeBlock parseHTML matches
-      .replace(/<code\s+class="[^"]*"/g, '<code')
-      // Remove inline style attributes that mess with rendering
-      .replace(/\s+style="[^"]*"/g, '')
-  )
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+
+  // Convert ChatGPT CodeMirror code blocks to standard <pre><code>
+  // ChatGPT structure: <pre ...><div...>...<div class="cm-content ..."><span>line</span><br>...</div>...</div></pre>
+  doc.querySelectorAll('pre').forEach((pre) => {
+    const cmContent = pre.querySelector('.cm-content')
+    if (cmContent) {
+      // Extract text from span/br structure
+      const lines: string[] = []
+      cmContent.childNodes.forEach((node) => {
+        if (node.nodeName === 'SPAN') {
+          lines.push(node.textContent || '')
+        } else if (node.nodeName === 'BR') {
+          lines.push('\n')
+        }
+      })
+      const code = lines.join('')
+      pre.innerHTML = `<code>${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code>`
+    }
+  })
+
+  // Strip inline styles
+  doc.querySelectorAll('[style]').forEach((el) => el.removeAttribute('style'))
+  // Strip classes from all elements (they're ChatGPT-specific Tailwind classes)
+  doc.querySelectorAll('[class]').forEach((el) => el.removeAttribute('class'))
+  // Remove data-* attributes
+  doc.querySelectorAll('*').forEach((el) => {
+    Array.from(el.attributes).forEach((attr) => {
+      if (attr.name.startsWith('data-')) el.removeAttribute(attr.name)
+    })
+  })
+
+  return doc.body.innerHTML
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -487,10 +514,23 @@ export default function PostEditor({
             <EditorContent
               editor={editor}
               className={[
-                'tiptap-editor-root prose prose-lg max-w-none min-h-[50vh] focus:outline-none',
+                'tiptap-editor-root prose prose-lg prose-invert max-w-none min-h-[50vh] focus:outline-none',
+                // Headings
                 'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[var(--color-heading)]',
+                // Body text
                 'prose-p:font-[family-name:var(--font-newsreader)] prose-p:text-[var(--color-body)] prose-p:leading-[1.8]',
+                // Lists
                 'prose-li:font-[family-name:var(--font-newsreader)] prose-li:text-[var(--color-body)]',
+                'prose-ul:text-[var(--color-body)] prose-ol:text-[var(--color-body)]',
+                // Bold/strong
+                'prose-strong:text-[var(--color-heading)]',
+                // Links
+                'prose-a:text-[var(--color-link)] hover:prose-a:text-[var(--color-link-hover)]',
+                // Inline code
+                'prose-code:text-[#f0abfc] prose-code:bg-[rgba(240,171,252,0.1)] prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-sm prose-code:before:content-none prose-code:after:content-none',
+                // Blockquote
+                'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)] prose-blockquote:font-[family-name:var(--font-newsreader)]',
+                // Code blocks
                 'prose-pre:bg-transparent prose-pre:p-0',
                 // Task lists
                 '[&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-0',
@@ -498,10 +538,8 @@ export default function PostEditor({
                 '[&_ul[data-type=taskList]_li_label]:mt-1 [&_ul[data-type=taskList]_li_input]:pointer-events-none',
                 // Highlight
                 '[&_mark]:bg-[rgba(255,184,108,0.3)] [&_mark]:rounded-sm [&_mark]:px-0.5',
-                // Code blocks
+                // Tiptap internals
                 '[&_.tiptap]:outline-none',
-                '[&_.tiptap_pre.hljs]:rounded-lg [&_.tiptap_pre.hljs]:border [&_.tiptap_pre.hljs]:border-[var(--color-border-subtle)] [&_.tiptap_pre.hljs]:bg-[oklch(0.2_0.02_250)] [&_.tiptap_pre.hljs]:p-4',
-                '[&_.tiptap_pre.hljs_code]:bg-transparent [&_.tiptap_pre.hljs_code]:p-0 [&_.tiptap_pre.hljs_code]:font-[family-name:var(--font-jetbrains-mono)] [&_.tiptap_pre.hljs_code]:text-sm',
                 // Placeholder
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:text-[var(--color-muted-text)]',
