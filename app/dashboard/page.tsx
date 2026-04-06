@@ -127,7 +127,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const tabClass = (tab: string) =>
     tab === (filter || 'all')
       ? 'px-6 py-1.5 rounded-full bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white shadow-sm text-sm font-medium'
-      : 'px-6 py-1.5 rounded-full text-[#40484f] hover:text-[#0045ad] transition-colors text-sm font-medium'
+      : 'px-6 py-1.5 rounded-full text-[var(--color-body)] hover:text-[var(--color-link)] transition-colors text-sm font-medium'
 
   return (
     <div className="min-h-screen">
@@ -137,12 +137,12 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1
-              className="text-4xl md:text-5xl font-bold tracking-tight mb-2 text-[#0d1c2e]"
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-2 text-[var(--color-heading)]"
               style={{ fontFamily: 'var(--font-space-grotesk)' }}
             >
               Author Dashboard
             </h1>
-            <p className="text-[#40484f] text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[var(--color-body)] text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
               Manage your writing, monitor performance, and engage with your readers.
             </p>
           </div>
@@ -168,25 +168,25 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white p-6 rounded-xl shadow-[0_8px_40px_rgba(13,28,46,0.06)] transition-transform hover:-translate-y-1"
+              className="bg-[var(--color-surface)] p-6 rounded-xl shadow-[0_8px_40px_rgba(0,0,0,0.2)] transition-transform hover:-translate-y-1"
             >
               <div className="flex justify-between items-start mb-4">
                 <span
-                  className="text-xs font-bold uppercase tracking-widest text-[#40484f]"
+                  className="text-xs font-bold uppercase tracking-widest text-[var(--color-body)]"
                   style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   {stat.label}
                 </span>
-                <span className="text-[#0045ad] opacity-70">{stat.icon}</span>
+                <span className="text-[#b2c5ff] opacity-70">{stat.icon}</span>
               </div>
               <div
-                className="text-4xl font-bold text-[#0d1c2e]"
+                className="text-4xl font-bold text-[var(--color-heading)]"
                 style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 {stat.value}
               </div>
               <div
-                className="text-xs mt-2 text-[#70787f]"
+                className="text-xs mt-2 text-[var(--color-muted-text)]"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {stat.sub}
@@ -196,19 +196,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Posts Table */}
-        <div className="bg-white rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
+        <div className="bg-[var(--color-surface)] rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
 
           {/* Table header with tabs */}
           <div className="p-8 bg-muted/30">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <h2
-                className="text-2xl font-bold text-[#0d1c2e]"
+                className="text-2xl font-bold text-[var(--color-heading)]"
                 style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 Your Posts
               </h2>
               <div
-                className="flex items-center gap-1 bg-white p-1 rounded-full shadow-[0_2px_8px_rgba(13,28,46,0.06)]"
+                className="flex items-center gap-1 bg-[var(--color-surface-dim)] p-1 rounded-full shadow-[0_2px_8px_rgba(0,0,0,0.2)]"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 <Link href="/dashboard" className={tabClass('all')}>All</Link>
@@ -219,9 +219,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
 
           {filteredPosts.length === 0 ? (
-            <div className="px-8 py-16 text-center text-[#40484f]" style={{ fontFamily: 'var(--font-newsreader)' }}>
+            <div className="px-8 py-16 text-center text-[var(--color-body)]" style={{ fontFamily: 'var(--font-newsreader)' }}>
               No posts yet.{' '}
-              <Link href="/dashboard/new" className="text-[#0045ad] underline underline-offset-4">
+              <Link href="/dashboard/new" className="text-[var(--color-link)] underline underline-offset-4">
                 Write your first article.
               </Link>
             </div>
@@ -230,7 +230,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <div className="overflow-x-auto">
                 <table className="w-full text-left" style={{ fontFamily: 'var(--font-inter)' }}>
                   <thead>
-                    <tr className="bg-muted text-xs font-bold uppercase tracking-widest text-[#40484f]">
+                    <tr className="bg-muted text-xs font-bold uppercase tracking-widest text-[var(--color-body)]">
                       <th className="px-8 py-4 font-semibold">Post Title</th>
                       <th className="px-6 py-4 font-semibold">Status</th>
                       <th className="px-6 py-4 font-semibold">Tags</th>
@@ -246,10 +246,10 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       )
                       const isPublished = post.status === 'published'
                       return (
-                        <tr key={post.id} className={`transition-colors group ${idx % 2 === 0 ? 'bg-white' : 'bg-muted/30'} hover:bg-muted/50`}>
+                        <tr key={post.id} className={`transition-colors group ${idx % 2 === 0 ? 'bg-[var(--color-surface)]' : 'bg-muted/30'} hover:bg-muted/50`}>
                           <td className="px-8 py-6">
                             <div
-                              className={`font-bold text-lg line-clamp-1 ${isPublished ? 'text-[#0d1c2e]' : 'text-[#40484f]/80'}`}
+                              className={`font-bold text-lg line-clamp-1 ${isPublished ? 'text-[var(--color-heading)]' : 'text-[var(--color-body)]'}`}
                               style={{ fontFamily: 'var(--font-space-grotesk)' }}
                             >
                               {post.title}
@@ -257,11 +257,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </td>
                           <td className="px-6 py-6">
                             {isPublished ? (
-                              <span className="bg-[#dae2ff] text-[#0045ad] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              <span className="bg-[var(--color-surface-raised)] text-[var(--color-link)] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 Published
                               </span>
                             ) : (
-                              <span className="bg-[#ffdcbc] text-[#704200] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              <span className="bg-[rgba(112,66,0,0.3)] text-[#ffb86c] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 Draft
                               </span>
                             )}
@@ -271,29 +271,29 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                               {post.tags.slice(0, 2).map((pt: { tag: { id: string; name: string; slug: string } }) => (
                                 <span
                                   key={pt.tag.id}
-                                  className="bg-[#dae2ff] text-[#001848] px-2 py-0.5 rounded-full text-[10px]"
+                                  className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] px-2 py-0.5 rounded-full text-[10px]"
                                 >
                                   {pt.tag.name}
                                 </span>
                               ))}
                               {post.tags.length === 0 && (
-                                <span className="text-[#bfc7d0] text-xs">—</span>
+                                <span className="text-[var(--color-border-subtle)] text-xs">—</span>
                               )}
                             </div>
                           </td>
-                          <td className="px-6 py-6 text-center font-medium text-sm text-[#0d1c2e]">
+                          <td className="px-6 py-6 text-center font-medium text-sm text-[var(--color-heading)]">
                             {isPublished ? formatCount(clapCount) : (
-                              <span className="text-[#bfc7d0]">—</span>
+                              <span className="text-[var(--color-muted-text)]">—</span>
                             )}
                           </td>
-                          <td className="px-6 py-6 text-sm text-[#40484f]">
+                          <td className="px-6 py-6 text-sm text-[var(--color-body)]">
                             {isPublished ? formatDate(post.published_at) : formatDate(post.updated_at ?? post.created_at)}
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Link
                                 href={`/dashboard/edit/${post.id}`}
-                                className="p-2 hover:bg-muted rounded-full transition-colors text-[#40484f]"
+                                className="p-2 hover:bg-muted rounded-full transition-colors text-[var(--color-body)]"
                                 title="Edit"
                               >
                                 <IconEdit />
@@ -301,7 +301,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                               <form action={deletePost.bind(null, post.id)}>
                                 <button
                                   type="submit"
-                                  className="p-2 hover:bg-red-50 rounded-full transition-colors text-red-500"
+                                  className="p-2 hover:bg-red-500/10 rounded-full transition-colors text-red-500"
                                   title="Delete"
                                   onClick={(e) => {
                                     if (!confirm('Delete this post? This cannot be undone.')) e.preventDefault()
@@ -322,14 +322,14 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               {/* Pagination footer */}
               <div className="px-8 py-6 bg-muted/30">
                 <div className="flex items-center justify-between" style={{ fontFamily: 'var(--font-inter)' }}>
-                  <span className="text-sm text-[#40484f]">
+                  <span className="text-sm text-[var(--color-body)]">
                     Showing {Math.min((page - 1) * perPage + 1, totalFiltered)}–{Math.min(page * perPage, totalFiltered)} of {totalFiltered} post{totalFiltered !== 1 ? 's' : ''}
                   </span>
                   <div className="flex items-center gap-2">
                     {page > 1 && (
                       <Link
                         href={`/dashboard?filter=${filter}&page=${page - 1}`}
-                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[#40484f] hover:bg-[#dae2ff] transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[var(--color-body)] hover:bg-[var(--color-surface-raised)] transition-colors"
                       >
                         &larr; Prev
                       </Link>
@@ -337,7 +337,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                     {page < totalPages && (
                       <Link
                         href={`/dashboard?filter=${filter}&page=${page + 1}`}
-                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[#40484f] hover:bg-[#dae2ff] transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-muted text-sm text-[var(--color-body)] hover:bg-[var(--color-surface-raised)] transition-colors"
                       >
                         Next &rarr;
                       </Link>

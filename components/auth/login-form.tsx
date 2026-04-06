@@ -36,20 +36,20 @@ export function LoginForm() {
               type="email"
               placeholder=" "
               {...register('email')}
-              className="peer w-full bg-transparent border-0 border-b-2 border-[#b2b2b1] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#056d41] transition-colors text-[#323233]"
+              className="peer w-full bg-transparent border-0 border-b-2 border-[var(--color-border-subtle)] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#1a5dd5] transition-colors text-[var(--color-heading)]"
               style={{ fontFamily: 'var(--font-inter)' }}
             />
             <label
               htmlFor="email"
-              className="absolute left-0 -top-3.5 text-[#5f5f5f] text-xs transition-all
+              className="absolute left-0 -top-3.5 text-[var(--color-muted-text)] text-xs transition-all
                 peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5
-                peer-focus:-top-3.5 peer-focus:text-[#056d41] peer-focus:text-xs cursor-text"
+                peer-focus:-top-3.5 peer-focus:text-[#b2c5ff] peer-focus:text-xs cursor-text"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               Email address
             </label>
             {errors.email && (
-              <p className="mt-1 text-xs text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+              <p className="mt-1 text-xs text-red-500" style={{ fontFamily: 'var(--font-inter)' }}>
                 {errors.email.message}
               </p>
             )}
@@ -62,20 +62,20 @@ export function LoginForm() {
               type="password"
               placeholder=" "
               {...register('password')}
-              className="peer w-full bg-transparent border-0 border-b-2 border-[#b2b2b1] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#056d41] transition-colors text-[#323233]"
+              className="peer w-full bg-transparent border-0 border-b-2 border-[var(--color-border-subtle)] py-3 px-0 focus:outline-none focus:ring-0 focus:border-[#1a5dd5] transition-colors text-[var(--color-heading)]"
               style={{ fontFamily: 'var(--font-inter)' }}
             />
             <label
               htmlFor="password"
-              className="absolute left-0 -top-3.5 text-[#5f5f5f] text-xs transition-all
+              className="absolute left-0 -top-3.5 text-[var(--color-muted-text)] text-xs transition-all
                 peer-placeholder-shown:text-base peer-placeholder-shown:top-2.5
-                peer-focus:-top-3.5 peer-focus:text-[#056d41] peer-focus:text-xs cursor-text"
+                peer-focus:-top-3.5 peer-focus:text-[#b2c5ff] peer-focus:text-xs cursor-text"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               Password
             </label>
             {errors.password && (
-              <p className="mt-1 text-xs text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+              <p className="mt-1 text-xs text-red-500" style={{ fontFamily: 'var(--font-inter)' }}>
                 {errors.password.message}
               </p>
             )}
@@ -83,7 +83,7 @@ export function LoginForm() {
         </div>
 
         {serverError && (
-          <p className="text-sm text-red-600" style={{ fontFamily: 'var(--font-inter)' }}>
+          <p className="text-sm text-red-500" style={{ fontFamily: 'var(--font-inter)' }}>
             {serverError}
           </p>
         )}
@@ -91,23 +91,23 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#056d41] text-[#e7ffeb] py-4 rounded-full font-semibold hover:bg-[#006038] transition-all shadow-lg shadow-[#056d41]/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white py-4 rounded-full font-semibold hover:opacity-90 transition-all shadow-lg shadow-[#0045ad]/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
-          {loading ? 'Signing in…' : 'Continue to The Ledger'}
+          {loading ? 'Signing in…' : 'Continue to DevOps Ledger'}
         </button>
       </form>
 
       {/* Sign up link */}
       <div className="text-center">
         <p
-          className="italic text-[#5f5f5f]"
+          className="italic text-[var(--color-muted-text)]"
           style={{ fontFamily: 'var(--font-newsreader)' }}
         >
           No account?{' '}
           <Link
             href="/auth/login"
-            className="text-[#056d41] font-bold not-italic hover:underline underline-offset-4"
+            className="text-[var(--color-link)] font-bold not-italic hover:underline underline-offset-4"
           >
             Create one
           </Link>

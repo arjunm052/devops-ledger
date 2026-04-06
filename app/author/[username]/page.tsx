@@ -64,16 +64,16 @@ export default async function AuthorProfilePage({ params }: PageProps) {
               className="rounded-full w-[120px] h-[120px] object-cover mb-5"
             />
           ) : (
-            <span className="w-[120px] h-[120px] rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-4xl font-medium text-[#0045ad] mb-5">
+            <span className="w-[120px] h-[120px] rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-4xl font-medium text-[var(--color-link)] mb-5">
               {(profile.full_name ?? profile.username ?? '').charAt(0).toUpperCase()}
             </span>
           )}
 
-          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[#0d1c2e]">
+          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[var(--color-heading)]">
             {profile.full_name ?? profile.username}
           </h1>
 
-          <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-1">
+          <p className="font-[family-name:var(--font-inter)] text-sm text-[var(--color-muted-text)] mt-1">
             @{profile.username}
           </p>
 
@@ -86,7 +86,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
           </div>
 
           {profile.bio && (
-            <p className="font-[family-name:var(--font-newsreader)] text-lg text-[#40484f] mt-4 max-w-xl leading-relaxed">
+            <p className="font-[family-name:var(--font-newsreader)] text-lg text-[var(--color-body)] mt-4 max-w-xl leading-relaxed">
               {profile.bio}
             </p>
           )}
@@ -94,28 +94,28 @@ export default async function AuthorProfilePage({ params }: PageProps) {
           {/* Stats Row */}
           <div className="flex items-center gap-6 mt-6">
             <div className="text-center">
-              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0d1c2e]">
+              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[var(--color-heading)]">
                 {total}
               </span>
-              <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">
+              <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)] block">
                 Posts
               </span>
             </div>
-            <div className="w-px h-8 bg-[#bfc7d0]/30" />
+            <div className="w-px h-8 bg-[var(--color-border-subtle)]" />
             <div className="text-center">
-              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0d1c2e]">
+              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[var(--color-heading)]">
                 {totalClaps >= 1000 ? `${(totalClaps / 1000).toFixed(1)}k` : totalClaps}
               </span>
-              <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">
+              <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)] block">
                 Claps
               </span>
             </div>
-            <div className="w-px h-8 bg-[#bfc7d0]/30" />
+            <div className="w-px h-8 bg-[var(--color-border-subtle)]" />
             <div className="text-center">
-              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0d1c2e]">
+              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[var(--color-heading)]">
                 {followerCount}
               </span>
-              <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">
+              <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)] block">
                 Followers
               </span>
             </div>
@@ -128,7 +128,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
                 href={profile.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm font-medium text-[#0045ad] hover:underline"
+                className="flex items-center gap-1.5 text-sm font-medium text-[var(--color-link)] hover:underline"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
@@ -144,11 +144,11 @@ export default async function AuthorProfilePage({ params }: PageProps) {
         {posts.length > 0 && (
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e]">
+              <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)]">
                 Latest Posts
               </h2>
               {total > 6 && (
-                <span className="font-[family-name:var(--font-inter)] text-sm text-[#0045ad]">
+                <span className="font-[family-name:var(--font-inter)] text-sm text-[var(--color-link)]">
                   View All
                 </span>
               )}

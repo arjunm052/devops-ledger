@@ -12,9 +12,9 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 px-6 text-sm text-muted-foreground">
         <Link
           href="/"
-          className="font-[family-name:var(--font-newsreader)] text-lg font-semibold text-foreground"
+          className="font-[family-name:var(--font-newsreader)] text-lg font-semibold text-[var(--color-heading)]"
         >
-          The Ledger
+          DevOps Ledger
         </Link>
 
         <nav className="flex items-center gap-1 font-[family-name:var(--font-space-grotesk)]">
@@ -23,7 +23,7 @@ export function Footer() {
               {i > 0 && <span aria-hidden="true">&middot;</span>}
               <Link
                 href={link.href}
-                className="transition-colors hover:text-foreground"
+                className="transition-colors hover:text-[var(--color-heading)]"
               >
                 {link.label}
               </Link>

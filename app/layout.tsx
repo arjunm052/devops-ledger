@@ -39,7 +39,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${spaceGrotesk.variable} ${newsreader.variable} ${inter.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${inter.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
         <ThemeProvider>
           <Nav />

@@ -20,17 +20,17 @@ export default function ChooseUsernamePage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8f9ff] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--color-page-bg)] px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1
-            className="text-3xl font-bold text-[#0d1c2e] mb-2"
+            className="text-3xl font-bold text-[var(--color-heading)] mb-2"
             style={{ fontFamily: 'var(--font-space-grotesk)' }}
           >
             Choose your username
           </h1>
           <p
-            className="text-sm text-[#40484f]"
+            className="text-sm text-[var(--color-body)]"
             style={{ fontFamily: 'var(--font-newsreader)' }}
           >
             Pick a unique username for your profile. This cannot be changed later.
@@ -39,9 +39,9 @@ export default function ChooseUsernamePage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <div className="flex items-stretch rounded-xl overflow-hidden bg-[#d5e3fc] border-b-2 border-transparent focus-within:border-[#0045ad] transition-colors">
+            <div className="flex items-stretch rounded-xl overflow-hidden bg-[var(--color-input-bg)] border-b-2 border-transparent focus-within:border-[#0045ad] transition-colors">
               <span
-                className="flex items-center px-4 text-sm text-[#4a5568] bg-[#c3d7f9] select-none shrink-0"
+                className="flex items-center px-4 text-sm text-[var(--color-label)] bg-[rgba(26,93,213,0.2)] select-none shrink-0"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 @
@@ -51,7 +51,7 @@ export default function ChooseUsernamePage() {
                 value={username}
                 onChange={(e) => setUsernameValue(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ''))}
                 placeholder="your-username"
-                className="flex-1 bg-transparent px-3 py-3.5 text-[#1a1a2e] text-sm outline-none placeholder:text-[#6b7a99]"
+                className="flex-1 bg-transparent px-3 py-3.5 text-[var(--color-heading)] text-sm outline-none placeholder:text-[var(--color-muted-text)]"
                 style={{ fontFamily: 'var(--font-inter)' }}
                 autoFocus
                 required
@@ -60,7 +60,7 @@ export default function ChooseUsernamePage() {
               />
             </div>
             <p
-              className="text-xs text-[#6b7a99] mt-2"
+              className="text-xs text-[var(--color-muted-text)] mt-2"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
               3-30 characters. Lowercase letters, numbers, hyphens, underscores only.

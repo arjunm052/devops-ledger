@@ -44,15 +44,15 @@ export default function ArticleCard({
   return (
     <Link
       href={`/${slug}`}
-      className="bg-white rounded-xl p-6 flex gap-5 items-start transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(13,28,46,0.08)] shadow-[0_8px_40px_rgba(13,28,46,0.06)]"
+      className="bg-[var(--color-surface)] rounded-xl p-6 flex gap-5 items-start transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(0,0,0,0.35)] shadow-[0_8px_40px_rgba(0,0,0,0.2)]"
     >
       <div className="flex-1 min-w-0">
-        <h2 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold leading-snug text-[#0d1c2e]">
+        <h2 className="font-[family-name:var(--font-space-grotesk)] text-xl font-bold leading-snug text-[var(--color-heading)]">
           {title}
         </h2>
 
         {excerpt && (
-          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] mt-2 line-clamp-2">
+          <p className="font-[family-name:var(--font-newsreader)] text-[var(--color-body)] mt-2 line-clamp-2">
             {excerpt}
           </p>
         )}
@@ -68,7 +68,7 @@ export default function ArticleCard({
                 className="rounded-full"
               />
             ) : (
-              <span className="w-5 h-5 rounded-full bg-[#eff4ff] inline-flex items-center justify-center text-[10px] font-medium text-[#40484f]">
+              <span className="w-5 h-5 rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-[10px] font-medium text-[var(--color-body)]">
                 {(author.fullName ?? author.username).charAt(0).toUpperCase()}
               </span>
             )}
@@ -77,7 +77,7 @@ export default function ArticleCard({
                 e.preventDefault()
                 window.location.href = `/author/${author.username}`
               }}
-              className="font-[family-name:var(--font-inter)] text-xs text-[#40484f] hover:text-[#0045ad] cursor-pointer transition-colors"
+              className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-body)] hover:text-[var(--color-link)] cursor-pointer transition-colors"
             >
               {author.fullName ?? author.username}
             </span>
@@ -92,7 +92,7 @@ export default function ArticleCard({
                     e.preventDefault()
                     window.location.href = `/tag/${tag.slug}`
                   }}
-                  className="bg-[#dae2ff] text-[#001848] text-xs px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-[#c4d0f5] transition-colors"
+                  className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] text-xs px-2.5 py-0.5 rounded-full cursor-pointer hover:bg-[rgba(26,93,213,0.2)] transition-colors"
                 >
                   {tag.name}
                 </span>
@@ -100,18 +100,18 @@ export default function ArticleCard({
             </div>
           )}
 
-          <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f]">
+          <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)]">
             {readingTimeMins} min read
           </span>
 
           {formattedDate && (
-            <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f]">
+            <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)]">
               {formattedDate}
             </span>
           )}
 
           {clapCount > 0 && (
-            <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f]">
+            <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)]">
               👏 {clapCount}
             </span>
           )}

@@ -22,10 +22,10 @@ export default async function AboutPage() {
     return (
       <div className="min-h-screen">
         <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[#0d1c2e] mb-4">
+          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[var(--color-heading)] mb-4">
             About
           </h1>
-          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f]">
+          <p className="font-[family-name:var(--font-newsreader)] text-[var(--color-body)]">
             Author profile not found. Please check back later.
           </p>
         </div>
@@ -52,18 +52,18 @@ export default async function AboutPage() {
             className="rounded-full w-[120px] h-[120px] object-cover mb-5"
           />
         ) : (
-          <span className="w-[120px] h-[120px] rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-4xl font-medium text-[#0045ad] mb-5">
+          <span className="w-[120px] h-[120px] rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-4xl font-medium text-[var(--color-link)] mb-5">
             {(profile.full_name ?? profile.username ?? '').charAt(0).toUpperCase()}
           </span>
         )}
 
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[#0d1c2e]">
+        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[var(--color-heading)]">
           {profile.full_name ?? profile.username}
         </h1>
 
-        <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-1">@{profile.username}</p>
+        <p className="font-[family-name:var(--font-inter)] text-sm text-[var(--color-muted-text)] mt-1">@{profile.username}</p>
 
-        <p className="font-[family-name:var(--font-newsreader)] text-lg text-[#40484f] mt-4 max-w-xl leading-relaxed">
+        <p className="font-[family-name:var(--font-newsreader)] text-lg text-[var(--color-body)] mt-4 max-w-xl leading-relaxed">
           {profile.bio ??
             'Engineering insights, architecture deep-dives, and DevOps patterns from the trenches.'}
         </p>
@@ -73,7 +73,7 @@ export default async function AboutPage() {
             href={profile.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-[family-name:var(--font-inter)] mt-3 text-sm font-medium text-[#0045ad] hover:underline"
+            className="font-[family-name:var(--font-inter)] mt-3 text-sm font-medium text-[var(--color-link)] hover:underline"
           >
             {profile.website}
           </Link>
@@ -83,7 +83,7 @@ export default async function AboutPage() {
       {/* Topics */}
       {tags.length > 0 && (
         <section className="mb-12">
-          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-4">
+          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-4">
             Topics I write about
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -91,7 +91,7 @@ export default async function AboutPage() {
               <Link
                 key={tag.id}
                 href={`/tag/${tag.slug}`}
-                className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors"
+                className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] text-xs px-3 py-1 rounded-full hover:bg-[rgba(26,93,213,0.2)] transition-colors"
               >
                 {tag.name}
               </Link>
@@ -103,7 +103,7 @@ export default async function AboutPage() {
       {/* Latest Posts */}
       {posts.length > 0 && (
         <section>
-          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-4">
+          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-4">
             Latest Posts
           </h2>
           <div className="space-y-4">

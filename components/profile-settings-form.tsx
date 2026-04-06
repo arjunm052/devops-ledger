@@ -51,9 +51,9 @@ function getInitials(name: string | null, username: string | null): string {
 
 // ── Input style helpers ──────────────────────────────────────────────────────
 const inputBase =
-  'w-full bg-[#d5e3fc] rounded-lg px-4 py-3 text-[#1a1a2e] text-sm outline-none border-b-2 border-transparent focus:border-[#0045ad] transition-colors placeholder:text-[#6b7a99]'
+  'w-full bg-[var(--color-input-bg)] rounded-lg px-4 py-3 text-[var(--color-heading)] text-sm outline-none border-b-2 border-transparent focus:border-[#0045ad] transition-colors placeholder:text-[var(--color-muted-text)]'
 const labelBase =
-  'block text-xs font-semibold uppercase tracking-wider text-[#4a5568] mb-1.5'
+  'block text-xs font-semibold uppercase tracking-wider text-[var(--color-label)] mb-1.5'
 const errorBase = 'text-xs text-red-500 mt-1'
 
 // ── Props ────────────────────────────────────────────────────────────────────
@@ -158,19 +158,19 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
   const isGithubLinked = linkedProviders.includes('github')
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff]">
+    <div className="min-h-screen bg-[var(--color-page-bg)]">
       <div className="max-w-2xl mx-auto px-4 py-10">
 
         {/* Page heading */}
         <div className="mb-8">
           <h1
-            className="text-3xl font-bold text-[#1a1a2e] mb-1"
+            className="text-3xl font-bold text-[var(--color-heading)] mb-1"
             style={{ fontFamily: 'var(--font-space-grotesk)' }}
           >
             Settings
           </h1>
           <p
-            className="text-sm text-[#6b7a99]"
+            className="text-sm text-[var(--color-muted-text)]"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
             Manage your profile, account preferences, and integrations.
@@ -179,7 +179,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
 
         {/* Tab navigation */}
         <div
-          className="flex gap-0 border-b border-[#e2eaf7] mb-8 overflow-x-auto"
+          className="flex gap-0 border-b border-[var(--color-border-subtle)] mb-8 overflow-x-auto"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
           {TABS.map((tab) => (
@@ -191,7 +191,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                 'px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors',
                 activeTab === tab
                   ? 'border-b-2 border-[#0045ad] text-[#0045ad] -mb-px'
-                  : 'text-[#6b7a99] hover:text-[#1a1a2e]',
+                  : 'text-[var(--color-muted-text)] hover:text-[var(--color-heading)]',
               ].join(' ')}
             >
               {tab}
@@ -204,12 +204,12 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
           <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
             <div>
               <label className={labelBase}>Email Address</label>
-              <p className="text-sm text-[#0d1c2e] mt-1">{email}</p>
-              <p className="text-xs text-[#70787f] mt-1">Contact support to change your email</p>
+              <p className="text-sm text-[var(--color-heading)] mt-1">{email}</p>
+              <p className="text-xs text-[var(--color-muted-text)] mt-1">Contact support to change your email</p>
             </div>
-            <div className="pt-6 border-t border-[#bfc7d0]/20">
+            <div className="pt-6 border-t border-[var(--color-border-subtle)]/20">
               <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-red-600 mb-2">Danger Zone</h3>
-              <p className="text-sm text-[#40484f] mb-4">Deactivating your account will permanently remove all your data. This action cannot be undone.</p>
+              <p className="text-sm text-[var(--color-body)] mb-4">Deactivating your account will permanently remove all your data. This action cannot be undone.</p>
               <button
                 type="button"
                 className="px-4 py-2 rounded-lg bg-red-50 text-red-600 text-sm font-medium hover:bg-red-100 transition-colors"
@@ -222,8 +222,8 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
         ) : activeTab === 'Security' ? (
           <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
             <div>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Change Password</h3>
-              <p className="text-sm text-[#40484f] mb-4">Only available for email/password accounts.</p>
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[var(--color-heading)] mb-4">Change Password</h3>
+              <p className="text-sm text-[var(--color-body)] mb-4">Only available for email/password accounts.</p>
               <div className="space-y-4 max-w-md">
                 <div>
                   <label className={labelBase}>New Password</label>
@@ -233,7 +233,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                   <label className={labelBase}>Confirm Password</label>
                   <input type="password" placeholder="Confirm new password" className={inputBase} disabled />
                 </div>
-                <button type="button" className="px-4 py-2 rounded-lg bg-muted text-sm text-[#40484f] cursor-not-allowed" disabled>
+                <button type="button" className="px-4 py-2 rounded-lg bg-muted text-sm text-[var(--color-body)] cursor-not-allowed" disabled>
                   Update Password (Coming Soon)
                 </button>
               </div>
@@ -241,7 +241,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
           </div>
         ) : activeTab === 'Notifications' ? (
           <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
-            <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Email Notifications</h3>
+            <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[var(--color-heading)] mb-4">Email Notifications</h3>
             <div className="space-y-4">
               {[
                 { label: 'New comments on your posts', description: 'Get notified when someone comments on your articles' },
@@ -250,29 +250,29 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
               ].map((item) => (
                 <div key={item.label} className="flex items-start justify-between py-3">
                   <div>
-                    <p className="text-sm font-medium text-[#0d1c2e]">{item.label}</p>
-                    <p className="text-xs text-[#70787f] mt-0.5">{item.description}</p>
+                    <p className="text-sm font-medium text-[var(--color-heading)]">{item.label}</p>
+                    <p className="text-xs text-[var(--color-muted-text)] mt-0.5">{item.description}</p>
                   </div>
-                  <button type="button" className="w-10 h-6 rounded-full bg-[#dae2ff] relative cursor-not-allowed" disabled>
-                    <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white shadow transition-transform" />
+                  <button type="button" className="w-10 h-6 rounded-full bg-[var(--color-surface-raised)] relative cursor-not-allowed" disabled>
+                    <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-[var(--color-surface)] shadow transition-transform" />
                   </button>
                 </div>
               ))}
             </div>
-            <p className="text-xs text-[#70787f] italic">Notification preferences coming soon</p>
+            <p className="text-xs text-[var(--color-muted-text)] italic">Notification preferences coming soon</p>
           </div>
         ) : activeTab === 'Membership' ? (
           <div className="space-y-6" style={{ fontFamily: 'var(--font-inter)' }}>
             <div>
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0d1c2e] mb-4">Membership</h3>
-              <div className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)] space-y-4">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[var(--color-heading)] mb-4">Membership</h3>
+              <div className="bg-[var(--color-surface)] rounded-xl p-6 shadow-[0_8px_40px_rgba(0,0,0,0.2)] space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#40484f]">Role</span>
-                  <span className="text-sm font-medium text-[#0d1c2e] capitalize">{role}</span>
+                  <span className="text-sm text-[var(--color-body)]">Role</span>
+                  <span className="text-sm font-medium text-[var(--color-heading)] capitalize">{role}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-[#40484f]">Member since</span>
-                  <span className="text-sm font-medium text-[#0d1c2e]">
+                  <span className="text-sm text-[var(--color-body)]">Member since</span>
+                  <span className="text-sm font-medium text-[var(--color-heading)]">
                     {new Date(createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   </span>
                 </div>
@@ -285,7 +285,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
             {/* ── Profile Picture ─────────────────────────────────────────── */}
             <section className="mb-10">
               <h2
-                className="text-lg font-semibold text-[#1a1a2e] mb-5"
+                className="text-lg font-semibold text-[var(--color-heading)] mb-5"
                 style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 Profile Picture
@@ -316,7 +316,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                 {/* Change photo button + dialog */}
                 <Dialog open={avatarDialogOpen} onOpenChange={setAvatarDialogOpen}>
                   <DialogTrigger
-                    className="text-sm font-medium text-[#0045ad] hover:text-[#1a5dd5] transition-colors"
+                    className="text-sm font-medium text-[#0045ad] hover:text-[var(--color-link)] transition-colors"
                     style={{ fontFamily: 'var(--font-inter)' }}
                   >
                     Change photo
@@ -335,8 +335,8 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                         onClick={() => setAvatarMode('upload')}
                         className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
                           avatarMode === 'upload'
-                            ? 'bg-white text-[#0045ad] shadow-sm'
-                            : 'text-[#6b7a99] hover:text-[#1a1a2e]'
+                            ? 'bg-[var(--color-surface)] text-[#0045ad] shadow-sm'
+                            : 'text-[var(--color-muted-text)] hover:text-[var(--color-heading)]'
                         }`}
                       >
                         Upload Photo
@@ -346,8 +346,8 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                         onClick={() => setAvatarMode('link')}
                         className={`flex-1 py-2 text-sm font-medium rounded-md transition-colors ${
                           avatarMode === 'link'
-                            ? 'bg-white text-[#0045ad] shadow-sm'
-                            : 'text-[#6b7a99] hover:text-[#1a1a2e]'
+                            ? 'bg-[var(--color-surface)] text-[#0045ad] shadow-sm'
+                            : 'text-[var(--color-muted-text)] hover:text-[var(--color-heading)]'
                         }`}
                       >
                         Paste Link
@@ -357,16 +357,16 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                     {avatarMode === 'upload' ? (
                       <div className="space-y-4">
                         <div
-                          className="border-2 border-dashed border-[#bfc7d0] rounded-xl p-8 text-center cursor-pointer hover:border-[#0045ad] transition-colors"
+                          className="border-2 border-dashed border-[var(--color-border-subtle)] rounded-xl p-8 text-center cursor-pointer hover:border-[#1a5dd5] transition-colors"
                           onClick={() => fileInputRef.current?.click()}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#6b7a99" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-3">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-muted-text)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-3">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
                           </svg>
-                          <p className="text-sm text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                          <p className="text-sm text-[var(--color-muted-text)]" style={{ fontFamily: 'var(--font-inter)' }}>
                             {isUploading ? 'Uploading...' : 'Click to select an image'}
                           </p>
-                          <p className="text-xs text-[#6b7a99] mt-1">JPEG, PNG, WebP. Max 2MB.</p>
+                          <p className="text-xs text-[var(--color-muted-text)] mt-1">JPEG, PNG, WebP. Max 2MB.</p>
                         </div>
                         <input
                           ref={fileInputRef}
@@ -419,7 +419,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
             {/* ── Personal Information ────────────────────────────────────── */}
             <section className="mb-10">
               <h2
-                className="text-lg font-semibold text-[#1a1a2e] mb-5"
+                className="text-lg font-semibold text-[var(--color-heading)] mb-5"
                 style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 Personal Information
@@ -449,9 +449,9 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                   <label className={labelBase} htmlFor="username">
                     Username
                   </label>
-                  <div className="flex items-stretch rounded-lg overflow-hidden bg-[#d5e3fc]/60 border-b-2 border-transparent">
+                  <div className="flex items-stretch rounded-lg overflow-hidden bg-[var(--color-input-bg)]/60 border-b-2 border-transparent">
                     <span
-                      className="flex items-center px-3 text-sm text-[#4a5568] bg-[#c3d7f9]/60 select-none shrink-0"
+                      className="flex items-center px-3 text-sm text-[var(--color-label)] bg-[rgba(26,93,213,0.15)] select-none shrink-0"
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
                       @
@@ -460,14 +460,14 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                       id="username"
                       type="text"
                       value={profile.username ?? ''}
-                      className="flex-1 bg-transparent px-3 py-3 text-[#1a1a2e] text-sm outline-none cursor-not-allowed opacity-70"
+                      className="flex-1 bg-transparent px-3 py-3 text-[var(--color-heading)] text-sm outline-none cursor-not-allowed opacity-70"
                       style={{ fontFamily: 'var(--font-inter)' }}
                       disabled
                       readOnly
                     />
                   </div>
                   <p
-                    className="text-xs text-[#6b7a99] mt-1.5"
+                    className="text-xs text-[var(--color-muted-text)] mt-1.5"
                     style={{ fontFamily: 'var(--font-inter)' }}
                   >
                     Username cannot be changed after creation.
@@ -486,7 +486,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                           ? 'text-red-500 font-semibold'
                           : bioValue.length > 140
                           ? 'text-amber-500'
-                          : 'text-[#6b7a99]'
+                          : 'text-[var(--color-muted-text)]'
                       }`}
                       style={{ fontFamily: 'var(--font-inter)' }}
                     >
@@ -529,13 +529,13 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
             {/* ── Connected Accounts ──────────────────────────────────────── */}
             <section className="mb-12">
               <h2
-                className="text-lg font-semibold text-[#1a1a2e] mb-2"
+                className="text-lg font-semibold text-[var(--color-heading)] mb-2"
                 style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 Connected Accounts
               </h2>
               <p
-                className="text-sm text-[#6b7a99] mb-5"
+                className="text-sm text-[var(--color-muted-text)] mb-5"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 Third-party accounts linked to your profile.
@@ -543,7 +543,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
 
               <div className="space-y-3">
                 {/* Google */}
-                <div className="flex items-center justify-between bg-[#eef3fd] rounded-xl px-5 py-4">
+                <div className="flex items-center justify-between bg-[var(--color-surface-raised)] rounded-xl px-5 py-4">
                   <div className="flex items-center gap-3">
                     <svg width="20" height="20" viewBox="0 0 24 24" aria-label="Google">
                       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -552,10 +552,10 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                       <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                     </svg>
                     <div>
-                      <p className="text-sm font-medium text-[#1a1a2e]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-sm font-medium text-[var(--color-heading)]" style={{ fontFamily: 'var(--font-inter)' }}>
                         Google
                       </p>
-                      <p className="text-xs text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-xs text-[var(--color-muted-text)]" style={{ fontFamily: 'var(--font-inter)' }}>
                         {isGoogleLinked ? 'Connected via Google sign-in' : 'Sign in with your Google account'}
                       </p>
                     </div>
@@ -565,23 +565,23 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                       Connected
                     </span>
                   ) : (
-                    <span className="text-xs font-semibold text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-xs font-semibold text-[var(--color-muted-text)]" style={{ fontFamily: 'var(--font-inter)' }}>
                       Not linked
                     </span>
                   )}
                 </div>
 
                 {/* GitHub */}
-                <div className="flex items-center justify-between bg-[#eef3fd] rounded-xl px-5 py-4">
+                <div className="flex items-center justify-between bg-[var(--color-surface-raised)] rounded-xl px-5 py-4">
                   <div className="flex items-center gap-3">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1a1a2e" aria-label="GitHub">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--color-heading)" aria-label="GitHub">
                       <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0 0 22 12.017C22 6.484 17.522 2 12 2z" />
                     </svg>
                     <div>
-                      <p className="text-sm font-medium text-[#1a1a2e]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-sm font-medium text-[var(--color-heading)]" style={{ fontFamily: 'var(--font-inter)' }}>
                         GitHub
                       </p>
-                      <p className="text-xs text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                      <p className="text-xs text-[var(--color-muted-text)]" style={{ fontFamily: 'var(--font-inter)' }}>
                         {isGithubLinked ? 'Connected via GitHub sign-in' : 'Sign in with your GitHub account'}
                       </p>
                     </div>
@@ -591,7 +591,7 @@ export function ProfileSettingsForm({ profile, email, role, createdAt, linkedPro
                       Connected
                     </span>
                   ) : (
-                    <span className="text-xs font-semibold text-[#6b7a99]" style={{ fontFamily: 'var(--font-inter)' }}>
+                    <span className="text-xs font-semibold text-[var(--color-muted-text)]" style={{ fontFamily: 'var(--font-inter)' }}>
                       Not linked
                     </span>
                   )}

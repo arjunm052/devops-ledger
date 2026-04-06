@@ -46,15 +46,15 @@ export default async function TagPage({ params }: TagPageProps) {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero */}
       <div className="mb-8">
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[#0045ad]">
+        <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[var(--color-link)]">
           {tag.name}
         </h1>
         {tag.description && (
-          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] mt-2">
+          <p className="font-[family-name:var(--font-newsreader)] text-[var(--color-body)] mt-2">
             {tag.description}
           </p>
         )}
-        <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-2">
+        <p className="font-[family-name:var(--font-inter)] text-sm text-[var(--color-muted-text)] mt-2">
           {tagStats.postCount} {tagStats.postCount === 1 ? 'Post' : 'Posts'} &middot; {tagStats.authorCount} {tagStats.authorCount === 1 ? 'Writer' : 'Writers'}
         </p>
       </div>
@@ -98,37 +98,37 @@ export default async function TagPage({ params }: TagPageProps) {
         <div className="hidden lg:block w-80">
           <aside className="sticky top-20 space-y-4">
             {relatedTags.length > 0 && (
-              <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
-                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">Related Topics</h3>
+              <section className="bg-[var(--color-surface)] rounded-xl p-6 shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-3">Related Topics</h3>
                 <div className="flex flex-wrap gap-2">
                   {relatedTags.map((t) => (
-                    <Link key={t.id} href={`/tag/${t.slug}`} className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors">{t.name}</Link>
+                    <Link key={t.id} href={`/tag/${t.slug}`} className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] text-xs px-3 py-1 rounded-full hover:bg-[rgba(26,93,213,0.2)] transition-colors">{t.name}</Link>
                   ))}
                 </div>
               </section>
             )}
             {topWriters.length > 0 && (
-              <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
-                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">Top Writers</h3>
+              <section className="bg-[var(--color-surface)] rounded-xl p-6 shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-3">Top Writers</h3>
                 <div className="space-y-3">
                   {topWriters.map((writer) => (
                     <Link key={writer.id} href={`/author/${writer.username}`} className="flex items-center gap-3 group">
-                      <span className="w-8 h-8 rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-xs font-medium text-[#0045ad] shrink-0">
+                      <span className="w-8 h-8 rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-xs font-medium text-[var(--color-link)] shrink-0">
                         {(writer.full_name ?? writer.username).charAt(0).toUpperCase()}
                       </span>
                       <div>
-                        <span className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#0d1c2e] group-hover:text-[#0045ad] transition-colors">{writer.full_name ?? writer.username}</span>
-                        <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">{writer.count} post{writer.count !== 1 ? 's' : ''}</span>
+                        <span className="font-[family-name:var(--font-inter)] text-sm font-medium text-[var(--color-heading)] group-hover:text-[var(--color-link)] transition-colors">{writer.full_name ?? writer.username}</span>
+                        <span className="font-[family-name:var(--font-inter)] text-xs text-[var(--color-muted-text)] block">{writer.count} post{writer.count !== 1 ? 's' : ''}</span>
                       </div>
                     </Link>
                   ))}
                 </div>
               </section>
             )}
-            <section className="bg-white rounded-xl p-6 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
-              <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-2">The Weekly Deploy</h3>
-              <p className="font-[family-name:var(--font-newsreader)] text-sm text-[#40484f] mb-3">Curated DevOps insights, delivered weekly.</p>
-              <p className="text-xs text-[#70787f] italic">Coming soon</p>
+            <section className="bg-[var(--color-surface)] rounded-xl p-6 shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+              <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-2">The Weekly Deploy</h3>
+              <p className="font-[family-name:var(--font-newsreader)] text-sm text-[var(--color-body)] mb-3">Curated DevOps insights, delivered weekly.</p>
+              <p className="text-xs text-[var(--color-muted-text)] italic">Coming soon</p>
             </section>
           </aside>
         </div>

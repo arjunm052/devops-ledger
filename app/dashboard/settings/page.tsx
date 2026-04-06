@@ -30,7 +30,7 @@ export default async function SettingsPage() {
   const linkedProviders = (user.identities ?? []).map((i) => i.provider)
 
   return (
-    <div className="bg-[#f8f9ff] min-h-screen">
+    <div className="bg-[var(--color-page-bg)] min-h-screen">
       <ProfileSettingsForm
         profile={profile}
         email={user.email ?? ''}

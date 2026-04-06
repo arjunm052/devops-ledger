@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { UserMenu } from '@/components/user-menu'
-import { ThemeToggle } from '@/components/theme-toggle'
 import { getNotifications, getUnreadCount } from '@/actions/notifications'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 
@@ -34,14 +33,14 @@ export async function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-[0_2px_20px_rgba(13,28,46,0.04)]">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.3)]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="font-[family-name:var(--font-newsreader)] text-xl font-bold tracking-tight text-[#0d1c2e]"
+          className="font-[family-name:var(--font-newsreader)] text-xl font-bold tracking-tight text-[var(--color-heading)]"
         >
-          The Ledger
+          DevOps Ledger
         </Link>
 
         {/* Center nav links */}
@@ -50,7 +49,7 @@ export async function Nav() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium text-[#40484f] transition-colors hover:text-[#0045ad]"
+                className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium text-[var(--color-body)] transition-colors hover:text-[var(--color-link)]"
               >
                 {link.label}
               </Link>
@@ -60,10 +59,9 @@ export async function Nav() {
 
         {/* Right side: search + write + auth */}
         <div className="flex items-center gap-4">
-          <ThemeToggle />
           <Link
             href="/search"
-            className="text-[#40484f] transition-colors hover:text-[#0045ad]"
+            className="text-[var(--color-body)] transition-colors hover:text-[var(--color-link)]"
             aria-label="Search"
           >
             <svg
@@ -119,7 +117,7 @@ export async function Nav() {
           ) : (
             <Link
               href="/auth/login"
-              className="font-[family-name:var(--font-space-grotesk)] rounded-full border border-[#0045ad]/20 px-4 py-1.5 text-sm font-medium text-[#0045ad] transition-colors hover:bg-[#0045ad]/5"
+              className="font-[family-name:var(--font-space-grotesk)] rounded-full border border-[#0045ad]/40 px-4 py-1.5 text-sm font-medium text-[var(--color-link)] transition-colors hover:bg-[#0045ad]/10"
             >
               Sign In
             </Link>

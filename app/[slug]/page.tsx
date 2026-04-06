@@ -110,7 +110,7 @@ export default async function ArticlePage({ params }: PageProps) {
       )}
 
       {/* Title */}
-      <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight tracking-tight text-[#0d1c2e] md:text-5xl">
+      <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight tracking-tight text-[var(--color-heading)] md:text-5xl">
         {post.title}
       </h1>
 
@@ -126,11 +126,11 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="flex flex-col">
           <Link
             href={`/author/${author?.username}`}
-            className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#40484f] hover:text-[#0045ad] transition-colors"
+            className="font-[family-name:var(--font-inter)] text-sm font-medium text-[var(--color-body)] hover:text-[var(--color-link)] transition-colors"
           >
             {authorName}
           </Link>
-          <div className="font-[family-name:var(--font-inter)] flex items-center gap-2 text-xs text-[#70787f]">
+          <div className="font-[family-name:var(--font-inter)] flex items-center gap-2 text-xs text-[var(--color-muted-text)]">
             {formattedDate && <time dateTime={post.published_at!}>{formattedDate}</time>}
             <span aria-hidden="true">&middot;</span>
             <span>{post.reading_time_mins} min read</span>
@@ -159,7 +159,7 @@ export default async function ArticlePage({ params }: PageProps) {
               <Link
                 key={tag.slug}
                 href={`/tag/${tag.slug}`}
-                className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors"
+                className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] text-xs px-3 py-1 rounded-full hover:bg-[rgba(26,93,213,0.2)] transition-colors"
               >
                 {tag.name}
               </Link>

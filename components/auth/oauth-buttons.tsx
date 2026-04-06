@@ -37,7 +37,7 @@ export function OAuthButtons() {
         type="button"
         onClick={() => handleOAuth('google')}
         disabled={loading !== null}
-        className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#b2b2b1] rounded-full text-sm font-medium text-[#323233] hover:bg-[#f6f3f2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--color-border-subtle)] rounded-full text-sm font-medium text-[var(--color-heading)] hover:bg-[var(--color-surface-raised)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ fontFamily: 'var(--font-inter)' }}
       >
         <GoogleIcon />
@@ -47,7 +47,7 @@ export function OAuthButtons() {
         type="button"
         onClick={() => handleOAuth('github')}
         disabled={loading !== null}
-        className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[#b2b2b1] rounded-full text-sm font-medium text-[#323233] hover:bg-[#f6f3f2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-[var(--color-border-subtle)] rounded-full text-sm font-medium text-[var(--color-heading)] hover:bg-[var(--color-surface-raised)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         style={{ fontFamily: 'var(--font-inter)' }}
       >
         <GitHubIcon />

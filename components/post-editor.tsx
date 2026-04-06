@@ -65,7 +65,7 @@ function ToolbarBtn({
         'p-1.5 rounded transition-colors',
         active
           ? 'bg-[#0045ad]/10 text-[#0045ad]'
-          : 'text-[#5a6a8a] hover:bg-[#eff4ff] hover:text-[#0045ad]',
+          : 'text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)] hover:text-[var(--color-link)]',
       ].join(' ')}
     >
       {children}
@@ -74,7 +74,7 @@ function ToolbarBtn({
 }
 
 function Separator() {
-  return <div className="w-px h-5 bg-[#c5d5f0] mx-1 self-center" />
+  return <div className="w-px h-5 bg-[var(--color-border-subtle)] mx-1 self-center" />
 }
 
 // ---- Toolbar ----
@@ -98,7 +98,7 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-0.5 px-4 py-2 border-b border-[#dde8fb] bg-white sticky top-0 z-10">
+    <div className="flex flex-wrap items-center gap-0.5 px-4 py-2 border-b border-[var(--color-border-subtle)] bg-[var(--color-surface)] sticky top-0 z-10">
       {/* Text style */}
       <ToolbarBtn
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -218,12 +218,12 @@ function EditorToolbar({ editor }: { editor: ReturnType<typeof useEditor> | null
 // ---- Tag chip ----
 function TagChip({ name, onRemove }: { name: string; onRemove: () => void }) {
   return (
-    <span className="inline-flex items-center gap-1 bg-[#d5e3fc] text-[#0045ad] text-xs font-medium px-2.5 py-1 rounded-full">
+    <span className="inline-flex items-center gap-1 bg-[var(--color-input-bg)] text-[#0045ad] text-xs font-medium px-2.5 py-1 rounded-full">
       {name}
       <button
         type="button"
         onClick={onRemove}
-        className="hover:text-[#002d7a] transition-colors leading-none"
+        className="hover:text-[var(--color-link-hover)] transition-colors leading-none"
         aria-label={`Remove ${name}`}
       >
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -380,9 +380,9 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
   const unselectedTags = allTags.filter((t) => !selectedTagIds.includes(t.id))
 
   return (
-    <div className="min-h-screen bg-[#f8f9ff]">
+    <div className="min-h-screen bg-[var(--color-page-bg)]">
       {/* Top nav bar */}
-      <nav className="sticky top-0 z-20 bg-white border-b border-[#dde8fb] flex items-center justify-between px-6 h-14">
+      <nav className="sticky top-0 z-20 bg-[var(--color-surface)] border-b border-[var(--color-border-subtle)] flex items-center justify-between px-6 h-14">
         <NextLink
           href="/dashboard"
           className="font-[family-name:var(--font-space-grotesk)] text-lg font-bold text-[#0045ad] tracking-tight"
@@ -396,7 +396,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
             </span>
           )}
           {isEditing && autoSaveLabel() && (
-            <span className="text-xs text-[#70787f] font-[family-name:var(--font-inter)]">
+            <span className="text-xs text-[var(--color-muted-text)] font-[family-name:var(--font-inter)]">
               {autoSaveLabel()}
             </span>
           )}
@@ -404,7 +404,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
             type="button"
             disabled={isPending}
             onClick={() => { setStatus('draft'); handleSave('draft') }}
-            className="px-4 py-1.5 rounded-lg text-sm font-medium font-[family-name:var(--font-inter)] text-[#0045ad] border border-[#0045ad]/25 hover:bg-[#eff4ff] transition-colors disabled:opacity-50"
+            className="px-4 py-1.5 rounded-lg text-sm font-medium font-[family-name:var(--font-inter)] text-[#0045ad] border border-[#0045ad]/25 hover:bg-[var(--color-surface-dim)] transition-colors disabled:opacity-50"
           >
             {isPending && status === 'draft' ? 'Saving…' : 'Save Draft'}
           </button>
@@ -422,7 +422,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
       {/* Two-column layout */}
       <div className="flex gap-0 max-w-[1400px] mx-auto">
         {/* Main editor column */}
-        <div className="flex-1 min-w-0 bg-white min-h-[calc(100vh-3.5rem)]">
+        <div className="flex-1 min-w-0 bg-[var(--color-surface)] min-h-[calc(100vh-3.5rem)]">
           {/* Cover image input */}
           <div className="px-10 pt-10 pb-2">
             <input
@@ -431,13 +431,13 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
               onChange={(e) => setCoverImageUrl(e.target.value)}
               placeholder="Paste cover image URL (e.g., https://...)"
               className={[
-                'w-full px-4 py-2 rounded-full text-sm bg-[#d5e3fc]',
-                'border-none outline-none placeholder:text-[#70787f]',
-                'text-[#0f1f40] font-[family-name:var(--font-inter)]',
+                'w-full px-4 py-2 rounded-full text-sm bg-[var(--color-input-bg)]',
+                'border-none outline-none placeholder:text-[var(--color-muted-text)]',
+                'text-[var(--color-heading)] font-[family-name:var(--font-inter)]',
               ].join(' ')}
             />
             {coverImageUrl && (
-              <div className="mt-3 rounded-xl overflow-hidden aspect-video bg-[#d5e3fc]">
+              <div className="mt-3 rounded-xl overflow-hidden aspect-video bg-[var(--color-input-bg)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={coverImageUrl}
@@ -458,8 +458,8 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
               rows={2}
               className={[
                 'w-full resize-none bg-transparent border-none outline-none',
-                'font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[#0f1f40]',
-                'placeholder:text-[#b8c8e8] leading-tight',
+                'font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[var(--color-heading)]',
+                'placeholder:text-[var(--color-muted-text)] leading-tight',
               ].join(' ')}
             />
           </div>
@@ -471,12 +471,12 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
               editor={editor}
               className={[
                 'prose prose-lg max-w-none min-h-[60vh] focus:outline-none',
-                'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[#0f1f40]',
-                'prose-p:font-[family-name:var(--font-newsreader)] prose-p:text-[#2a3a55]',
+                'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[var(--color-heading)]',
+                'prose-p:font-[family-name:var(--font-newsreader)] prose-p:text-[var(--color-body)]',
                 'prose-pre:bg-slate-900 prose-pre:text-slate-100',
                 '[&_.tiptap]:outline-none',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]',
-                '[&_.tiptap_p.is-editor-empty:first-child::before]:text-[#b8c8e8]',
+                '[&_.tiptap_p.is-editor-empty:first-child::before]:text-[var(--color-muted-text)]',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:float-left',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none',
                 '[&_.tiptap_p.is-editor-empty:first-child::before]:h-0',
@@ -486,13 +486,13 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
         </div>
 
         {/* Right sidebar */}
-        <aside className="w-[320px] shrink-0 bg-[#eff4ff] min-h-[calc(100vh-3.5rem)] border-l border-[#dde8fb]">
+        <aside className="w-[320px] shrink-0 bg-[var(--color-surface-dim)] min-h-[calc(100vh-3.5rem)] border-l border-[var(--color-border-subtle)]">
           <div className="sticky top-14 p-6 space-y-6 max-h-[calc(100vh-3.5rem)] overflow-y-auto">
 
             {/* Cover image */}
             <section>
               <label
-                className="block text-xs font-bold uppercase tracking-widest text-[#5a6a8a] mb-2 font-[family-name:var(--font-inter)]"
+                className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]"
               >
                 Cover Image URL
               </label>
@@ -502,14 +502,14 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                 onChange={(e) => setCoverImageUrl(e.target.value)}
                 placeholder="https://…"
                 className={[
-                  'w-full px-3 py-2 rounded-lg text-sm bg-[#d5e3fc] text-[#0f1f40]',
+                  'w-full px-3 py-2 rounded-lg text-sm bg-[var(--color-input-bg)] text-[var(--color-heading)]',
                   'border-b-2 border-transparent focus:border-[#0045ad]',
-                  'outline-none transition-colors placeholder:text-[#8aa3c8]',
+                  'outline-none transition-colors placeholder:text-[var(--color-muted-text)]',
                   'font-[family-name:var(--font-inter)]',
                 ].join(' ')}
               />
               {coverImageUrl && (
-                <div className="mt-2 rounded-lg overflow-hidden aspect-video bg-[#d5e3fc]">
+                <div className="mt-2 rounded-lg overflow-hidden aspect-video bg-[var(--color-input-bg)]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={coverImageUrl}
@@ -523,9 +523,9 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
 
             {/* Tags */}
             <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[#5a6a8a] mb-2 font-[family-name:var(--font-inter)]">
+              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
                 Tags{' '}
-                <span className="normal-case font-normal tracking-normal text-[#8aa3c8]">
+                <span className="normal-case font-normal tracking-normal text-[var(--color-muted-text)]">
                   ({selectedTagIds.length}/5)
                 </span>
               </label>
@@ -551,7 +551,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                       key={tag.id}
                       type="button"
                       onClick={() => toggleTag(tag.id)}
-                      className="text-xs px-2.5 py-1 rounded-full bg-white text-[#5a6a8a] border border-[#c5d5f0] hover:bg-[#d5e3fc] hover:text-[#0045ad] hover:border-[#0045ad]/30 transition-colors font-[family-name:var(--font-inter)]"
+                      className="text-xs px-2.5 py-1 rounded-full bg-[var(--color-surface)] text-[var(--color-muted-text)] border border-[var(--color-border-subtle)] hover:bg-[var(--color-input-bg)] hover:text-[var(--color-link)] hover:border-[#1a5dd5]/30 transition-colors font-[family-name:var(--font-inter)]"
                     >
                       + {tag.name}
                     </button>
@@ -559,7 +559,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                 </div>
               )}
               {allTags.length === 0 && (
-                <p className="text-xs text-[#8aa3c8] font-[family-name:var(--font-inter)]">
+                <p className="text-xs text-[var(--color-muted-text)] font-[family-name:var(--font-inter)]">
                   No tags available.
                 </p>
               )}
@@ -567,7 +567,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
 
             {/* Excerpt */}
             <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[#5a6a8a] mb-2 font-[family-name:var(--font-inter)]">
+              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
                 Excerpt
               </label>
               <textarea
@@ -576,23 +576,23 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                 placeholder="A short summary of your article…"
                 rows={4}
                 className={[
-                  'w-full px-3 py-2 rounded-lg text-sm bg-[#d5e3fc] text-[#0f1f40]',
+                  'w-full px-3 py-2 rounded-lg text-sm bg-[var(--color-input-bg)] text-[var(--color-heading)]',
                   'border-b-2 border-transparent focus:border-[#0045ad]',
-                  'outline-none transition-colors resize-none placeholder:text-[#8aa3c8]',
+                  'outline-none transition-colors resize-none placeholder:text-[var(--color-muted-text)]',
                   'font-[family-name:var(--font-newsreader)]',
                 ].join(' ')}
               />
-              <div className="text-right text-[10px] text-[#8aa3c8] mt-1 font-[family-name:var(--font-inter)]">
+              <div className="text-right text-[10px] text-[var(--color-muted-text)] mt-1 font-[family-name:var(--font-inter)]">
                 {excerpt.length}/300
               </div>
             </section>
 
             {/* Status */}
             <section>
-              <label className="block text-xs font-bold uppercase tracking-widest text-[#5a6a8a] mb-2 font-[family-name:var(--font-inter)]">
+              <label className="block text-xs font-bold uppercase tracking-widest text-[var(--color-muted-text)] mb-2 font-[family-name:var(--font-inter)]">
                 Status
               </label>
-              <div className="flex rounded-lg overflow-hidden border border-[#c5d5f0] font-[family-name:var(--font-inter)]">
+              <div className="flex rounded-lg overflow-hidden border border-[var(--color-border-subtle)] font-[family-name:var(--font-inter)]">
                 <button
                   type="button"
                   onClick={() => setStatus('draft')}
@@ -600,7 +600,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                     'flex-1 py-2 text-sm font-medium transition-colors',
                     status === 'draft'
                       ? 'bg-[#0045ad] text-white'
-                      : 'bg-white text-[#5a6a8a] hover:bg-[#eff4ff]',
+                      : 'bg-[var(--color-surface)] text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)]',
                   ].join(' ')}
                 >
                   Draft
@@ -612,7 +612,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                     'flex-1 py-2 text-sm font-medium transition-colors',
                     status === 'published'
                       ? 'bg-[#0045ad] text-white'
-                      : 'bg-white text-[#5a6a8a] hover:bg-[#eff4ff]',
+                      : 'bg-[var(--color-surface)] text-[var(--color-muted-text)] hover:bg-[var(--color-surface-dim)]',
                   ].join(' ')}
                 >
                   Published
@@ -641,7 +641,7 @@ export default function PostEditor({ allTags, initialData }: PostEditorProps) {
                 type="button"
                 disabled={isPending}
                 onClick={() => handleSave('draft')}
-                className="w-full py-2.5 rounded-lg text-sm font-semibold text-[#0045ad] border border-[#0045ad]/25 hover:bg-[#d5e3fc] transition-colors disabled:opacity-50 font-[family-name:var(--font-inter)]"
+                className="w-full py-2.5 rounded-lg text-sm font-semibold text-[#0045ad] border border-[#0045ad]/25 hover:bg-[var(--color-input-bg)] transition-colors disabled:opacity-50 font-[family-name:var(--font-inter)]"
               >
                 {isPending && status === 'draft' ? 'Saving…' : 'Save Draft'}
               </button>

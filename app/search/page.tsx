@@ -49,7 +49,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       </div>
 
       {!q && (
-        <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] text-center py-12">
+        <p className="font-[family-name:var(--font-newsreader)] text-[var(--color-body)] text-center py-12">
           Search for articles on DevOps, Kubernetes, AWS, and more.
         </p>
       )}
@@ -57,12 +57,12 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       {q && posts && (
         <div className="flex gap-8">
           <div className="flex-1">
-            <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mb-4">
+            <p className="font-[family-name:var(--font-inter)] text-sm text-[var(--color-muted-text)] mb-4">
               {posts.length} result{posts.length !== 1 ? 's' : ''} for &lsquo;{q}&rsquo;
             </p>
 
             {posts.length === 0 ? (
-              <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] text-center py-12">
+              <p className="font-[family-name:var(--font-newsreader)] text-[var(--color-body)] text-center py-12">
                 No results found. Try different keywords.
               </p>
             ) : (
@@ -99,8 +99,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
           <div className="hidden lg:block w-64">
             <aside className="sticky top-20 space-y-6">
-              <section className="bg-white rounded-xl p-5 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
-                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">
+              <section className="bg-[var(--color-surface)] rounded-xl p-5 shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-3">
                   Sort By
                 </h3>
                 <div className="space-y-1">
@@ -109,7 +109,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       key={s}
                       href={buildUrl({ sort: s })}
                       className={`block text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                        sortBy === s ? 'bg-[#dae2ff] text-[#0045ad] font-medium' : 'text-[#40484f] hover:bg-muted'
+                        sortBy === s ? 'bg-[var(--color-surface-raised)] text-[var(--color-link)] font-medium' : 'text-[var(--color-body)] hover:bg-muted'
                       }`}
                     >
                       {s.charAt(0).toUpperCase() + s.slice(1)}
@@ -118,15 +118,15 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                 </div>
               </section>
 
-              <section className="bg-white rounded-xl p-5 shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
-                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-3">
+              <section className="bg-[var(--color-surface)] rounded-xl p-5 shadow-[0_8px_40px_rgba(0,0,0,0.2)]">
+                <h3 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[var(--color-heading)] mb-3">
                   Category
                 </h3>
                 <div className="space-y-1">
                   <Link
                     href={buildUrl({ category: '' })}
                     className={`block text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                      !category ? 'bg-[#dae2ff] text-[#0045ad] font-medium' : 'text-[#40484f] hover:bg-muted'
+                      !category ? 'bg-[var(--color-surface-raised)] text-[var(--color-link)] font-medium' : 'text-[var(--color-body)] hover:bg-muted'
                     }`}
                   >
                     All
@@ -136,7 +136,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                       key={tag.id}
                       href={buildUrl({ category: tag.slug })}
                       className={`block text-sm px-3 py-1.5 rounded-lg transition-colors ${
-                        category === tag.slug ? 'bg-[#dae2ff] text-[#0045ad] font-medium' : 'text-[#40484f] hover:bg-muted'
+                        category === tag.slug ? 'bg-[var(--color-surface-raised)] text-[var(--color-link)] font-medium' : 'text-[var(--color-body)] hover:bg-muted'
                       }`}
                     >
                       {tag.name}

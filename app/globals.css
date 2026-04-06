@@ -2,8 +2,6 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -48,42 +46,8 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Dark-only theme — Stitch color tokens */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
   --background: oklch(0.17 0.02 250);
   --foreground: oklch(0.93 0 0);
   --card: oklch(0.22 0.02 250);
@@ -107,6 +71,7 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
   --sidebar: oklch(0.22 0.02 250);
   --sidebar-foreground: oklch(0.93 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -115,6 +80,21 @@
   --sidebar-accent-foreground: oklch(0.93 0 0);
   --sidebar-border: oklch(0.3 0.02 250);
   --sidebar-ring: oklch(0.5 0 0);
+
+  /* Semantic CSS custom properties */
+  --color-heading: #eaf1ff;
+  --color-body: #afcae0;
+  --color-muted-text: #8899a6;
+  --color-label: #8899a6;
+  --color-link: #b2c5ff;
+  --color-link-hover: #dae1ff;
+  --color-surface: #1a2332;
+  --color-surface-dim: #152028;
+  --color-surface-raised: rgba(26, 93, 213, 0.1);
+  --color-input-bg: rgba(26, 93, 213, 0.15);
+  --color-chip-text: #dae1ff;
+  --color-border-subtle: rgba(191, 199, 208, 0.15);
+  --color-page-bg: #0f1923;
 }
 
 @layer base {
@@ -127,61 +107,4 @@
   html {
     @apply font-sans;
   }
-}
-
-/* Dark mode overrides for hardcoded Stitch design colors */
-:is(.dark *) {
-  /* Text colors — main Stitch palette */
-  &.text-\[\#0d1c2e\] { color: #eaf1ff; }
-  &.text-\[\#40484f\] { color: #afcae0; }
-  &.text-\[\#70787f\] { color: #8899a6; }
-  &.text-\[\#001848\] { color: #dae1ff; }
-  &.text-\[\#0045ad\] { color: #b2c5ff; }
-  &.text-\[\#704200\] { color: #ffb86c; }
-
-  /* Text colors — settings page palette */
-  &.text-\[\#1a1a2e\] { color: #eaf1ff; }
-  &.text-\[\#6b7a99\] { color: #8899a6; }
-  &.text-\[\#4a5568\] { color: #8899a6; }
-
-  /* Background colors */
-  &.bg-white { background-color: oklch(0.22 0.02 250); }
-  &.bg-\[\#dae2ff\] { background-color: rgba(26, 93, 213, 0.2); }
-  &.bg-\[\#d5e3fc\] { background-color: rgba(26, 93, 213, 0.15); }
-  &.bg-\[\#eff4ff\] { background-color: oklch(0.2 0.02 250); }
-  &.bg-\[\#ffdcbc\] { background-color: rgba(112, 66, 0, 0.3); }
-  &.bg-\[\#f8f9ff\] { background-color: oklch(0.15 0.02 250); }
-  &.bg-\[\#eef3fd\] { background-color: rgba(26, 93, 213, 0.1); }
-  &.bg-\[\#c3d7f9\]\/60 { background-color: rgba(26, 93, 213, 0.15); }
-
-  /* Input background in dark mode */
-  &.bg-\[\#d5e3fc\] { background-color: rgba(26, 93, 213, 0.15); }
-
-  /* Border colors */
-  &.border-\[\#e2eaf7\] { border-color: rgba(191, 199, 208, 0.15); }
-
-  /* Hover overrides */
-  &.hover\:bg-\[\#c4d0f5\]:hover { background-color: rgba(26, 93, 213, 0.3); }
-  &.hover\:text-\[\#1a1a2e\]:hover { color: #eaf1ff; }
-  &.hover\:text-\[\#1a5dd5\]:hover { color: #b2c5ff; }
-
-  /* Shadow overrides — reduce opacity in dark mode */
-  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.06\)\] {
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-  }
-  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.08\)\] {
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
-  }
-  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.12\)\] {
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Border/divider colors */
-  &.bg-\[\#bfc7d0\]\/30 { background-color: rgba(191, 199, 208, 0.1); }
-
-  /* SVG fill overrides for dark mode */
-  & svg[fill="#1a1a2e"] { fill: #eaf1ff; }
-  & svg line[stroke="#6b7a99"],
-  & svg path[stroke="#6b7a99"],
-  & svg polyline[stroke="#6b7a99"] { stroke: #8899a6; }
 }
