@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 
@@ -18,12 +19,14 @@ export async function setUsername(username: string): Promise<{ error: string } |
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Not authenticated' }
 
+  await ensureProfileRow(supabase, user)
+
   // Check if user already has a username (can't change it)
   const { data: profile } = await supabase
     .from('profiles')
     .select('username')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (profile?.username) {
     return { error: 'Username is already set and cannot be changed.' }
@@ -51,12 +54,21 @@ export async function setUsername(username: string): Promise<{ error: string } |
   if (metaAvatarUrl) updatePayload.avatar_url = metaAvatarUrl
   if (metaFullName) updatePayload.full_name = metaFullName
 
-  const { error } = await supabase
-    .from('profiles')
-    .update(updatePayload)
-    .eq('id', user.id)
-
-  if (error) return { error: error.message }
+  if (!profile) {
+    const { error } = await supabase.from('profiles').insert({
+      id: user.id,
+      username: parsed.data,
+      full_name: metaFullName,
+      avatar_url: metaAvatarUrl,
+    })
+    if (error) return { error: error.message }
+  } else {
+    const { error } = await supabase
+      .from('profiles')
+      .update(updatePayload)
+      .eq('id', user.id)
+    if (error) return { error: error.message }
+  }
 
   redirect('/')
 }

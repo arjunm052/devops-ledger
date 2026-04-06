@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -10,14 +11,15 @@ export async function GET(request: Request) {
     const supabase = await createServerSupabaseClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // Check if user has a username set — OAuth users may not
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
+        await ensureProfileRow(supabase, user)
+
         const { data: profile } = await supabase
           .from('profiles')
           .select('username')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
 
         if (!profile?.username) {
           return NextResponse.redirect(`${origin}/auth/choose-username`)

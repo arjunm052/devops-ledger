@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { ProfileSettingsForm } from '@/components/profile-settings-form'
 
 export const metadata: Metadata = { title: 'Profile Settings' }
@@ -16,11 +17,13 @@ export default async function SettingsPage() {
     redirect('/auth/login')
   }
 
+  await ensureProfileRow(supabase, user)
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!profile) {
     // User is authenticated but has no profile yet — send home, not to login.

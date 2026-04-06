@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { loginSchema, signupSchema, otpSchema } from '@/lib/validations/auth'
 import type { LoginInput, SignupInput, OtpInput } from '@/lib/validations/auth'
 
@@ -18,6 +19,12 @@ export async function signInWithEmail(input: LoginInput) {
   })
 
   if (error) return { error: error.message }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (user) await ensureProfileRow(supabase, user)
+
   redirect('/dashboard')
 }
 

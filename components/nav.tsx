@@ -24,7 +24,7 @@ export async function Nav() {
       .from('profiles')
       .select('role, avatar_url, full_name')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
     isAuthor = profile?.role === 'author'
     // Use profiles row as source of truth so avatar/name match settings and public pages
     // (JWT user_metadata still holds the provider picture after the user removes it in settings).

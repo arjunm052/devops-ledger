@@ -6,6 +6,11 @@ const mockSignInWithOAuth = vi.fn()
 const mockSignInWithOtp = vi.fn()
 const mockSignUp = vi.fn()
 const mockSignOut = vi.fn()
+const mockGetUser = vi.fn()
+
+vi.mock('@/lib/supabase/ensure-profile', () => ({
+  ensureProfileRow: vi.fn().mockResolvedValue(undefined),
+}))
 
 vi.mock('@/lib/supabase/server', () => ({
   createServerSupabaseClient: vi.fn(() => ({
@@ -15,6 +20,7 @@ vi.mock('@/lib/supabase/server', () => ({
       signInWithOtp: mockSignInWithOtp,
       signUp: mockSignUp,
       signOut: mockSignOut,
+      getUser: mockGetUser,
     },
   })),
 }))
@@ -27,6 +33,9 @@ vi.stubEnv('NEXT_PUBLIC_APP_URL', 'http://localhost:3000')
 
 beforeEach(() => {
   vi.clearAllMocks()
+  mockGetUser.mockResolvedValue({
+    data: { user: { id: '00000000-0000-4000-8000-000000000001', email: 'test@example.com', user_metadata: {}, app_metadata: {} } },
+  })
 })
 
 describe('signInWithEmail', () => {

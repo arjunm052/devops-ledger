@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { redirect } from 'next/navigation'
 import { getAllTags } from '@/lib/queries/tags'
 import PostEditor from '@/components/post-editor'
@@ -12,11 +13,13 @@ export default async function NewArticlePage() {
 
   if (!user) redirect('/auth/login')
 
+  await ensureProfileRow(supabase, user)
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('role')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (profile?.role !== 'author') redirect('/dashboard')
 

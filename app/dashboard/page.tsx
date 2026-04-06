@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { redirect } from 'next/navigation'
 import { deletePost } from '@/actions/posts'
 
@@ -80,11 +81,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  await ensureProfileRow(supabase, user)
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('full_name, role')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   if (profile?.role !== 'author') redirect('/')
 
