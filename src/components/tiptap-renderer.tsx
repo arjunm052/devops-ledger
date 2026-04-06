@@ -29,6 +29,7 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
         'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)]',
         'prose-pre:bg-transparent prose-pre:p-0',
         '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm [&_pre_code]:rounded-none',
+        '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#abb2bf] [&_.code-block-wrapper_code]:text-sm [&_.code-block-wrapper_code]:rounded-none',
         // Task lists
         '[&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-0',
         '[&_ul[data-type=taskList]_li]:flex [&_ul[data-type=taskList]_li]:gap-2 [&_ul[data-type=taskList]_li]:items-start',
