@@ -17,15 +17,11 @@ export const LANGUAGE_NAMES: Record<string, string> = {
 export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
   const [copied, setCopied] = useState(false)
   const [editingFilename, setEditingFilename] = useState(false)
-  const [detectedLang, setDetectedLang] = useState<string | null>(null)
   const filenameRef = useRef<HTMLInputElement>(null)
   const detectionTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const userSetLang = useRef(false)
 
-  const language = node.attrs.language || ''
   const filename = node.attrs.filename || ''
-  const effectiveLang = language || detectedLang || ''
-  const displayLang = LANGUAGE_NAMES[effectiveLang] || effectiveLang || 'Plain Text'
 
   // Auto-detect language on content change (only if user hasn't manually set one)
   useEffect(() => {
@@ -47,10 +43,7 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
         const relevance = data?.relevance ?? 0
         // Only accept detection with a meaningful relevance score
         if (lang && relevance >= 3) {
-          setDetectedLang(lang)
           updateAttributes({ language: lang })
-        } else {
-          setDetectedLang(null)
         }
       } catch {
         // Ignore detection errors
@@ -112,9 +105,6 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
             )}
           </div>
           <div className="flex items-center gap-3" contentEditable={false}>
-            <span className="rounded-md bg-[#3e4451] px-2 py-0.5 font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#7f848e]">
-              {displayLang}
-            </span>
             <button
               type="button"
               onClick={copyCode}
