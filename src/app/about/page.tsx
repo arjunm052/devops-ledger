@@ -41,23 +41,23 @@ export default async function AboutPage() {
   return (
     <div className="min-h-screen">
     <div className="max-w-3xl mx-auto px-4 py-12">
-      {/* Author Profile */}
-      <div className="flex flex-col items-center text-center mb-12">
+      {/* Author Profile — w-full min-w-0 so long names wrap instead of clipping in flex column */}
+      <div className="flex flex-col items-center text-center mb-12 w-full max-w-full min-w-0 px-1 sm:px-0">
         {profile.avatar_url ? (
           <Image
             src={profile.avatar_url}
             alt={profile.full_name ?? profile.username ?? ''}
             width={120}
             height={120}
-            className="rounded-full w-[120px] h-[120px] object-cover mb-5"
+            className="rounded-full w-[120px] h-[120px] object-cover mb-5 shrink-0"
           />
         ) : (
-          <span className="w-[120px] h-[120px] rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-4xl font-medium text-[var(--color-link)] mb-5">
+          <span className="w-[120px] h-[120px] rounded-full bg-[var(--color-surface-raised)] inline-flex items-center justify-center text-4xl font-medium text-[var(--color-link)] mb-5 shrink-0 leading-none">
             {(profile.full_name ?? profile.username ?? '').charAt(0).toUpperCase()}
           </span>
         )}
 
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[var(--color-heading)]">
+        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-normal text-[var(--color-heading)] w-full max-w-full min-w-0 break-words leading-snug py-1">
           {profile.full_name ?? profile.username}
         </h1>
 
