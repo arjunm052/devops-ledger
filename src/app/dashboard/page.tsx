@@ -103,7 +103,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
     .eq('author_id', user.id)
     .order('created_at', { ascending: false })
 
-  const allPosts = posts ?? []
+  // Supabase may return null for empty nested relations — normalize to arrays
+  const allPosts = (posts ?? []).map((p) => ({
+    ...p,
+    tags: Array.isArray(p.tags) ? p.tags : [],
+    claps: Array.isArray(p.claps) ? p.claps : [],
+    comments: Array.isArray(p.comments) ? p.comments : [],
+  }))
 
   // Stats
   const totalPosts = allPosts.length
@@ -271,14 +277,18 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                           </td>
                           <td className="px-6 py-6">
                             <div className="flex flex-wrap gap-2">
-                              {post.tags.slice(0, 2).map((pt: { tag: { id: string; name: string; slug: string } }) => (
-                                <span
-                                  key={pt.tag.id}
-                                  className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] px-2 py-0.5 rounded-full text-[10px]"
-                                >
-                                  {pt.tag.name}
-                                </span>
-                              ))}
+                              {post.tags
+                                .slice(0, 2)
+                                .map((pt: { tag: { id: string; name: string; slug: string } | null }) =>
+                                  pt.tag ? (
+                                    <span
+                                      key={pt.tag.id}
+                                      className="bg-[var(--color-surface-raised)] text-[var(--color-chip-text)] px-2 py-0.5 rounded-full text-[10px]"
+                                    >
+                                      {pt.tag.name}
+                                    </span>
+                                  ) : null
+                                )}
                               {post.tags.length === 0 && (
                                 <span className="text-[var(--color-border-subtle)] text-xs">—</span>
                               )}
