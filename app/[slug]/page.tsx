@@ -114,9 +114,12 @@ export default async function ArticlePage({ params }: PageProps) {
           )}
         </Avatar>
         <div className="flex flex-col">
-          <span className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#40484f]">
+          <Link
+            href={`/author/${author?.username}`}
+            className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#40484f] hover:text-[#0045ad] transition-colors"
+          >
             {authorName}
-          </span>
+          </Link>
           <div className="font-[family-name:var(--font-inter)] flex items-center gap-2 text-xs text-[#70787f]">
             {formattedDate && <time dateTime={post.published_at!}>{formattedDate}</time>}
             <span aria-hidden="true">&middot;</span>

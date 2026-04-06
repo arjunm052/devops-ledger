@@ -67,7 +67,13 @@ export default function ArticleCard({
                 {(author.fullName ?? author.username).charAt(0).toUpperCase()}
               </span>
             )}
-            <span className="font-[family-name:var(--font-inter)] text-xs text-[#40484f]">
+            <span
+              onClick={(e) => {
+                e.preventDefault()
+                window.location.href = `/author/${author.username}`
+              }}
+              className="font-[family-name:var(--font-inter)] text-xs text-[#40484f] hover:text-[#0045ad] cursor-pointer transition-colors"
+            >
               {author.fullName ?? author.username}
             </span>
           </div>
