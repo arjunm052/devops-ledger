@@ -34,7 +34,7 @@ export function ArticlePreviewPane({
   const mins = estimateMinsFromContent(content, title)
 
   return (
-    <article className="mx-auto w-full max-w-3xl px-4 sm:px-6">
+    <article className="mx-auto w-full max-w-6xl px-6">
       {coverImageUrl ? (
         <div className="relative mb-8 aspect-[2/1] w-full overflow-hidden rounded-xl">
           {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary cover URLs in editor preview */}
