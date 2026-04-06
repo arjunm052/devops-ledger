@@ -11,6 +11,7 @@ import { BookmarkButton } from '@/components/bookmark-button'
 import { getBookmarkStatus } from '@/actions/bookmarks'
 import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { ReadingProgress } from '@/components/reading-progress'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -89,6 +90,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen py-10">
+      <ReadingProgress />
     <article className="mx-auto max-w-3xl px-6">
       {/* Cover image */}
       {post.cover_image_url && (
