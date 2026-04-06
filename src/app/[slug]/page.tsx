@@ -95,7 +95,7 @@ export default async function ArticlePage({ params }: PageProps) {
   return (
     <div className="min-h-screen py-10">
       <ReadingProgress />
-    <article className="mx-auto max-w-3xl px-6">
+    <article className="mx-auto max-w-6xl px-6">
       {/* Cover image */}
       {post.cover_image_url && (
         <div className="relative mb-8 aspect-[2/1] w-full overflow-hidden rounded-xl">
