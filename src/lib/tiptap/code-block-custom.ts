@@ -1,4 +1,6 @@
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import { CodeBlockNodeView } from '@/components/editor/code-block-node'
 
 export const CodeBlockCustom = CodeBlockLowlight.extend({
   addAttributes() {
@@ -13,5 +15,9 @@ export const CodeBlockCustom = CodeBlockLowlight.extend({
         },
       },
     }
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlockNodeView)
   },
 })

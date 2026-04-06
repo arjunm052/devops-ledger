@@ -1,4 +1,6 @@
 import { Node, mergeAttributes, type RawCommands, type CommandProps } from '@tiptap/core'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import { CalloutNodeView } from '@/components/editor/callout-node'
 
 export type CalloutType = 'info' | 'warning' | 'tip' | 'danger'
 
@@ -54,5 +56,9 @@ export const Callout = Node.create({
           return props.commands.updateAttributes(this.name, { type })
         },
     }
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(CalloutNodeView)
   },
 })

@@ -1,4 +1,6 @@
 import { Node, type RawCommands, type CommandProps } from '@tiptap/core'
+import { ReactNodeViewRenderer } from '@tiptap/react'
+import { TocNodeView } from '@/components/editor/toc-node'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -29,5 +31,9 @@ export const TableOfContents = Node.create({
           return props.commands.insertContent({ type: this.name })
         },
     }
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(TocNodeView)
   },
 })
