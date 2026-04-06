@@ -5,7 +5,7 @@ import { NodeViewWrapper, NodeViewContent, type NodeViewProps } from '@tiptap/re
 import { Copy, Check } from 'lucide-react'
 import { lowlight } from '@/lib/tiptap/editor-extensions'
 
-const LANGUAGE_NAMES: Record<string, string> = {
+export const LANGUAGE_NAMES: Record<string, string> = {
   typescript: 'TypeScript', javascript: 'JavaScript', python: 'Python',
   go: 'Go', rust: 'Rust', java: 'Java', bash: 'Bash', shell: 'Shell',
   yaml: 'YAML', dockerfile: 'Dockerfile', nginx: 'Nginx',
@@ -41,12 +41,12 @@ export function CodeBlockNodeView({ node, updateAttributes }: NodeViewProps) {
         return
       }
       try {
-        const result = lowlight.highlightAuto(text)
-        const data = result as { data?: { language?: string }; relevance?: number }
-        const lang = data.data?.language
-        const relevance = data.relevance ?? 0
+        const result = lowlight.highlightAuto(text, { subset: Object.keys(LANGUAGE_NAMES) })
+        const data = result.data as { language?: string; relevance?: number } | undefined
+        const lang = data?.language
+        const relevance = data?.relevance ?? 0
         // Only accept detection with a meaningful relevance score
-        if (lang && relevance >= 5) {
+        if (lang && relevance >= 3) {
           setDetectedLang(lang)
           updateAttributes({ language: lang })
         } else {
