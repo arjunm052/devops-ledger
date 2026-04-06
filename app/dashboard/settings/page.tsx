@@ -23,14 +23,15 @@ export default async function SettingsPage() {
     .single()
 
   if (!profile) {
-    redirect('/auth/login')
+    // User is authenticated but has no profile yet — send home, not to login.
+    redirect('/')
   }
 
   // Extract linked OAuth providers from user identities
   const linkedProviders = (user.identities ?? []).map((i) => i.provider)
 
   return (
-    <div className="bg-[var(--color-page-bg)] min-h-screen">
+    <div className="min-h-screen">
       <ProfileSettingsForm
         profile={profile}
         email={user.email ?? ''}

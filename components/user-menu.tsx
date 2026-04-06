@@ -47,17 +47,20 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
         </div>
         <DropdownMenuSeparator />
         {isAuthor && (
-          <DropdownMenuItem>
-            <Link href="/dashboard/new" className="w-full">
-              New Article
-            </Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem>
+              <Link href="/dashboard/new" className="w-full">
+                New Article
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/dashboard" className="w-full">
+                Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+          </>
         )}
-        <DropdownMenuItem>
-          <Link href="/dashboard" className="w-full">
-            Dashboard
-          </Link>
-        </DropdownMenuItem>
         <DropdownMenuItem>
           <Link href="/dashboard/settings" className="w-full">
             Settings

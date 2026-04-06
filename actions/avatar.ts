@@ -33,6 +33,11 @@ export async function uploadAvatar(formData: FormData): Promise<{ url: string } 
     .update({ avatar_url: publicUrl })
     .eq('id', user.id)
 
+  // Sync avatar to Auth user metadata so it's updated everywhere the session is used
+  await supabase.auth.updateUser({
+    data: { avatar_url: publicUrl }
+  })
+
   revalidatePath('/dashboard/settings')
   revalidatePath('/', 'layout')
   return { url: publicUrl }

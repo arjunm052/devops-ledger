@@ -40,12 +40,23 @@ export async function setUsername(username: string): Promise<{ error: string } |
     return { error: 'That username is already taken.' }
   }
 
+  // Backfill avatar_url and full_name from OAuth provider metadata so the
+  // profile picture and display name show up immediately after first sign-in.
+  const metaAvatarUrl: string | null =
+    user.user_metadata?.avatar_url ?? user.user_metadata?.picture ?? null
+  const metaFullName: string | null =
+    user.user_metadata?.full_name ?? user.user_metadata?.name ?? null
+
+  const updatePayload: Record<string, string | null> = { username: parsed.data }
+  if (metaAvatarUrl) updatePayload.avatar_url = metaAvatarUrl
+  if (metaFullName) updatePayload.full_name = metaFullName
+
   const { error } = await supabase
     .from('profiles')
-    .update({ username: parsed.data })
+    .update(updatePayload)
     .eq('id', user.id)
 
   if (error) return { error: error.message }
 
-  redirect('/dashboard')
+  redirect('/')
 }

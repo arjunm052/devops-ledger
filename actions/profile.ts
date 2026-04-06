@@ -37,6 +37,14 @@ export async function updateProfile(
     return { error: error.message }
   }
 
+  // Sync avatar and name to Auth user metadata so it's updated everywhere the session is used
+  await supabase.auth.updateUser({
+    data: {
+      avatar_url: data.avatarUrl || null,
+      full_name: data.fullName || null,
+    }
+  })
+
   revalidatePath('/dashboard/settings')
   revalidatePath('/dashboard')
   revalidatePath('/about')
