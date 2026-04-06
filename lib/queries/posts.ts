@@ -88,10 +88,15 @@ export async function getPostsByTag(tagSlug: string, limit = 10, offset = 0) {
   return { tag, posts }
 }
 
-export async function searchPosts(query: string, limit = 10) {
+export async function searchPosts(
+  query: string,
+  limit = 10,
+  sortBy: 'relevance' | 'newest' | 'oldest' = 'relevance',
+  categorySlug?: string
+) {
   const supabase = await createServerSupabaseClient()
 
-  const { data, error } = await supabase
+  let q = supabase
     .from('posts')
     .select(
       `
@@ -103,9 +108,23 @@ export async function searchPosts(query: string, limit = 10) {
     )
     .eq('status', 'published')
     .textSearch('fts', query, { type: 'websearch' })
-    .limit(limit)
+
+  if (sortBy === 'newest') {
+    q = q.order('published_at', { ascending: false })
+  } else if (sortBy === 'oldest') {
+    q = q.order('published_at', { ascending: true })
+  }
+
+  const { data, error } = await q.limit(limit)
 
   if (error) throw error
+
+  if (categorySlug && data) {
+    return data.filter((post) =>
+      post.tags.some((pt) => pt.tag.slug === categorySlug)
+    )
+  }
+
   return data
 }
 
