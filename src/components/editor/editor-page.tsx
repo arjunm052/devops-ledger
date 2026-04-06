@@ -120,18 +120,17 @@ export default function PostEditor({
     },
   })
 
-  // Markdown paste with editor reference — handled after editor is initialized
+  // Rich paste handling — upgrade after editor is initialized
   useEffect(() => {
     if (!editor) return
 
-    const originalHandlePaste = editor.view.props.handlePaste
-
     editor.setOptions({
       editorProps: {
-        handlePaste(view, event) {
+        handlePaste(_view, event) {
           const dt = event.clipboardData
+          if (!dt) return false
 
-          // Image paste
+          // 1. Image paste — upload to Supabase
           const imageFile = getImageFileFromDataTransfer(dt)
           if (imageFile) {
             event.preventDefault()
@@ -139,24 +138,31 @@ export default function PostEditor({
             return true
           }
 
-          // HTML paste — let Tiptap handle it natively
-          if (dt && dt.types.includes('text/html')) {
-            return false
+          // 2. Rich HTML paste (ChatGPT, Claude, docs, etc.)
+          //    Explicitly grab the HTML and insert via Tiptap's parser
+          //    so all registered extensions (headings, lists, code blocks,
+          //    tables, bold, italic, links, etc.) are used to convert it.
+          const html = dt.getData('text/html')
+          if (html && html.trim().length > 0) {
+            event.preventDefault()
+            editor.commands.insertContent(html, {
+              parseOptions: { preserveWhitespace: false },
+            })
+            return true
           }
 
-          // Markdown plain-text fallback
-          if (dt && dt.types.includes('text/plain')) {
-            const plain = dt.getData('text/plain')
-            if (
-              /^#{1,4}\s|```|^\s*[-*]\s|^\s*\d+\.\s|^\s*>/m.test(plain)
-            ) {
-              event.preventDefault()
-              const html = md.render(plain)
-              editor.commands.insertContent(html, {
-                parseOptions: { preserveWhitespace: false },
-              })
-              return true
-            }
+          // 3. Markdown plain-text fallback
+          const plain = dt.getData('text/plain')
+          if (
+            plain &&
+            /^#{1,4}\s|```|^\s*[-*]\s|^\s*\d+\.\s|^\s*>/m.test(plain)
+          ) {
+            event.preventDefault()
+            const rendered = md.render(plain)
+            editor.commands.insertContent(rendered, {
+              parseOptions: { preserveWhitespace: false },
+            })
+            return true
           }
 
           return false
