@@ -11,7 +11,6 @@ import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
 import { toast } from 'sonner'
-import MarkdownIt from 'markdown-it'
 import { createEditorExtensions } from '@/lib/tiptap/editor-extensions'
 import { SlashCommands } from '@/components/editor/slash-command-menu'
 import { EditorToolbar } from '@/components/editor/editor-toolbar'
@@ -30,9 +29,22 @@ import { getImageFileFromDataTransfer } from '@/components/article-editor/image-
 import { Button } from '@/components/ui/button'
 import { Settings2, Eye, PenLine } from 'lucide-react'
 
-// ─── Markdown-It instance ─────────────────────────────────────────────────────
+// ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const md = new MarkdownIt()
+/**
+ * Clean up non-standard HTML from LLM outputs before Tiptap parses it.
+ * Strips wrapper divs, normalises code blocks, removes inline styles, etc.
+ */
+function cleanLlmHtml(html: string): string {
+  return (
+    html
+      // ChatGPT wraps code blocks in <pre><code class="!whitespace-pre ...">
+      // Strip the Tailwind bang-classes so Tiptap's CodeBlock parseHTML matches
+      .replace(/<code\s+class="[^"]*"/g, '<code')
+      // Remove inline style attributes that mess with rendering
+      .replace(/\s+style="[^"]*"/g, '')
+  )
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -104,72 +116,24 @@ export default function PostEditor({
     editable: true,
     immediatelyRender: false,
     editorProps: {
+      // Clean LLM HTML before Tiptap parses it
+      transformPastedHTML(html) {
+        return cleanLlmHtml(html)
+      },
+      // Image paste — intercept clipboard images for Supabase upload
       handlePaste(_view, event) {
         const dt = event.clipboardData
-
-        // Image paste
         const imageFile = getImageFileFromDataTransfer(dt)
         if (imageFile) {
           event.preventDefault()
           insertImageFromFileRef.current(imageFile)
           return true
         }
-
+        // Everything else (HTML + Markdown) handled by tiptap-markdown extension
         return false
       },
     },
   })
-
-  // Rich paste handling — upgrade after editor is initialized
-  useEffect(() => {
-    if (!editor) return
-
-    editor.setOptions({
-      editorProps: {
-        handlePaste(_view, event) {
-          const dt = event.clipboardData
-          if (!dt) return false
-
-          // 1. Image paste — upload to Supabase
-          const imageFile = getImageFileFromDataTransfer(dt)
-          if (imageFile) {
-            event.preventDefault()
-            insertImageFromFileRef.current(imageFile)
-            return true
-          }
-
-          // 2. Rich HTML paste (ChatGPT, Claude, docs, etc.)
-          //    Explicitly grab the HTML and insert via Tiptap's parser
-          //    so all registered extensions (headings, lists, code blocks,
-          //    tables, bold, italic, links, etc.) are used to convert it.
-          const html = dt.getData('text/html')
-          if (html && html.trim().length > 0) {
-            event.preventDefault()
-            editor.commands.insertContent(html, {
-              parseOptions: { preserveWhitespace: false },
-            })
-            return true
-          }
-
-          // 3. Markdown plain-text fallback
-          const plain = dt.getData('text/plain')
-          if (
-            plain &&
-            /^#{1,4}\s|```|^\s*[-*]\s|^\s*\d+\.\s|^\s*>/m.test(plain)
-          ) {
-            event.preventDefault()
-            const rendered = md.render(plain)
-            editor.commands.insertContent(rendered, {
-              parseOptions: { preserveWhitespace: false },
-            })
-            return true
-          }
-
-          return false
-        },
-      },
-    })
-  }, [editor])
 
   const insertImageFromFile = useCallback(
     async (file: File) => {

@@ -21,6 +21,8 @@ import yaml from 'highlight.js/lib/languages/yaml'
 import ini from 'highlight.js/lib/languages/ini'
 import powershell from 'highlight.js/lib/languages/powershell'
 
+import { Markdown } from 'tiptap-markdown'
+
 import { CodeBlockCustom } from './code-block-custom'
 import { Callout } from './callout-extension'
 import { TableOfContents } from './toc-extension'
@@ -73,6 +75,11 @@ export function createEditorExtensions(
     TaskItem.configure({ nested: true }),
     Underline,
     Highlight.configure({ multicolor: false }),
+    Markdown.configure({
+      html: true,
+      transformPastedText: true,
+      transformCopiedText: true,
+    }),
     Callout,
     TableOfContents,
   ]
