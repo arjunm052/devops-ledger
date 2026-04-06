@@ -19,9 +19,10 @@ interface UserMenuProps {
   email: string
   userName: string | null
   avatarUrl: string | null
+  isAuthor?: boolean
 }
 
-export function UserMenu({ email, userName, avatarUrl }: UserMenuProps) {
+export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps) {
   const initials = (userName ?? email)
     .split(/[\s@]/)
     .filter(Boolean)
@@ -45,6 +46,13 @@ export function UserMenu({ email, userName, avatarUrl }: UserMenuProps) {
           <p className="text-xs text-muted-foreground">{email}</p>
         </div>
         <DropdownMenuSeparator />
+        {isAuthor && (
+          <DropdownMenuItem>
+            <Link href="/dashboard/new" className="w-full">
+              New Article
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem>
           <Link href="/dashboard" className="w-full">
             Dashboard

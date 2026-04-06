@@ -14,6 +14,16 @@ export async function Nav() {
     data: { user },
   } = await supabase.auth.getUser()
 
+  let isAuthor = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+    isAuthor = profile?.role === 'author'
+  }
+
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
@@ -39,7 +49,7 @@ export async function Nav() {
           ))}
         </ul>
 
-        {/* Right side: search + auth */}
+        {/* Right side: search + write + auth */}
         <div className="flex items-center gap-4">
           <Link
             href="/search"
@@ -62,11 +72,35 @@ export async function Nav() {
             </svg>
           </Link>
 
+          {isAuthor && (
+            <Link
+              href="/dashboard/new"
+              className="font-[family-name:var(--font-space-grotesk)] text-sm text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              </svg>
+              Write
+            </Link>
+          )}
+
           {user ? (
             <UserMenu
               email={user.email ?? ''}
-              userName={user.user_metadata?.user_name ?? null}
+              userName={user.user_metadata?.full_name ?? user.user_metadata?.user_name ?? null}
               avatarUrl={user.user_metadata?.avatar_url ?? null}
+              isAuthor={isAuthor}
             />
           ) : (
             <Link
