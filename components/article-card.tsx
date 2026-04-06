@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { BookmarkButton } from '@/components/bookmark-button'
 
 interface ArticleCardProps {
   title: string
@@ -15,6 +16,8 @@ interface ArticleCardProps {
   }
   tags: { name: string; slug: string }[]
   clapCount: number
+  postId?: string
+  bookmarked?: boolean
 }
 
 export default function ArticleCard({
@@ -27,6 +30,8 @@ export default function ArticleCard({
   author,
   tags,
   clapCount,
+  postId,
+  bookmarked,
 }: ArticleCardProps) {
   const formattedDate = publishedAt
     ? new Date(publishedAt).toLocaleDateString('en-US', {
@@ -109,6 +114,10 @@ export default function ArticleCard({
             <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f]">
               👏 {clapCount}
             </span>
+          )}
+
+          {postId && bookmarked !== undefined && (
+            <BookmarkButton postId={postId} initialBookmarked={bookmarked} path={`/${slug}`} />
           )}
         </div>
       </div>

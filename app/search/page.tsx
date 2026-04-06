@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Metadata } from 'next'
 import { searchPosts } from '@/lib/queries/posts'
+import { getBookmarkStatuses } from '@/actions/bookmarks'
 import ArticleCard from '@/components/article-card'
 import SearchInput from '@/components/search-input'
 
@@ -20,6 +21,7 @@ export async function generateMetadata({
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q } = await searchParams
   const posts = q ? await searchPosts(q) : null
+  const bookmarks = posts ? await getBookmarkStatuses(posts.map((p) => p.id)) : {}
 
   return (
     <div className="min-h-screen">
@@ -69,6 +71,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
                     (sum, c) => sum + (c.count ?? 0),
                     0
                   )}
+                  postId={post.id}
+                  bookmarked={bookmarks[post.id] ?? false}
                 />
               ))}
             </div>

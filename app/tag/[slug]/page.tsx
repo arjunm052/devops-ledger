@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 import { getPostsByTag } from '@/lib/queries/posts'
 import { getAllTags } from '@/lib/queries/tags'
+import { getBookmarkStatuses } from '@/actions/bookmarks'
 import ArticleCard from '@/components/article-card'
 import { Sidebar } from '@/components/sidebar'
 
@@ -34,6 +35,7 @@ export default async function TagPage({ params }: TagPageProps) {
   }
 
   const tags = await getAllTags()
+  const bookmarks = await getBookmarkStatuses(posts.map((p) => p.id))
 
   return (
     <div className="min-h-screen">
@@ -83,6 +85,8 @@ export default async function TagPage({ params }: TagPageProps) {
                   (sum, c) => sum + (c.count ?? 0),
                   0
                 )}
+                postId={post.id}
+                bookmarked={bookmarks[post.id] ?? false}
               />
             ))
           )}

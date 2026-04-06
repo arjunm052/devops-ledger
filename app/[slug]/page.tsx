@@ -7,6 +7,8 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import TiptapRenderer from '@/components/tiptap-renderer'
 import { ClapButton } from '@/components/clap-button'
 import { ShareButton } from '@/components/share-button'
+import { BookmarkButton } from '@/components/bookmark-button'
+import { getBookmarkStatus } from '@/actions/bookmarks'
 import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 
@@ -46,6 +48,7 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const isBookmarked = await getBookmarkStatus(post.id)
 
   const author = post.author as { id: string; full_name: string | null; username: string; avatar_url: string | null; bio: string | null } | null
   const tags = (post.tags as { tag: { id: string; name: string; slug: string } | null }[] | null) ?? []
@@ -161,6 +164,7 @@ export default async function ArticlePage({ params }: PageProps) {
       <div className="mt-10 flex justify-center items-center gap-4 bg-muted/50 rounded-xl py-6">
         <ClapButton postId={post.id} slug={slug} initialCount={totalClaps} />
         <ShareButton title={post.title} url={`${process.env.NEXT_PUBLIC_APP_URL ?? ''}/${slug}`} />
+        <BookmarkButton postId={post.id} initialBookmarked={isBookmarked} path={`/${slug}`} />
       </div>
 
       {/* Comments */}

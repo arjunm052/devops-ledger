@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getProfileByUsername } from '@/lib/queries/profiles'
 import { getPostsByAuthor } from '@/lib/queries/posts'
+import { getBookmarkStatuses } from '@/actions/bookmarks'
 import ArticleCard from '@/components/article-card'
 
 interface PageProps {
@@ -35,6 +36,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
   }
 
   const { posts, total } = await getPostsByAuthor(profile.id, 6)
+  const bookmarks = await getBookmarkStatuses(posts.map((p) => p.id))
 
   const totalClaps = posts.reduce(
     (sum, p) => sum + p.claps.reduce((s, c) => s + (c.count ?? 0), 0),
@@ -150,6 +152,8 @@ export default async function AuthorProfilePage({ params }: PageProps) {
                     (sum, c) => sum + (c.count ?? 0),
                     0
                   )}
+                  postId={post.id}
+                  bookmarked={bookmarks[post.id] ?? false}
                 />
               ))}
             </div>
