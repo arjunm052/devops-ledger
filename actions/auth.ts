@@ -8,7 +8,7 @@ import type { LoginInput, SignupInput, OtpInput } from '@/lib/validations/auth'
 export async function signInWithEmail(input: LoginInput) {
   const parsed = loginSchema.safeParse(input)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const supabase = await createServerSupabaseClient()
@@ -24,7 +24,7 @@ export async function signInWithEmail(input: LoginInput) {
 export async function signUpWithEmail(input: SignupInput) {
   const parsed = signupSchema.safeParse(input)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const supabase = await createServerSupabaseClient()
@@ -56,7 +56,7 @@ export async function signInWithOAuth(provider: 'google' | 'github') {
 export async function sendOtp(input: OtpInput) {
   const parsed = otpSchema.safeParse(input)
   if (!parsed.success) {
-    return { error: parsed.error.errors[0].message }
+    return { error: parsed.error.issues[0].message }
   }
 
   const supabase = await createServerSupabaseClient()
