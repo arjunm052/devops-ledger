@@ -9,6 +9,8 @@ import { ClapButton } from '@/components/clap-button'
 import { ShareButton } from '@/components/share-button'
 import { BookmarkButton } from '@/components/bookmark-button'
 import { getBookmarkStatus } from '@/actions/bookmarks'
+import { getFollowStatus } from '@/actions/follows'
+import { FollowButton } from '@/components/follow-button'
 import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { ReadingProgress } from '@/components/reading-progress'
@@ -52,6 +54,8 @@ export default async function ArticlePage({ params }: PageProps) {
   const isBookmarked = await getBookmarkStatus(post.id)
 
   const author = post.author as { id: string; full_name: string | null; username: string; avatar_url: string | null; bio: string | null } | null
+
+  const followStatus = author ? await getFollowStatus(author.id) : false
   const tags = (post.tags as { tag: { id: string; name: string; slug: string } | null }[] | null) ?? []
   const claps = post.claps as { count: number }[] | null
   const rawComments = (post.comments ?? []) as {
@@ -138,6 +142,13 @@ export default async function ArticlePage({ params }: PageProps) {
             )}
           </div>
         </div>
+        {author && (
+          <FollowButton
+            authorId={author.id}
+            initialFollowing={followStatus}
+            path={`/${slug}`}
+          />
+        )}
       </div>
 
       {/* Tags */}

@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { getProfileByUsername } from '@/lib/queries/profiles'
 import { getPostsByAuthor } from '@/lib/queries/posts'
 import { getBookmarkStatuses } from '@/actions/bookmarks'
+import { getFollowStatus, getFollowerCount } from '@/actions/follows'
+import { FollowButton } from '@/components/follow-button'
 import ArticleCard from '@/components/article-card'
 
 interface PageProps {
@@ -37,6 +39,11 @@ export default async function AuthorProfilePage({ params }: PageProps) {
 
   const { posts, total } = await getPostsByAuthor(profile.id, 6)
   const bookmarks = await getBookmarkStatuses(posts.map((p) => p.id))
+
+  const [followStatus, followerCount] = await Promise.all([
+    getFollowStatus(profile.id),
+    getFollowerCount(profile.id),
+  ])
 
   const totalClaps = posts.reduce(
     (sum, p) => sum + p.claps.reduce((s, c) => s + (c.count ?? 0), 0),
@@ -70,6 +77,14 @@ export default async function AuthorProfilePage({ params }: PageProps) {
             @{profile.username}
           </p>
 
+          <div className="mt-3">
+            <FollowButton
+              authorId={profile.id}
+              initialFollowing={followStatus}
+              path={`/author/${username}`}
+            />
+          </div>
+
           {profile.bio && (
             <p className="font-[family-name:var(--font-newsreader)] text-lg text-[#40484f] mt-4 max-w-xl leading-relaxed">
               {profile.bio}
@@ -93,6 +108,15 @@ export default async function AuthorProfilePage({ params }: PageProps) {
               </span>
               <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">
                 Claps
+              </span>
+            </div>
+            <div className="w-px h-8 bg-[#bfc7d0]/30" />
+            <div className="text-center">
+              <span className="font-[family-name:var(--font-space-grotesk)] text-2xl font-bold text-[#0d1c2e]">
+                {followerCount}
+              </span>
+              <span className="font-[family-name:var(--font-inter)] text-xs text-[#70787f] block">
+                Followers
               </span>
             </div>
           </div>
