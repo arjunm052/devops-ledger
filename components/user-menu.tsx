@@ -58,6 +58,11 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
             Dashboard
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="/dashboard/settings" className="w-full">
+            Settings
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           <form action={signOut} className="w-full">

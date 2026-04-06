@@ -128,3 +128,38 @@
     @apply font-sans;
   }
 }
+
+/* Dark mode overrides for hardcoded Stitch design colors */
+:is(.dark *) {
+  /* Text colors */
+  &.text-\[\#0d1c2e\] { color: #eaf1ff; }
+  &.text-\[\#40484f\] { color: #afcae0; }
+  &.text-\[\#70787f\] { color: #8899a6; }
+  &.text-\[\#001848\] { color: #dae1ff; }
+  &.text-\[\#0045ad\] { color: #b2c5ff; }
+  &.text-\[\#704200\] { color: #ffb86c; }
+
+  /* Background colors */
+  &.bg-white { background-color: oklch(0.22 0.02 250); }
+  &.bg-\[\#dae2ff\] { background-color: rgba(26, 93, 213, 0.2); }
+  &.bg-\[\#d5e3fc\] { background-color: rgba(26, 93, 213, 0.15); }
+  &.bg-\[\#eff4ff\] { background-color: oklch(0.2 0.02 250); }
+  &.bg-\[\#ffdcbc\] { background-color: rgba(112, 66, 0, 0.3); }
+
+  /* Hover overrides */
+  &.hover\:bg-\[\#c4d0f5\]:hover { background-color: rgba(26, 93, 213, 0.3); }
+
+  /* Shadow overrides — reduce opacity in dark mode */
+  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.06\)\] {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+  }
+  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.08\)\] {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+  }
+  &.shadow-\[0_8px_40px_rgba\(13\,28\,46\,0\.12\)\] {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Border/divider colors */
+  &.bg-\[\#bfc7d0\]\/30 { background-color: rgba(191, 199, 208, 0.1); }
+}
