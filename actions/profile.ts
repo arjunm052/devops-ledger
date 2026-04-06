@@ -40,6 +40,7 @@ export async function updateProfile(
   revalidatePath('/dashboard/settings')
   revalidatePath('/dashboard')
   revalidatePath('/about')
+  revalidatePath('/', 'layout')
 
   return { success: true }
 }

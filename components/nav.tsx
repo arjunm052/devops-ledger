@@ -17,13 +17,23 @@ export async function Nav() {
   } = await supabase.auth.getUser()
 
   let isAuthor = false
+  let navAvatarUrl: string | null = null
+  let navUserName: string | null = null
   if (user) {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, avatar_url, full_name')
       .eq('id', user.id)
       .single()
     isAuthor = profile?.role === 'author'
+    // Use profiles row as source of truth so avatar/name match settings and public pages
+    // (JWT user_metadata still holds the provider picture after the user removes it in settings).
+    navAvatarUrl = profile?.avatar_url ?? null
+    navUserName =
+      profile?.full_name ??
+      user.user_metadata?.full_name ??
+      user.user_metadata?.user_name ??
+      null
   }
 
   let notifications: Awaited<ReturnType<typeof getNotifications>> = []
@@ -110,8 +120,8 @@ export async function Nav() {
           {user ? (
             <UserMenu
               email={user.email ?? ''}
-              userName={user.user_metadata?.full_name ?? user.user_metadata?.user_name ?? null}
-              avatarUrl={user.user_metadata?.avatar_url ?? null}
+              userName={navUserName}
+              avatarUrl={navAvatarUrl}
               isAuthor={isAuthor}
             />
           ) : (

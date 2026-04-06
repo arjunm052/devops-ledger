@@ -34,5 +34,6 @@ export async function uploadAvatar(formData: FormData): Promise<{ url: string } 
     .eq('id', user.id)
 
   revalidatePath('/dashboard/settings')
+  revalidatePath('/', 'layout')
   return { url: publicUrl }
 }
