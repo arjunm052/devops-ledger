@@ -3,7 +3,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 import { redirect } from 'next/navigation'
 import { getAllTags } from '@/lib/queries/tags'
-import PostEditor from '@/components/post-editor'
+import PostEditor from '@/components/editor/editor-page'
 
 export const metadata: Metadata = { title: 'New Article – The DevOps Ledger' }
 
