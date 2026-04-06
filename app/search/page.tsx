@@ -22,6 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const posts = q ? await searchPosts(q) : null
 
   return (
+    <div className="bg-[#eff4ff] min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto space-y-6">
         <Suspense>
@@ -29,20 +30,20 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </Suspense>
 
         {!q && (
-          <p className="text-muted-foreground text-center py-12">
+          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] text-center py-12">
             Search for articles on DevOps, Kubernetes, AWS, and more.
           </p>
         )}
 
         {q && posts && posts.length === 0 && (
-          <p className="text-muted-foreground text-center py-12">
+          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] text-center py-12">
             No results found for &lsquo;{q}&rsquo;. Try different keywords.
           </p>
         )}
 
         {q && posts && posts.length > 0 && (
           <>
-            <p className="text-sm text-muted-foreground">
+            <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f]">
               {posts.length} result{posts.length !== 1 ? 's' : ''} for &lsquo;{q}&rsquo;
             </p>
             <div className="space-y-4">
@@ -74,6 +75,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           </>
         )}
       </div>
+    </div>
     </div>
   )
 }

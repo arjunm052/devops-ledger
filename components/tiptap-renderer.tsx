@@ -1,6 +1,6 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, type Content } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight'
 import Image from '@tiptap/extension-image'
@@ -20,7 +20,8 @@ lowlight.register('dockerfile', dockerfile)
 lowlight.register('nginx', nginx)
 
 interface TiptapRendererProps {
-  content: any
+  // Tiptap JSON document — typed as unknown to accept Supabase's Json type
+  content: unknown
 }
 
 export default function TiptapRenderer({ content }: TiptapRendererProps) {
@@ -47,7 +48,7 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
       }),
       Typography,
     ],
-    content,
+    content: content as Content,
     editable: false,
     immediatelyRender: false,
   })

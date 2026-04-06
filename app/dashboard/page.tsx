@@ -120,29 +120,29 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
   const tabClass = (tab: string) =>
     tab === (filter || 'all')
-      ? 'px-6 py-1.5 rounded-full bg-white shadow-sm text-[#323233] text-sm font-medium'
-      : 'px-6 py-1.5 rounded-full text-[#5f5f5f] hover:text-[#323233] transition-colors text-sm font-medium'
+      ? 'px-6 py-1.5 rounded-full bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white shadow-sm text-sm font-medium'
+      : 'px-6 py-1.5 rounded-full text-[#40484f] hover:text-[#0045ad] transition-colors text-sm font-medium'
 
   return (
-    <div className="bg-[#fcf9f8] min-h-screen">
+    <div className="bg-[#eff4ff] min-h-screen">
       <main className="max-w-6xl mx-auto pt-12 pb-20 px-6">
 
         {/* Header */}
         <div className="mb-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1
-              className="text-4xl md:text-5xl font-bold tracking-tight mb-2"
-              style={{ fontFamily: 'var(--font-newsreader)' }}
+              className="text-4xl md:text-5xl font-bold tracking-tight mb-2 text-[#0d1c2e]"
+              style={{ fontFamily: 'var(--font-space-grotesk)' }}
             >
               Author Dashboard
             </h1>
-            <p className="text-[#5f5f5f] text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[#40484f] text-sm" style={{ fontFamily: 'var(--font-inter)' }}>
               Manage your writing, monitor performance, and engage with your readers.
             </p>
           </div>
           <Link
             href="/dashboard/new"
-            className="shrink-0 inline-flex items-center gap-2 bg-[#056d41] text-[#e7ffeb] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-[#006038] transition-all active:opacity-80 active:scale-95"
+            className="shrink-0 inline-flex items-center gap-2 bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white px-5 py-2.5 rounded-full text-sm font-medium hover:opacity-90 transition-all active:scale-95"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -155,33 +155,33 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {[
-            { label: 'Total Posts', value: totalPosts, sub: `${draftsCount} draft${draftsCount !== 1 ? 's' : ''}`, subColor: '#7b7b7a', icon: <IconArticle /> },
-            { label: 'Claps', value: formatCount(totalClaps), sub: 'Across all posts', subColor: '#7b7b7a', icon: <IconClap /> },
-            { label: 'Comments', value: formatCount(totalComments), sub: 'Across all posts', subColor: '#7b7b7a', icon: <IconChat /> },
-            { label: 'Drafts', value: draftsCount, sub: 'Ready to polish', subColor: '#7b7b7a', icon: <IconDraft /> },
+            { label: 'Total Posts', value: totalPosts, sub: `${draftsCount} draft${draftsCount !== 1 ? 's' : ''}`, icon: <IconArticle /> },
+            { label: 'Claps', value: formatCount(totalClaps), sub: 'Across all posts', icon: <IconClap /> },
+            { label: 'Comments', value: formatCount(totalComments), sub: 'Across all posts', icon: <IconChat /> },
+            { label: 'Drafts', value: draftsCount, sub: 'Ready to polish', icon: <IconDraft /> },
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white p-6 rounded-xl border border-[#b2b2b1]/10 shadow-sm transition-transform hover:-translate-y-1"
+              className="bg-white p-6 rounded-xl shadow-[0_8px_40px_rgba(13,28,46,0.06)] transition-transform hover:-translate-y-1"
             >
               <div className="flex justify-between items-start mb-4">
                 <span
-                  className="text-xs font-bold uppercase tracking-widest text-[#5f5f5f]"
+                  className="text-xs font-bold uppercase tracking-widest text-[#40484f]"
                   style={{ fontFamily: 'var(--font-inter)' }}
                 >
                   {stat.label}
                 </span>
-                <span className="text-[#056d41] opacity-70">{stat.icon}</span>
+                <span className="text-[#0045ad] opacity-70">{stat.icon}</span>
               </div>
               <div
-                className="text-4xl font-bold text-[#323233]"
-                style={{ fontFamily: 'var(--font-newsreader)' }}
+                className="text-4xl font-bold text-[#0d1c2e]"
+                style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 {stat.value}
               </div>
               <div
-                className="text-xs mt-2"
-                style={{ fontFamily: 'var(--font-inter)', color: stat.subColor }}
+                className="text-xs mt-2 text-[#70787f]"
+                style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {stat.sub}
               </div>
@@ -190,19 +190,19 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         </div>
 
         {/* Posts Table */}
-        <div className="bg-white rounded-xl border border-[#b2b2b1]/10 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-xl overflow-hidden shadow-[0_8px_40px_rgba(13,28,46,0.06)]">
 
           {/* Table header with tabs */}
-          <div className="p-8 border-b border-[#f0eded]">
+          <div className="p-8 bg-[#eff4ff]">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
               <h2
-                className="text-2xl font-bold text-[#323233]"
-                style={{ fontFamily: 'var(--font-newsreader)' }}
+                className="text-2xl font-bold text-[#0d1c2e]"
+                style={{ fontFamily: 'var(--font-space-grotesk)' }}
               >
                 Your Posts
               </h2>
               <div
-                className="flex items-center gap-1 bg-[#f6f3f2] p-1 rounded-full"
+                className="flex items-center gap-1 bg-white p-1 rounded-full shadow-[0_2px_8px_rgba(13,28,46,0.06)]"
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 <Link href="/dashboard" className={tabClass('all')}>All</Link>
@@ -213,9 +213,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
           </div>
 
           {filteredPosts.length === 0 ? (
-            <div className="px-8 py-16 text-center text-[#5f5f5f]" style={{ fontFamily: 'var(--font-newsreader)' }}>
+            <div className="px-8 py-16 text-center text-[#40484f]" style={{ fontFamily: 'var(--font-newsreader)' }}>
               No posts yet.{' '}
-              <Link href="/dashboard/new" className="text-[#056d41] underline underline-offset-4">
+              <Link href="/dashboard/new" className="text-[#0045ad] underline underline-offset-4">
                 Write your first article.
               </Link>
             </div>
@@ -224,7 +224,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               <div className="overflow-x-auto">
                 <table className="w-full text-left" style={{ fontFamily: 'var(--font-inter)' }}>
                   <thead>
-                    <tr className="bg-[#f6f3f2]/50 text-xs font-bold uppercase tracking-widest text-[#5f5f5f]">
+                    <tr className="bg-[#eff4ff]/60 text-xs font-bold uppercase tracking-widest text-[#40484f]">
                       <th className="px-8 py-4 font-semibold">Post Title</th>
                       <th className="px-6 py-4 font-semibold">Status</th>
                       <th className="px-6 py-4 font-semibold">Tags</th>
@@ -233,29 +233,29 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                       <th className="px-8 py-4 font-semibold text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#f0eded]">
-                    {filteredPosts.map((post) => {
+                  <tbody>
+                    {filteredPosts.map((post, idx) => {
                       const clapCount = post.claps.reduce(
                         (s: number, c: { count: number | null }) => s + (c.count ?? 0), 0
                       )
                       const isPublished = post.status === 'published'
                       return (
-                        <tr key={post.id} className="hover:bg-[#f6f3f2]/30 transition-colors group">
+                        <tr key={post.id} className={`transition-colors group ${idx % 2 === 0 ? 'bg-white' : 'bg-[#eff4ff]/40'} hover:bg-[#eff4ff]`}>
                           <td className="px-8 py-6">
                             <div
-                              className={`font-bold text-lg line-clamp-1 ${isPublished ? 'text-[#323233]' : 'text-[#5f5f5f]/80'}`}
-                              style={{ fontFamily: 'var(--font-newsreader)' }}
+                              className={`font-bold text-lg line-clamp-1 ${isPublished ? 'text-[#0d1c2e]' : 'text-[#40484f]/80'}`}
+                              style={{ fontFamily: 'var(--font-space-grotesk)' }}
                             >
                               {post.title}
                             </div>
                           </td>
                           <td className="px-6 py-6">
                             {isPublished ? (
-                              <span className="bg-[#9df5bd] text-[#005e37] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              <span className="bg-[#dae2ff] text-[#0045ad] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 Published
                               </span>
                             ) : (
-                              <span className="bg-[#e4e2e2] text-[#5f5f5f] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                              <span className="bg-[#ffdcbc] text-[#704200] px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                                 Draft
                               </span>
                             )}
@@ -265,29 +265,29 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                               {post.tags.slice(0, 2).map((pt: { tag: { id: string; name: string; slug: string } }) => (
                                 <span
                                   key={pt.tag.id}
-                                  className="bg-[#e4e2e2] px-2 py-0.5 rounded-md text-[10px] text-[#5f5f5f]"
+                                  className="bg-[#dae2ff] text-[#001848] px-2 py-0.5 rounded-full text-[10px]"
                                 >
                                   {pt.tag.name}
                                 </span>
                               ))}
                               {post.tags.length === 0 && (
-                                <span className="text-[#b2b2b1] text-xs">—</span>
+                                <span className="text-[#bfc7d0] text-xs">—</span>
                               )}
                             </div>
                           </td>
-                          <td className="px-6 py-6 text-center font-medium text-sm">
+                          <td className="px-6 py-6 text-center font-medium text-sm text-[#0d1c2e]">
                             {isPublished ? formatCount(clapCount) : (
-                              <span className="text-[#b2b2b1]">—</span>
+                              <span className="text-[#bfc7d0]">—</span>
                             )}
                           </td>
-                          <td className="px-6 py-6 text-sm text-[#5f5f5f]">
+                          <td className="px-6 py-6 text-sm text-[#40484f]">
                             {isPublished ? formatDate(post.published_at) : formatDate(post.updated_at ?? post.created_at)}
                           </td>
                           <td className="px-8 py-6 text-right">
                             <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
                               <Link
                                 href={`/dashboard/edit/${post.id}`}
-                                className="p-2 hover:bg-[#eae8e7] rounded-full transition-colors text-[#5f5f5f]"
+                                className="p-2 hover:bg-[#eff4ff] rounded-full transition-colors text-[#40484f]"
                                 title="Edit"
                               >
                                 <IconEdit />
@@ -295,7 +295,7 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                               <form action={deletePost.bind(null, post.id)}>
                                 <button
                                   type="submit"
-                                  className="p-2 hover:bg-[#9f403d]/10 rounded-full transition-colors text-[#9f403d]"
+                                  className="p-2 hover:bg-red-50 rounded-full transition-colors text-red-500"
                                   title="Delete"
                                   onClick={(e) => {
                                     if (!confirm('Delete this post? This cannot be undone.')) e.preventDefault()
@@ -314,9 +314,9 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
               </div>
 
               {/* Pagination footer */}
-              <div className="px-8 py-6 border-t border-[#f0eded] bg-[#f6f3f2]/30">
+              <div className="px-8 py-6 bg-[#eff4ff]/40">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-[#5f5f5f]" style={{ fontFamily: 'var(--font-inter)' }}>
+                  <span className="text-sm text-[#40484f]" style={{ fontFamily: 'var(--font-inter)' }}>
                     Showing {filteredPosts.length} of {totalPosts} post{totalPosts !== 1 ? 's' : ''}
                   </span>
                 </div>

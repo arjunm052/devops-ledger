@@ -36,6 +36,9 @@ yarn-error.log*
 # superpowers brainstorming
 .superpowers/
 
+# project state files (local only)
+/ai/
+
 # vercel
 .vercel
 

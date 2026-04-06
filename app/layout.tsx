@@ -3,6 +3,7 @@ import { Space_Grotesk, Newsreader, Inter } from 'next/font/google'
 import './globals.css'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
+import { Toaster } from '@/components/ui/sonner'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -32,6 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <main className="flex-1">{children}</main>
         <Footer />
+        <Toaster richColors position="bottom-right" />
       </body>
     </html>
   )

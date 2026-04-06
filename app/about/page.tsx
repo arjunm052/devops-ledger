@@ -20,13 +20,15 @@ export default async function AboutPage() {
 
   if (!profile) {
     return (
-      <div className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold mb-4">
-          About
-        </h1>
-        <p className="text-muted-foreground">
-          Author profile not found. Please check back later.
-        </p>
+      <div className="bg-[#eff4ff] min-h-screen">
+        <div className="max-w-3xl mx-auto px-4 py-16 text-center">
+          <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold text-[#0d1c2e] mb-4">
+            About
+          </h1>
+          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f]">
+            Author profile not found. Please check back later.
+          </p>
+        </div>
       </div>
     )
   }
@@ -37,6 +39,7 @@ export default async function AboutPage() {
   ])
 
   return (
+    <div className="bg-[#eff4ff] min-h-screen">
     <div className="max-w-3xl mx-auto px-4 py-12">
       {/* Author Profile */}
       <div className="flex flex-col items-center text-center mb-12">
@@ -44,23 +47,23 @@ export default async function AboutPage() {
           <Image
             src={profile.avatar_url}
             alt={profile.full_name ?? profile.username}
-            width={128}
-            height={128}
-            className="rounded-full w-32 h-32 object-cover mb-5"
+            width={120}
+            height={120}
+            className="rounded-full w-[120px] h-[120px] object-cover mb-5"
           />
         ) : (
-          <span className="w-32 h-32 rounded-full bg-muted inline-flex items-center justify-center text-4xl font-medium text-muted-foreground mb-5">
+          <span className="w-[120px] h-[120px] rounded-full bg-[#dae2ff] inline-flex items-center justify-center text-4xl font-medium text-[#0045ad] mb-5">
             {(profile.full_name ?? profile.username).charAt(0).toUpperCase()}
           </span>
         )}
 
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold tracking-tight">
+        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold tracking-tight text-[#0d1c2e]">
           {profile.full_name ?? profile.username}
         </h1>
 
-        <p className="text-muted-foreground mt-1">@{profile.username}</p>
+        <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-1">@{profile.username}</p>
 
-        <p className="font-[family-name:var(--font-newsreader)] text-lg text-muted-foreground mt-4 max-w-xl leading-relaxed">
+        <p className="font-[family-name:var(--font-newsreader)] text-lg text-[#40484f] mt-4 max-w-xl leading-relaxed">
           {profile.bio ??
             'Engineering insights, architecture deep-dives, and DevOps patterns from the trenches.'}
         </p>
@@ -70,7 +73,7 @@ export default async function AboutPage() {
             href={profile.website}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 text-sm font-medium text-primary hover:underline"
+            className="font-[family-name:var(--font-inter)] mt-3 text-sm font-medium text-[#0045ad] hover:underline"
           >
             {profile.website}
           </Link>
@@ -80,7 +83,7 @@ export default async function AboutPage() {
       {/* Topics */}
       {tags.length > 0 && (
         <section className="mb-12">
-          <h2 className="font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-4">
             Topics I write about
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -88,7 +91,7 @@ export default async function AboutPage() {
               <Link
                 key={tag.id}
                 href={`/tag/${tag.slug}`}
-                className="bg-primary/5 hover:bg-primary/10 text-primary text-sm px-3 py-1 rounded-full transition-colors"
+                className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors"
               >
                 {tag.name}
               </Link>
@@ -100,7 +103,7 @@ export default async function AboutPage() {
       {/* Latest Posts */}
       {posts.length > 0 && (
         <section>
-          <h2 className="font-[family-name:var(--font-inter)] text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">
+          <h2 className="font-[family-name:var(--font-space-grotesk)] text-sm font-bold text-[#0d1c2e] mb-4">
             Latest Posts
           </h2>
           <div className="space-y-4">
@@ -131,6 +134,7 @@ export default async function AboutPage() {
           </div>
         </section>
       )}
+    </div>
     </div>
   )
 }

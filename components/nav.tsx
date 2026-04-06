@@ -25,12 +25,12 @@ export async function Nav() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md">
+    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-[0_2px_20px_rgba(13,28,46,0.04)]">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         {/* Logo */}
         <Link
           href="/"
-          className="font-[family-name:var(--font-newsreader)] text-xl font-semibold tracking-tight"
+          className="font-[family-name:var(--font-newsreader)] text-xl font-bold tracking-tight text-[#0d1c2e]"
         >
           The Ledger
         </Link>
@@ -41,7 +41,7 @@ export async function Nav() {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="font-[family-name:var(--font-space-grotesk)] text-sm text-muted-foreground transition-colors hover:text-foreground"
+                className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium text-[#40484f] transition-colors hover:text-[#0045ad]"
               >
                 {link.label}
               </Link>
@@ -53,7 +53,7 @@ export async function Nav() {
         <div className="flex items-center gap-4">
           <Link
             href="/search"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="text-[#40484f] transition-colors hover:text-[#0045ad]"
             aria-label="Search"
           >
             <svg
@@ -75,12 +75,12 @@ export async function Nav() {
           {isAuthor && (
             <Link
               href="/dashboard/new"
-              className="font-[family-name:var(--font-space-grotesk)] text-sm text-muted-foreground transition-colors hover:text-foreground flex items-center gap-1.5"
+              className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium flex items-center gap-1.5 bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white px-4 py-1.5 rounded-full transition-opacity hover:opacity-90"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                width="14"
+                height="14"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -105,7 +105,7 @@ export async function Nav() {
           ) : (
             <Link
               href="/auth/login"
-              className="font-[family-name:var(--font-space-grotesk)] rounded-full bg-foreground px-4 py-1.5 text-sm font-medium text-background transition-opacity hover:opacity-90"
+              className="font-[family-name:var(--font-space-grotesk)] rounded-full border border-[#0045ad]/20 px-4 py-1.5 text-sm font-medium text-[#0045ad] transition-colors hover:bg-[#0045ad]/5"
             >
               Sign In
             </Link>

@@ -1,8 +1,10 @@
 import type { Metadata } from 'next'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getAllTags } from '@/lib/queries/tags'
+import PostEditor from '@/components/post-editor'
 
-export const metadata: Metadata = { title: 'New Article' }
+export const metadata: Metadata = { title: 'New Article – The DevOps Ledger' }
 
 export default async function NewArticlePage() {
   const supabase = await createServerSupabaseClient()
@@ -18,14 +20,7 @@ export default async function NewArticlePage() {
 
   if (profile?.role !== 'author') redirect('/dashboard')
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-12">
-      <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold mb-4">
-        New Article
-      </h1>
-      <p className="font-[family-name:var(--font-newsreader)] text-muted-foreground">
-        The article editor is coming soon.
-      </p>
-    </div>
-  )
+  const allTags = await getAllTags()
+
+  return <PostEditor allTags={allTags} />
 }

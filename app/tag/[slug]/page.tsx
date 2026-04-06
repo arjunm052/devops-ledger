@@ -36,18 +36,19 @@ export default async function TagPage({ params }: TagPageProps) {
   const tags = await getAllTags()
 
   return (
+    <div className="bg-[#eff4ff] min-h-screen">
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero */}
       <div className="mb-8">
-        <h1 className="font-[family-name:var(--font-space-grotesk)] text-3xl font-bold">
+        <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold text-[#0045ad]">
           {tag.name}
         </h1>
         {tag.description && (
-          <p className="font-[family-name:var(--font-newsreader)] text-muted-foreground mt-2">
+          <p className="font-[family-name:var(--font-newsreader)] text-[#40484f] mt-2">
             {tag.description}
           </p>
         )}
-        <p className="font-[family-name:var(--font-inter)] text-sm text-muted-foreground mt-2">
+        <p className="font-[family-name:var(--font-inter)] text-sm text-[#70787f] mt-2">
           {posts.length} {posts.length === 1 ? 'post' : 'posts'}
         </p>
       </div>
@@ -90,6 +91,7 @@ export default async function TagPage({ params }: TagPageProps) {
           <Sidebar tags={tags} />
         </div>
       </div>
+    </div>
     </div>
   )
 }

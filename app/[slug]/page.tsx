@@ -8,7 +8,6 @@ import TiptapRenderer from '@/components/tiptap-renderer'
 import { ClapButton } from '@/components/clap-button'
 import { CommentSection } from '@/components/comment-section'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -85,7 +84,8 @@ export default async function ArticlePage({ params }: PageProps) {
   const authorInitial = authorName.charAt(0).toUpperCase()
 
   return (
-    <article className="mx-auto max-w-3xl px-6 py-10">
+    <div className="bg-[#eff4ff] min-h-screen py-10">
+    <article className="mx-auto max-w-3xl px-6">
       {/* Cover image */}
       {post.cover_image_url && (
         <div className="relative mb-8 aspect-[2/1] w-full overflow-hidden rounded-xl">
@@ -100,7 +100,7 @@ export default async function ArticlePage({ params }: PageProps) {
       )}
 
       {/* Title */}
-      <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight tracking-tight md:text-5xl">
+      <h1 className="font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight tracking-tight text-[#0d1c2e] md:text-5xl">
         {post.title}
       </h1>
 
@@ -114,10 +114,10 @@ export default async function ArticlePage({ params }: PageProps) {
           )}
         </Avatar>
         <div className="flex flex-col">
-          <span className="font-[family-name:var(--font-inter)] text-sm font-medium">
+          <span className="font-[family-name:var(--font-inter)] text-sm font-medium text-[#40484f]">
             {authorName}
           </span>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="font-[family-name:var(--font-inter)] flex items-center gap-2 text-xs text-[#70787f]">
             {formattedDate && <time dateTime={post.published_at!}>{formattedDate}</time>}
             <span aria-hidden="true">&middot;</span>
             <span>{post.reading_time_mins} min read</span>
@@ -136,8 +136,12 @@ export default async function ArticlePage({ params }: PageProps) {
         <div className="mt-4 flex flex-wrap gap-2">
           {tags.map(({ tag }) =>
             tag ? (
-              <Link key={tag.slug} href={`/tag/${tag.slug}`}>
-                <Badge variant="secondary">{tag.name}</Badge>
+              <Link
+                key={tag.slug}
+                href={`/tag/${tag.slug}`}
+                className="bg-[#dae2ff] text-[#001848] text-xs px-3 py-1 rounded-full hover:bg-[#c4d0f5] transition-colors"
+              >
+                {tag.name}
               </Link>
             ) : null
           )}
@@ -145,17 +149,17 @@ export default async function ArticlePage({ params }: PageProps) {
       )}
 
       {/* Article content */}
-      <div className="mt-10">
+      <div className="mt-10 font-[family-name:var(--font-newsreader)]">
         <TiptapRenderer content={post.content} />
       </div>
 
       {/* Claps */}
-      <div className="mt-10 flex justify-center border-t border-b border-border py-6">
+      <div className="mt-10 flex justify-center bg-[#eff4ff] rounded-xl py-6">
         <ClapButton postId={post.id} slug={slug} initialCount={totalClaps} />
       </div>
 
       {/* Comments */}
-      <div className="mt-10">
+      <div className="mt-8 bg-[#eff4ff] rounded-xl p-6">
         <CommentSection
           postId={post.id}
           slug={slug}
@@ -164,5 +168,6 @@ export default async function ArticlePage({ params }: PageProps) {
         />
       </div>
     </article>
+    </div>
   )
 }
