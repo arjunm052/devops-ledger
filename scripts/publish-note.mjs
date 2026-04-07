@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 import { readFileSync, existsSync } from 'node:fs'
-import { resolve, basename } from 'node:path'
+import { resolve, basename, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { createClient } from '@supabase/supabase-js'
 import { config } from 'dotenv'
 import { convertHtmlToTiptap } from './html-to-tiptap.mjs'
 
-// Load .env.local from project root
-config({ path: resolve(process.cwd(), '.env.local') })
+// Load .env.local from project root (script-relative so it works from any cwd)
+const __dirname = dirname(fileURLToPath(import.meta.url))
+config({ path: resolve(__dirname, '../.env.local') })
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -23,8 +25,13 @@ function slugify(title) {
     .replace(/^-|-$/g, '')
 }
 
+function extractText(node) {
+  if (node.type === 'text') return node.text ?? ''
+  return (node.content ?? []).map(extractText).join(' ')
+}
+
 function estimateReadingTime(content) {
-  const words = JSON.stringify(content).split(/\s+/).length
+  const words = extractText(content).trim().split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.ceil(words / 200))
 }
 

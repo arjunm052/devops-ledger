@@ -101,7 +101,7 @@ function calloutNode($, el, type) {
 
 function flowListNode($, el) {
   const items = []
-  $(el).find('.flow-step').each((_, step) => {
+  $(el).children('.flow-step').each((_, step) => {
     const title = $(step).find('.flow-content strong').first().text().trim()
     const desc = $(step).find('.flow-content p').first().text().trim()
     const inlineContent = []
