@@ -495,7 +495,7 @@ export default function PostEditor({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Title"
               rows={2}
-              className="w-full resize-none border-none bg-transparent font-[family-name:var(--font-space-grotesk)] text-4xl font-bold leading-tight text-[var(--color-heading)] outline-none placeholder:text-[var(--color-muted-text)]"
+              className="w-full resize-none border-none bg-transparent font-[family-name:var(--font-space-grotesk)] text-[clamp(2.25rem,5vw,3rem)] font-bold leading-[1.15] tracking-tight text-[var(--color-heading)] outline-none placeholder:text-[var(--color-muted-text)]"
             />
           </div>
 
