@@ -1,5 +1,6 @@
 import type { Extensions } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
+import Heading from '@tiptap/extension-heading'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import { Table } from '@tiptap/extension-table'
@@ -24,6 +25,7 @@ import powershell from 'highlight.js/lib/languages/powershell'
 import { CodeBlockCustom } from './code-block-custom'
 import { Callout } from './callout-extension'
 import { TableOfContents } from './toc-extension'
+import { slugify } from './slugify'
 
 const lowlight = createLowlight(common)
 lowlight.register('dockerfile', dockerfile)
@@ -45,7 +47,21 @@ export function createEditorExtensions(
   const exts: Extensions = [
     StarterKit.configure({
       codeBlock: false,
+      heading: false,
     }),
+    Heading.extend({
+      parseHTML() {
+        return [1, 2, 3, 4, 5, 6].map((level) => ({
+          tag: `h${level}`,
+          attrs: { level },
+        }))
+      },
+      renderHTML({ node, HTMLAttributes }) {
+        const level = node.attrs.level as number
+        const id = slugify(node.textContent) || `h${level}`
+        return [`h${level}`, { ...HTMLAttributes, id }, 0]
+      },
+    }).configure({ levels: [1, 2, 3, 4] }),
     CodeBlockCustom.configure({
       lowlight,
       defaultLanguage: null,
