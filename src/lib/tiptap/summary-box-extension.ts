@@ -35,14 +35,13 @@ export const SummaryBox = Node.create({
     return [{ tag: 'div.summary-box' }]
   },
 
-  renderHTML({ HTMLAttributes, node }) {
+  renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(HTMLAttributes, {
         class: 'summary-box',
         'data-type': 'summaryBox',
       }),
-      ['div', { class: 'summary-title' }, node.attrs.title as string],
       0,
     ]
   },

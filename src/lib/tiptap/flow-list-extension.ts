@@ -41,8 +41,7 @@ export const FlowItem = Node.create({
         class: 'flow-step',
         'data-flow-step': String(step),
       }),
-      ['div', { class: 'flow-num' }, String(step)],
-      ['div', { class: 'flow-content' }, 0],
+      0,
     ]
   },
 

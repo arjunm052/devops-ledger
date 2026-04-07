@@ -35,11 +35,10 @@ export const Analogy = Node.create({
     return [{ tag: 'div.analogy' }]
   },
 
-  renderHTML({ HTMLAttributes, node }) {
+  renderHTML({ HTMLAttributes }) {
     return [
       'div',
       mergeAttributes(HTMLAttributes, { class: 'analogy', 'data-type': 'analogy' }),
-      ['div', { class: 'analogy-label' }, node.attrs.label as string],
       0,
     ]
   },

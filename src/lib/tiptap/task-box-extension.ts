@@ -24,13 +24,6 @@ function parseDifficulty(el: HTMLElement): TaskDifficulty {
   return '1'
 }
 
-function diffClass(d: string): string {
-  return d === '2' ? 'diff-2' : d === '3' ? 'diff-3' : 'diff-1'
-}
-
-function diffLabel(d: string): string {
-  return d === '2' ? 'Medium' : d === '3' ? 'Hard' : 'Easy'
-}
 
 export const TaskBox = Node.create({
   name: 'taskBox',
@@ -67,23 +60,17 @@ export const TaskBox = Node.create({
   },
 
   renderHTML({ node }) {
-    const d = node.attrs.difficulty as string
     return [
       'div',
-      mergeAttributes({ class: 'task-box', 'data-type': 'taskBox' }),
-      [
-        'div',
-        { class: 'task-header' },
-        ['span', { class: 'task-badge' }, node.attrs.badge as string],
-        ['span', { class: 'task-title' }, node.attrs.taskTitle as string],
-        [
-          'span',
-          { class: `task-diff ${diffClass(d)}` },
-          diffLabel(d),
-        ],
-        ['span', { class: 'task-time' }, node.attrs.timeEstimate as string],
-      ],
-      ['div', { class: 'task-body' }, 0],
+      mergeAttributes({
+        class: 'task-box',
+        'data-type': 'taskBox',
+        'data-badge': node.attrs.badge as string,
+        'data-task-title': node.attrs.taskTitle as string,
+        'data-difficulty': node.attrs.difficulty as string,
+        'data-time-estimate': node.attrs.timeEstimate as string,
+      }),
+      0,
     ]
   },
 
