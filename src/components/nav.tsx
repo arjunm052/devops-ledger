@@ -91,7 +91,7 @@ export async function Nav() {
           {isAuthor && (
             <Link
               href="/dashboard/new"
-              className="font-[family-name:var(--font-space-grotesk)] ml-1 flex items-center gap-1.5 rounded-full border border-[oklch(0.35_0.05_250)] px-[14px] py-[6px] text-[12px] font-semibold text-[oklch(0.80_0.05_250)] transition-colors hover:border-[#1a5dd5] hover:text-white"
+              className="font-[family-name:var(--font-space-grotesk)] flex items-center gap-1.5 rounded-full border border-[oklch(0.35_0.05_250)] px-[14px] py-[6px] text-xs font-semibold text-[oklch(0.80_0.05_250)] transition-colors hover:border-[#1a5dd5] hover:text-white"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +113,7 @@ export async function Nav() {
 
           {/* Avatar / Sign In */}
           {user ? (
-            <div className="ml-2">
+            <div>
               <UserMenu
                 email={user.email ?? ''}
                 userName={navUserName}
