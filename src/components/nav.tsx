@@ -43,23 +43,22 @@ export async function Nav() {
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.3)]">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        {/* Logo */}
+      <div className="flex h-16 w-full items-center px-6 lg:px-10">
+        {/* Logo — left anchor */}
         <Link
           href="/"
-          className="font-[family-name:var(--font-newsreader)] text-xl font-bold tracking-tight text-[var(--color-heading)]"
+          className="font-[family-name:var(--font-newsreader)] shrink-0 text-xl font-bold tracking-tight text-[var(--color-heading)]"
         >
           DevOps Ledger
         </Link>
 
-        {/* Right side: nav links + actions */}
-        <div className="flex items-center gap-1">
-          {/* Nav links */}
+        {/* Nav links — center */}
+        <div className="flex flex-1 items-center justify-center">
           <NavLinks links={navLinks} />
+        </div>
 
-          {/* Divider */}
-          <div className="mx-3 hidden h-[18px] w-px bg-[oklch(0.27_0.02_250)] sm:block" />
-
+        {/* Right side actions */}
+        <div className="flex shrink-0 items-center gap-1">
           {/* Search */}
           <Link
             href="/search"
@@ -111,20 +110,21 @@ export async function Nav() {
             </Link>
           )}
 
+          {/* Divider before avatar */}
+          <div className="mx-2 hidden h-[18px] w-px bg-[oklch(0.27_0.02_250)] sm:block" />
+
           {/* Avatar / Sign In */}
           {user ? (
-            <div>
-              <UserMenu
-                email={user.email ?? ''}
-                userName={navUserName}
-                avatarUrl={navAvatarUrl}
-                isAuthor={isAuthor}
-              />
-            </div>
+            <UserMenu
+              email={user.email ?? ''}
+              userName={navUserName}
+              avatarUrl={navAvatarUrl}
+              isAuthor={isAuthor}
+            />
           ) : (
             <Link
               href="/auth/login"
-              className="font-[family-name:var(--font-space-grotesk)] ml-2 rounded-full border border-[#0045ad]/40 px-4 py-1.5 text-sm font-medium text-[var(--color-link)] transition-colors hover:bg-[#0045ad]/10"
+              className="font-[family-name:var(--font-space-grotesk)] rounded-full border border-[#0045ad]/40 px-4 py-1.5 text-sm font-medium text-[var(--color-link)] transition-colors hover:bg-[#0045ad]/10"
             >
               Sign In
             </Link>

@@ -29,9 +29,9 @@ Requires `.env.local` with: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_AN
 
 **Database types** are auto-generated in `lib/supabase/types.ts`. Query helpers live in `lib/queries/` (posts, tags, profiles).
 
-**Server Actions** in `actions/` handle mutations (auth, claps, comments) and call `revalidatePath()` for cache invalidation.
+**Server Actions** in `actions/` handle mutations (auth, claps, comments) and call `revalidatePath()` for cache invalidation. Use `revalidatePath('/', 'layout')` when root layout content (e.g. `Nav`) must refresh.
 
-**Auth:** Supabase Auth with email/password, Google OAuth, GitHub OAuth. Session managed via HTTP-only cookies + middleware (`middleware.ts` guards `/dashboard/*` routes). New users get `role='reader'`; authors are promoted manually in Supabase.
+**Auth:** Supabase Auth with email/password, Google OAuth, GitHub OAuth. Session managed via HTTP-only cookies + middleware (`middleware.ts` guards `/dashboard/*` routes). New users get `role='reader'`; authors are promoted manually in Supabase. The `profiles` table is the source of truth for display fields (`avatar_url`, `full_name`) — do not rely on `user.user_metadata` for UI that must match settings. `SUPABASE_SERVICE_ROLE_KEY` is server-only; never expose to the client or `NEXT_PUBLIC_*`.
 
 **Content:** Blog posts store Tiptap JSON in `posts.content`, rendered by `components/tiptap-renderer.tsx`. Full-text search uses a `tsvector` column (`fts`) on the posts table.
 
@@ -44,7 +44,12 @@ Requires `.env.local` with: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_AN
 - UI components: shadcn/ui in `components/ui/` — do not edit these directly
 - Tailwind CSS 4 uses CSS-first config in `src/app/globals.css` with `@theme inline` and OKLch colors
 - Tests use Vitest + React Testing Library + jsdom (config in `vitest.config.ts`)
-- Deployed on Vercel
+- Deployed on Vercel via Git push to `origin/main` (Vercel Git integration auto-deploys)
+
+## Deployment & CLI Tools
+
+**Git push is the primary deploy path.** Pushing to the remote triggers Vercel. Before pushing non-trivial changes: run `npm run lint` and `npm run test:run`. Do not force-push without explicit user approval.
+
 
 
 
