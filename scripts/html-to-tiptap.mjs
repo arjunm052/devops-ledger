@@ -286,19 +286,92 @@ function isMcqSection($, section) {
 }
 
 function mcqSectionNode($, section, htmlString) {
-  // Extract the full MCQ section HTML
-  const sectionHtml = $.html(section)
+  // Extract section title
+  const title = $(section).find('.mcq-section-header h2').text().trim() || 'Practice Questions'
 
-  // Extract the MCQ quiz logic script from the full HTML
-  const scriptMatch = htmlString.match(
-    /\/\/ ── MCQ Quiz Logic ──[\s\S]*?(?=<\/script>)/
-  )
-  const quizScript = scriptMatch ? scriptMatch[0] : ''
+  // Extract badges
+  const badges = []
+  $(section).find('.mcq-badge').each((_, el) => {
+    const t = $(el).text().trim()
+    if (t) badges.push(t)
+  })
 
-  // Build self-contained HTML with embedded script
-  const html = sectionHtml + (quizScript ? `<script>${quizScript}</script>` : '')
+  // Extract correct answers map from the script block
+  const answersMatch = htmlString.match(/correctAnswers\s*=\s*\{([^}]+)\}/)
+  const correctMap = {}
+  if (answersMatch) {
+    const pairs = answersMatch[1].matchAll(/(\w+)\s*:\s*'([A-Z])'/g)
+    for (const m of pairs) {
+      const letterIdx = 'ABCDEFGH'.indexOf(m[2])
+      correctMap[m[1]] = letterIdx >= 0 ? letterIdx : 0
+    }
+  }
 
-  return { type: 'rawHtml', attrs: { html } }
+  // Parse questions
+  const questions = []
+  let currentLevel = null
+  let currentLevelLabel = null
+
+  // Walk through children of the quiz container (or the section itself)
+  const container = $(section).find('#quizContainer').length
+    ? $(section).find('#quizContainer')
+    : $(section)
+
+  container.children().each((_, child) => {
+    const cls = ($(child).attr('class') ?? '').split(' ')
+
+    // Level header
+    if (cls.includes('mcq-level-header')) {
+      currentLevel = cls.includes('mcq-level-intermediate') ? 'intermediate' : 'beginner'
+      currentLevelLabel = $(child).text().trim()
+      return
+    }
+
+    // Question card
+    if (cls.includes('mcq-card')) {
+      const qId = $(child).attr('id') || `q${questions.length + 1}`
+      const text = $(child).find('.mcq-q-text').text().trim()
+
+      const options = []
+      $(child).find('.mcq-option').each((_, opt) => {
+        // Get text without the letter span
+        const clone = $(opt).clone()
+        clone.find('.opt-letter').remove()
+        options.push(clone.text().trim())
+      })
+
+      // Get explanation HTML (without the label)
+      const expEl = $(child).find('.mcq-explanation')
+      let explanation = ''
+      if (expEl.length) {
+        const expClone = expEl.clone()
+        expClone.find('.mcq-exp-label').remove()
+        explanation = expClone.html()?.trim() ?? ''
+      }
+
+      const correct = correctMap[qId] ?? 0
+
+      const q = { id: qId, text, options, correct, explanation }
+
+      // Attach level info to first question after a level header
+      if (currentLevelLabel) {
+        q.level = currentLevel
+        q.levelLabel = currentLevelLabel
+        currentLevelLabel = null
+      }
+
+      questions.push(q)
+    }
+  })
+
+  return {
+    type: 'mcqQuiz',
+    attrs: {
+      title,
+      badges: JSON.stringify(badges),
+      questions: JSON.stringify(questions),
+    },
+  }
 }
 
 function convertSection($, section) {

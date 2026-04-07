@@ -32,6 +32,7 @@ import { TaskBox } from './task-box-extension'
 import { FlowItem, FlowList } from './flow-list-extension'
 import { MiniCard, TwoCol } from './two-col-extension'
 import { Diagram } from './diagram-extension'
+import { McqQuiz } from './mcq-quiz-extension'
 import { slugify } from './slugify'
 
 const lowlight = createLowlight(common)
@@ -105,6 +106,7 @@ export function createEditorExtensions(
     SummaryBox,
     TaskBox,
     Diagram,
+    McqQuiz,
     TableOfContents,
     RawHtml,
   ]
