@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { UserMenu } from '@/components/user-menu'
+import { NavLinks } from '@/components/nav-links'
 import { getNotifications, getUnreadCount } from '@/actions/notifications'
 import { NotificationsDropdown } from '@/components/notifications-dropdown'
 
@@ -26,8 +27,6 @@ export async function Nav() {
       .eq('id', user.id)
       .maybeSingle()
     isAuthor = profile?.role === 'author'
-    // Use profiles row as source of truth so avatar/name match settings and public pages
-    // (JWT user_metadata still holds the provider picture after the user removes it in settings).
     navAvatarUrl = profile?.avatar_url ?? null
     navUserName =
       profile?.full_name ??
@@ -53,31 +52,24 @@ export async function Nav() {
           DevOps Ledger
         </Link>
 
-        {/* Center nav links */}
-        <ul className="hidden items-center gap-8 sm:flex">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium text-[var(--color-body)] transition-colors hover:text-[var(--color-link)]"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        {/* Right side: nav links + actions */}
+        <div className="flex items-center gap-1">
+          {/* Nav links */}
+          <NavLinks links={navLinks} />
 
-        {/* Right side: search + write + auth */}
-        <div className="flex items-center gap-4">
+          {/* Divider */}
+          <div className="mx-3 hidden h-[18px] w-px bg-[oklch(0.27_0.02_250)] sm:block" />
+
+          {/* Search */}
           <Link
             href="/search"
-            className="text-[var(--color-body)] transition-colors hover:text-[var(--color-link)]"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-[oklch(0.60_0_0)] transition-colors hover:bg-[oklch(0.24_0.02_250)] hover:text-[oklch(0.93_0_0)]"
             aria-label="Search"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
+              width="16"
+              height="16"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -90,15 +82,21 @@ export async function Nav() {
             </svg>
           </Link>
 
+          {/* Notifications */}
+          {user && (
+            <NotificationsDropdown notifications={notifications} unreadCount={unreadCount} />
+          )}
+
+          {/* Write */}
           {isAuthor && (
             <Link
               href="/dashboard/new"
-              className="font-[family-name:var(--font-space-grotesk)] text-sm font-medium flex items-center gap-1.5 bg-gradient-to-r from-[#0045ad] to-[#1a5dd5] text-white px-4 py-1.5 rounded-full transition-opacity hover:opacity-90"
+              className="font-[family-name:var(--font-space-grotesk)] ml-1 flex items-center gap-1.5 rounded-full border border-[oklch(0.35_0.05_250)] px-[14px] py-[6px] text-[12px] font-semibold text-[oklch(0.80_0.05_250)] transition-colors hover:border-[#1a5dd5] hover:text-white"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
+                width="13"
+                height="13"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -113,21 +111,20 @@ export async function Nav() {
             </Link>
           )}
 
-          {user && (
-            <NotificationsDropdown notifications={notifications} unreadCount={unreadCount} />
-          )}
-
+          {/* Avatar / Sign In */}
           {user ? (
-            <UserMenu
-              email={user.email ?? ''}
-              userName={navUserName}
-              avatarUrl={navAvatarUrl}
-              isAuthor={isAuthor}
-            />
+            <div className="ml-2">
+              <UserMenu
+                email={user.email ?? ''}
+                userName={navUserName}
+                avatarUrl={navAvatarUrl}
+                isAuthor={isAuthor}
+              />
+            </div>
           ) : (
             <Link
               href="/auth/login"
-              className="font-[family-name:var(--font-space-grotesk)] rounded-full border border-[#0045ad]/40 px-4 py-1.5 text-sm font-medium text-[var(--color-link)] transition-colors hover:bg-[#0045ad]/10"
+              className="font-[family-name:var(--font-space-grotesk)] ml-2 rounded-full border border-[#0045ad]/40 px-4 py-1.5 text-sm font-medium text-[var(--color-link)] transition-colors hover:bg-[#0045ad]/10"
             >
               Sign In
             </Link>
