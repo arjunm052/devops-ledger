@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { NodeViewWrapper, NodeViewContent, type NodeViewProps } from '@tiptap/react'
-import { Copy, Check } from 'lucide-react'
 import { lowlight } from '@/lib/tiptap/editor-extensions'
 
 export const LANGUAGE_NAMES: Record<string, string> = {
@@ -23,14 +22,11 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
   const filename = node.attrs.filename || ''
   const isEditable = editor.isEditable
 
-  // Auto-detect language on content change (for syntax highlighting only; never shown in UI)
   useEffect(() => {
     if (!isEditable) return
     if (detectionTimer.current) clearTimeout(detectionTimer.current)
     detectionTimer.current = setTimeout(() => {
       const text = node.textContent
-      // Only auto-detect for multi-line content with enough text
-      // Short one-liners produce unreliable results
       const lines = text.split('\n').filter(Boolean).length
       if (!text || text.length < 30 || lines < 2) {
         return
@@ -40,7 +36,6 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
         const data = result.data as { language?: string; relevance?: number } | undefined
         const lang = data?.language
         const relevance = data?.relevance ?? 0
-        // Only accept detection with a meaningful relevance score
         if (lang && relevance >= 3) {
           updateAttributes({ language: lang })
         }
@@ -54,9 +49,9 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
   }, [node.textContent, updateAttributes, isEditable])
 
   const copyCode = useCallback(() => {
-    navigator.clipboard.writeText(node.textContent).then(() => {
+    void navigator.clipboard.writeText(node.textContent).then(() => {
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      setTimeout(() => setCopied(false), 1500)
     })
   }, [node.textContent])
 
@@ -64,32 +59,27 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
     setEditingFilename(false)
   }, [])
 
-  const lineCount = node.textContent.split('\n').length
-
   const language = node.attrs.language as string | null
   const langDisplay = language ? LANGUAGE_NAMES[language] ?? language.toUpperCase() : null
 
   return (
-    <NodeViewWrapper className="code-block-wrapper my-4">
-      <div className="overflow-hidden rounded-lg border border-[#2a3044] bg-[#0d1117]">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#2a3044] bg-[#0d1117] px-3 py-1.5">
-          <div className="flex items-center gap-2" contentEditable={false}>
-            {/* Language badge — always visible when language is known */}
-            {langDisplay && (
-              <span className="font-[family-name:var(--font-jetbrains-mono)] text-[10px] font-medium uppercase tracking-[0.06em] rounded-[3px] bg-[rgba(96,165,250,0.12)] px-[7px] py-[2px] text-[#60a5fa]">
+    <NodeViewWrapper className="code-block-wrapper my-5">
+      <div className="code-block overflow-hidden rounded-[10px] border border-[#2a3044]">
+        <div className="code-header flex items-center justify-between bg-[#0d1117] px-[14px] py-[7px]">
+          <div className="flex min-w-0 flex-1 items-center gap-2" contentEditable={false}>
+            {langDisplay ? (
+              <span className="code-lang shrink-0 font-[family-name:var(--font-jetbrains-mono)] text-[10px] font-medium uppercase tracking-[0.06em] text-[#60a5fa] bg-[rgba(96,165,250,0.12)] px-[7px] py-[2px] rounded-[3px]">
                 {langDisplay}
               </span>
-            )}
-            {/* Filename (editor only) */}
-            {isEditable && (
+            ) : null}
+            {isEditable ? (
               editingFilename ? (
                 <input
                   ref={filenameRef}
                   type="text"
                   defaultValue={filename}
                   placeholder="filename.ext"
-                  className="bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#e2e8f0] outline-none placeholder:text-[#636d83]"
+                  className="min-w-0 flex-1 bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#e2e8f0] outline-none placeholder:text-[#636d83]"
                   autoFocus
                   onBlur={(e) => {
                     updateAttributes({ filename: e.target.value || null })
@@ -107,41 +97,29 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
                 <button
                   type="button"
                   onClick={() => setEditingFilename(true)}
-                  className="font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#4b5a78] hover:text-[#60a5fa]"
+                  className="truncate font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#4b5a78] hover:text-[#60a5fa]"
                   contentEditable={false}
                 >
-                  {filename || 'Add filename\u2026'}
+                  {filename || (langDisplay ? '' : 'Add filename…')}
                 </button>
               )
-            )}
+            ) : null}
           </div>
-          <div className="flex items-center gap-3" contentEditable={false}>
-            <button
-              type="button"
-              onClick={copyCode}
-              className="rounded-[3px] border border-[#2a3044] px-2 py-[2px] font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#4b5a78] transition-colors hover:border-[#60a5fa] hover:text-[#60a5fa]"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-              {copied ? <Check className="ml-1 inline size-3" /> : <Copy className="ml-1 inline size-3" />}
-            </button>
-          </div>
-        </div>
-        {/* Code area with line numbers */}
-        <div className="flex overflow-x-auto p-4">
-          <div
-            className="select-none pr-4 text-right font-[family-name:var(--font-jetbrains-mono)] text-xs leading-[1.85] text-[#636d83]"
+          <button
+            type="button"
+            onClick={copyCode}
+            className="code-copy shrink-0 rounded-[3px] border border-[#2a3044] px-2 py-[2px] font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#4b5a78] transition-colors hover:border-[#60a5fa] hover:text-[#60a5fa]"
             contentEditable={false}
-            aria-hidden
           >
-            {Array.from({ length: lineCount }, (_, i) => (
-              <div key={i}>{i + 1}</div>
-            ))}
-          </div>
+            {copied ? 'copied!' : 'copy'}
+          </button>
+        </div>
+        <pre className="hljs m-0 overflow-x-auto bg-[#0d1117] px-[1.4rem] py-5 font-[family-name:var(--font-jetbrains-mono)] text-[13px] leading-[1.85] text-[#e2e8f0]">
           <NodeViewContent<'code'>
             as="code"
-            className="flex-1 font-[family-name:var(--font-jetbrains-mono)] text-sm leading-[1.85] text-[#e2e8f0] outline-none"
+            className="block min-h-[1.25em] w-max min-w-full bg-transparent p-0 font-[family-name:var(--font-jetbrains-mono)] text-[13px] leading-[1.85] text-inherit outline-none"
           />
-        </div>
+        </pre>
       </div>
     </NodeViewWrapper>
   )

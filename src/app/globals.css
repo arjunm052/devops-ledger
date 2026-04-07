@@ -112,59 +112,66 @@
   }
 }
 
-/* ── Editor: Medium-scale typography ── */
+/* ── Editor / article body: DeepStudyNotes template scale (15px base) ── */
 .ProseMirror {
   font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
-  font-size: 1.3125rem; /* 21px */
+  font-size: 15px;
   line-height: 1.7;
-  color: var(--color-body);
+  color: #b0b8c9;
 }
 
 .ProseMirror h1 {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 2.625rem; /* 42px */
-  line-height: 1.2;
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.15;
   font-weight: 800;
-  letter-spacing: -0.02em;
   color: var(--color-heading);
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 
 .ProseMirror h2 {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.75rem; /* 28px */
-  line-height: 1.3;
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-size: 22px;
+  line-height: 1.2;
   font-weight: 800;
-  letter-spacing: -0.01em;
   color: var(--color-heading);
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
 }
 
 .ProseMirror h3 {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 1.375rem; /* 22px */
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-size: 17px;
   line-height: 1.35;
   font-weight: 700;
   color: var(--color-heading);
-  margin-top: 1.5rem;
-  margin-bottom: 0.375rem;
+  margin: 2rem 0 0.75rem;
 }
 
 .ProseMirror h4 {
-  font-family: var(--font-space-grotesk), sans-serif;
-  font-size: 0.8125rem; /* 13px */
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-size: 13px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-muted-text);
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
+  color: #7a8499;
+  margin: 1.5rem 0 0.5rem;
+}
+
+/* Mini-card titles (template h5) */
+.ProseMirror h5 {
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: #60a5fa;
+  margin: 0 0 6px;
 }
 
 .ProseMirror p {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 15px;
+  color: #b0b8c9;
 }
 
 .ProseMirror strong {
@@ -182,12 +189,28 @@
 
 .ProseMirror ul,
 .ProseMirror ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1.25rem;
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
 }
 
 .ProseMirror li {
-  margin-bottom: 0.375rem;
+  margin-bottom: 6px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #b0b8c9;
+}
+
+.ProseMirror li strong {
+  color: var(--color-heading);
+}
+
+/* ── Editor: Table wrapper (Tiptap uses .tableWrapper) ── */
+.ProseMirror .tableWrapper {
+  overflow-x: auto;
+  margin: 1.25rem 0;
+  border-radius: 10px;
+  border: 1px solid #252d3d;
+  overflow: hidden;
 }
 
 /* ── Editor: Table styles ── */
@@ -225,38 +248,337 @@
   background: #1a2332;
 }
 
-/* ── Editor: Callout blocks (read-only renderer fallback) ── */
-.callout[data-callout-type="info"] {
+/* ── Callout blocks (template-aligned; data-callout-type + class variants) ── */
+.callout {
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border: 1px solid;
+  font-size: 14px;
+}
+.callout[data-callout-type="info"],
+.callout.callout-info {
   background: rgba(96, 165, 250, 0.1);
-  border: 1px solid rgba(96, 165, 250, 0.3);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  font-size: 14px;
+  border-color: rgba(96, 165, 250, 0.3);
 }
-.callout[data-callout-type="warning"] {
+.callout[data-callout-type="warning"],
+.callout.callout-warn {
   background: rgba(251, 191, 36, 0.1);
-  border: 1px solid rgba(251, 191, 36, 0.3);
-  border-radius: 10px;
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
-  font-size: 14px;
+  border-color: rgba(251, 191, 36, 0.3);
 }
-.callout[data-callout-type="tip"] {
+.callout[data-callout-type="tip"],
+.callout.callout-success {
   background: rgba(74, 222, 128, 0.1);
-  border: 1px solid rgba(74, 222, 128, 0.3);
+  border-color: rgba(74, 222, 128, 0.3);
+}
+.callout[data-callout-type="danger"],
+.callout.callout-danger {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.3);
+}
+.callout-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.callout-info .callout-label,
+.callout[data-callout-type="info"] .callout-label {
+  color: #60a5fa;
+}
+.callout-warn .callout-label,
+.callout[data-callout-type="warning"] .callout-label {
+  color: #fbbf24;
+}
+.callout-success .callout-label,
+.callout[data-callout-type="tip"] .callout-label {
+  color: #4ade80;
+}
+.callout-danger .callout-label,
+.callout[data-callout-type="danger"] .callout-label {
+  color: #f87171;
+}
+.callout-info p,
+.callout-info li,
+.callout[data-callout-type="info"] p,
+.callout[data-callout-type="info"] li {
+  color: #bfdbfe;
+  margin: 0 0 4px;
+}
+.callout-info p strong,
+.callout-info li strong,
+.callout[data-callout-type="info"] p strong,
+.callout[data-callout-type="info"] li strong {
+  color: #e0effe;
+}
+.callout-warn p,
+.callout-warn li,
+.callout[data-callout-type="warning"] p,
+.callout[data-callout-type="warning"] li {
+  color: #fde68a;
+  margin: 0 0 4px;
+}
+.callout-warn p strong,
+.callout-warn li strong,
+.callout[data-callout-type="warning"] p strong,
+.callout[data-callout-type="warning"] li strong {
+  color: #fef3c7;
+}
+.callout-danger p,
+.callout-danger li,
+.callout[data-callout-type="danger"] p,
+.callout[data-callout-type="danger"] li {
+  color: #fecaca;
+  margin: 0 0 4px;
+}
+.callout-danger p strong,
+.callout-danger li strong,
+.callout[data-callout-type="danger"] p strong,
+.callout[data-callout-type="danger"] li strong {
+  color: #fee2e2;
+}
+.callout-success p,
+.callout-success li,
+.callout[data-callout-type="tip"] p,
+.callout[data-callout-type="tip"] li {
+  color: #bbf7d0;
+  margin: 0 0 4px;
+}
+.callout-success p strong,
+.callout-success li strong,
+.callout[data-callout-type="tip"] p strong,
+.callout[data-callout-type="tip"] li strong {
+  color: #dcfce7;
+}
+
+/* ── Study template: analogy, summary, flow, two-col, task, diagram ── */
+.ProseMirror .analogy {
+  background: rgba(94, 234, 212, 0.08);
+  border: 1px solid rgba(94, 234, 212, 0.25);
   border-radius: 10px;
   padding: 1rem 1.25rem;
   margin: 1.5rem 0;
   font-size: 14px;
 }
-.callout[data-callout-type="danger"] {
-  background: rgba(248, 113, 113, 0.1);
-  border: 1px solid rgba(248, 113, 113, 0.3);
+.ProseMirror .analogy-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5eead4;
+  margin-bottom: 6px;
+}
+.ProseMirror .analogy p {
+  color: #b2f5ea;
+  margin: 0 0 4px;
+  font-size: 14px;
+}
+
+.ProseMirror .summary-box {
+  background: linear-gradient(135deg, #0c1929 0%, #111d2e 100%);
+  border: 1px solid #1e3a5f;
+  color: #e8ecf4;
+  border-radius: 10px;
+  padding: 1.5rem 2rem;
+  margin: 2.5rem 0 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+.ProseMirror .summary-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #60a5fa;
+  margin-bottom: 10px;
+}
+.ProseMirror .summary-box ul {
+  margin-bottom: 0;
+  padding-left: 1.25rem;
+}
+.ProseMirror .summary-box li {
+  color: #cbd5e1;
+  font-size: 14px;
+}
+.ProseMirror .summary-box li strong {
+  color: #f1f5f9;
+}
+.ProseMirror .summary-box li::marker {
+  color: #60a5fa;
+}
+
+.ProseMirror .flow {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 1.5rem 0;
+}
+.ProseMirror .flow-step {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #161b26;
+  border: 1px solid #252d3d;
   border-radius: 10px;
   padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
+}
+.ProseMirror .flow-num {
+  width: 28px;
+  height: 28px;
+  background: #60a5fa;
+  color: #0b0e14;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.ProseMirror .flow-content {
+  flex: 1;
+}
+.ProseMirror .flow-content strong {
+  display: block;
+  margin-bottom: 4px;
   font-size: 14px;
+  color: #e8ecf4;
+}
+.ProseMirror .flow-content p {
+  font-size: 13.5px;
+  margin: 0;
+  color: #b0b8c9;
+}
+
+.ProseMirror .two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 1.25rem 0;
+}
+@media (max-width: 900px) {
+  .ProseMirror .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+.ProseMirror .mini-card {
+  background: #161b26;
+  border: 1px solid #252d3d;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+}
+.ProseMirror .mini-card h5 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #60a5fa;
+  margin-bottom: 6px;
+}
+.ProseMirror .mini-card p,
+.ProseMirror .mini-card li {
+  font-size: 13px;
+  color: #b0b8c9;
+  margin-bottom: 4px;
+}
+
+.ProseMirror .task-box {
+  background: rgba(167, 139, 250, 0.06);
+  border: 1px solid rgba(167, 139, 250, 0.25);
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.ProseMirror .task-header {
+  background: rgba(167, 139, 250, 0.1);
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ProseMirror .task-badge {
+  background: #a78bfa;
+  color: white;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+.ProseMirror .task-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #a78bfa;
+}
+.ProseMirror .task-diff {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.ProseMirror .diff-1 {
+  background: rgba(74, 222, 128, 0.08);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.2);
+}
+.ProseMirror .diff-2 {
+  background: rgba(251, 191, 36, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+.ProseMirror .diff-3 {
+  background: rgba(248, 113, 113, 0.08);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.2);
+}
+.ProseMirror .task-time {
+  margin-left: auto;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 11px;
+  color: #fbbf24;
+  font-weight: 600;
+}
+.ProseMirror .task-body {
+  padding: 14px 16px;
+}
+.ProseMirror .task-body > p {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #b0b8c9;
+}
+.ProseMirror .task-hint {
+  font-size: 12.5px;
+  color: #7a8499;
+  font-style: italic;
+  margin-top: 6px;
+}
+
+.ProseMirror .diagram-wrap {
+  background: #111827;
+  border: 1px solid #1e2d42;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+.ProseMirror .diagram-title {
+  padding: 8px 16px;
+  background: #0d1320;
+  border-bottom: 1px solid #1e2d42;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #60a5fa;
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.ProseMirror .diagram-wrap svg {
+  display: block;
+  width: 100%;
+  height: auto;
 }
 
 /* ── Editor: TOC block (read-only renderer fallback) ── */

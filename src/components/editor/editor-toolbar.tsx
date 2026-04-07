@@ -42,6 +42,14 @@ export function getActiveBlockLabel(editor: Editor): string {
   if (editor.isActive('blockquote')) return 'Blockquote'
   if (editor.isActive('codeBlock')) return 'Code Block'
   if (editor.isActive('callout')) return 'Callout'
+  if (editor.isActive('analogy')) return 'Analogy'
+  if (editor.isActive('summaryBox')) return 'Summary'
+  if (editor.isActive('taskBox')) return 'Task'
+  if (editor.isActive('flowList')) return 'Flow'
+  if (editor.isActive('flowItem')) return 'Flow step'
+  if (editor.isActive('twoCol')) return 'Two columns'
+  if (editor.isActive('miniCard')) return 'Card'
+  if (editor.isActive('diagram')) return 'Diagram'
   return 'Paragraph'
 }
 
@@ -91,6 +99,7 @@ const BLOCK_OPTIONS = [
   { label: 'Heading 2', action: (e: Editor) => e.chain().focus().setHeading({ level: 2 }).run() },
   { label: 'Heading 3', action: (e: Editor) => e.chain().focus().setHeading({ level: 3 }).run() },
   { label: 'Heading 4', action: (e: Editor) => e.chain().focus().setHeading({ level: 4 }).run() },
+  { label: 'Heading 5', action: (e: Editor) => e.chain().focus().setHeading({ level: 5 }).run() },
   { label: 'Bullet List', action: (e: Editor) => e.chain().focus().toggleBulletList().run() },
   { label: 'Numbered List', action: (e: Editor) => e.chain().focus().toggleOrderedList().run() },
   { label: 'Task List', action: (e: Editor) => e.chain().focus().toggleTaskList().run() },

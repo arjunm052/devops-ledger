@@ -81,7 +81,7 @@ function codeBlockNode($, el) {
 }
 
 function calloutNode($, el, type) {
-  const SKIP = ['callout-label', 'summary-title', 'analogy-label']
+  const SKIP = ['callout-label']
   const blockContent = []
 
   $(el).children().each((_, child) => {
@@ -99,21 +99,91 @@ function calloutNode($, el, type) {
   return { type: 'callout', attrs: { type }, content: blockContent }
 }
 
+function analogyNode($, el) {
+  const label = $(el).find('.analogy-label').first().text().trim() || 'Analogy'
+  const blockContent = []
+  $(el).children().each((_, child) => {
+    const c = ($(child).attr('class') ?? '').split(' ')
+    if (c.includes('analogy-label')) return
+    const node = convertBlock($, child)
+    if (node) blockContent.push(node)
+  })
+  if (blockContent.length === 0) blockContent.push(paragraphFromText(''))
+  return { type: 'analogy', attrs: { label }, content: blockContent }
+}
+
+function summaryBoxNode($, el) {
+  const title = $(el).find('.summary-title').first().text().trim() || '// Section summary'
+  const blockContent = []
+  $(el).children().each((_, child) => {
+    const c = ($(child).attr('class') ?? '').split(' ')
+    if (c.includes('summary-title')) return
+    const node = convertBlock($, child)
+    if (node) blockContent.push(node)
+  })
+  if (blockContent.length === 0) blockContent.push(paragraphFromText(''))
+  return { type: 'summaryBox', attrs: { title }, content: blockContent }
+}
+
+function taskBoxNode($, el) {
+  const badge = $(el).find('.task-badge').first().text().trim() || 'Practice'
+  const taskTitle = $(el).find('.task-title').first().text().trim() || ''
+  const diffEl = $(el).find('.task-diff').first()
+  let difficulty = '1'
+  if (diffEl.hasClass('diff-2')) difficulty = '2'
+  else if (diffEl.hasClass('diff-3')) difficulty = '3'
+  const timeEstimate = $(el).find('.task-time').first().text().trim() || ''
+  const blockContent = []
+  $(el).find('.task-body').children().each((_, child) => {
+    const node = convertBlock($, child)
+    if (node) blockContent.push(node)
+  })
+  if (blockContent.length === 0) blockContent.push(paragraphFromText(''))
+  return {
+    type: 'taskBox',
+    attrs: { badge, taskTitle, difficulty, timeEstimate },
+    content: blockContent,
+  }
+}
+
 function flowListNode($, el) {
   const items = []
   $(el).children('.flow-step').each((_, step) => {
-    const title = $(step).find('.flow-content strong').first().text().trim()
-    const desc = $(step).find('.flow-content p').first().text().trim()
-    const inlineContent = []
-    if (title) inlineContent.push({ type: 'text', text: title, marks: [{ type: 'bold' }] })
-    if (title && desc) inlineContent.push({ type: 'text', text: ` — ${desc}` })
-    else if (desc) inlineContent.push({ type: 'text', text: desc })
-    items.push({
-      type: 'listItem',
-      content: [{ type: 'paragraph', content: inlineContent }],
+    const numText = $(step).find('.flow-num').first().text().trim()
+    const stepNum = parseInt(numText, 10)
+    const stepN = Number.isFinite(stepNum) ? stepNum : items.length + 1
+    const body = []
+    $(step).find('.flow-content').children().each((_, child) => {
+      const node = convertBlock($, child)
+      if (node) body.push(node)
     })
+    if (body.length === 0) body.push(paragraphFromText(''))
+    items.push({ type: 'flowItem', attrs: { step: stepN }, content: body })
   })
-  return { type: 'orderedList', content: items }
+  if (items.length === 0) return null
+  return { type: 'flowList', content: items }
+}
+
+function twoColNode($, el) {
+  const cards = []
+  $(el).children('.mini-card').each((_, card) => {
+    const blockContent = []
+    $(card).children().each((_, child) => {
+      const node = convertBlock($, child)
+      if (node) blockContent.push(node)
+    })
+    if (blockContent.length === 0) blockContent.push(paragraphFromText(''))
+    cards.push({ type: 'miniCard', content: blockContent })
+  })
+  if (cards.length === 0) return null
+  return { type: 'twoCol', content: cards }
+}
+
+function diagramNode($, el) {
+  const title = $(el).find('.diagram-title').first().text().trim() || ''
+  const svg = $(el).find('svg').first()
+  const svgHtml = svg.length ? $.html(svg) : ''
+  return { type: 'diagram', attrs: { title, svgHtml } }
 }
 
 function tableNode($, elOrWrap) {
@@ -149,26 +219,6 @@ function tableNode($, elOrWrap) {
   return { type: 'table', content: rows }
 }
 
-function rawHtmlNode($, el) {
-  const svg = $(el).find('svg')
-  if (!svg.length) return null
-  return { type: 'rawHtml', attrs: { html: $.html(svg) } }
-}
-
-function twoColNodes($, el) {
-  const nodes = []
-  $(el).find('.mini-card').each((_, card) => {
-    const title = $(card).find('h5').text().trim()
-    if (title) nodes.push(headingNode(title, 4))
-    $(card).children().each((_, child) => {
-      if (child.tagName?.toLowerCase() === 'h5') return
-      const node = convertBlock($, child)
-      if (node) nodes.push(node)
-    })
-  })
-  return nodes
-}
-
 // ─── Block dispatcher ─────────────────────────────────────────────────────────
 
 function convertBlock($, el) {
@@ -177,12 +227,12 @@ function convertBlock($, el) {
   const tag = el.tagName.toLowerCase()
   const cls = ($(el).attr('class') ?? '').split(' ')
 
-  if (cls.includes('task-box')) return null
   if (cls.includes('section-num')) return null
 
   if (tag === 'h2') return headingNode($(el).text().trim(), 2)
   if (tag === 'h3') return headingNode($(el).text().trim(), 3)
-  if (tag === 'h4' || tag === 'h5') return headingNode($(el).text().trim(), 4)
+  if (tag === 'h4') return headingNode($(el).text().trim(), 4)
+  if (tag === 'h5') return headingNode($(el).text().trim(), 5)
 
   if (tag === 'p') return paragraphNode($, el)
 
@@ -199,15 +249,17 @@ function convertBlock($, el) {
     return calloutNode($, el, 'info')
   }
 
-  if (cls.includes('analogy')) return calloutNode($, el, 'tip')
-  if (cls.includes('summary-box')) return calloutNode($, el, 'info')
+  if (cls.includes('analogy')) return analogyNode($, el)
+  if (cls.includes('summary-box')) return summaryBoxNode($, el)
+  if (cls.includes('task-box')) return taskBoxNode($, el)
 
   if (cls.includes('flow')) return flowListNode($, el)
+  if (cls.includes('two-col')) return twoColNode($, el)
 
   if (tag === 'table') return tableNode($, el)
   if (cls.includes('table-wrap')) return tableNode($, el)
 
-  if (cls.includes('diagram-wrap')) return rawHtmlNode($, el)
+  if (cls.includes('diagram-wrap')) return diagramNode($, el)
 
   if (cls.includes('section-header')) {
     const h2 = $(el).find('h2')
@@ -222,7 +274,8 @@ function convertSection($, section) {
   $(section).children().each((_, el) => {
     const cls = ($(el).attr('class') ?? '').split(' ')
     if (cls.includes('two-col')) {
-      nodes.push(...twoColNodes($, el))
+      const n = twoColNode($, el)
+      if (n) nodes.push(n)
       return
     }
     const node = convertBlock($, el)
@@ -259,7 +312,8 @@ export function convertHtmlToTiptap(htmlString) {
     if (tag === 'section') {
       contentNodes.push(...convertSection($, el))
     } else if (cls.includes('two-col')) {
-      contentNodes.push(...twoColNodes($, el))
+      const n = twoColNode($, el)
+      if (n) contentNodes.push(n)
     } else {
       const node = convertBlock($, el)
       if (node) contentNodes.push(node)

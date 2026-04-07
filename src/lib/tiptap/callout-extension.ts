@@ -35,10 +35,22 @@ export const Callout = Node.create({
     return [{ tag: 'div[data-callout-type]' }]
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ node, HTMLAttributes }) {
+    const type = (node.attrs.type || 'info') as CalloutType
+    const variant =
+      type === 'info'
+        ? 'callout-info'
+        : type === 'warning'
+          ? 'callout-warn'
+          : type === 'tip'
+            ? 'callout-success'
+            : 'callout-danger'
     return [
       'div',
-      mergeAttributes(HTMLAttributes, { class: 'callout' }),
+      mergeAttributes(HTMLAttributes, {
+        class: `callout ${variant}`,
+        'data-callout-type': type,
+      }),
       0,
     ]
   },

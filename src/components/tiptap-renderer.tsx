@@ -19,9 +19,9 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
   return (
     <div
       className={[
-        'prose prose-lg prose-invert max-w-none',
-        'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[var(--color-heading)]',
-        'prose-p:font-[family-name:var(--font-plus-jakarta-sans)] prose-p:text-[var(--color-body)] prose-p:leading-[1.7]',
+        'prose prose-invert max-w-none',
+        'prose-headings:font-[family-name:var(--font-plus-jakarta-sans)] prose-headings:text-[var(--color-heading)]',
+        'prose-p:font-[family-name:var(--font-plus-jakarta-sans)] prose-p:text-[#b0b8c9] prose-p:text-[15px] prose-p:leading-[1.7]',
         'prose-li:font-[family-name:var(--font-plus-jakarta-sans)] prose-li:text-[var(--color-body)]',
         '[&_ul]:font-[family-name:var(--font-plus-jakarta-sans)] [&_ol]:font-[family-name:var(--font-plus-jakarta-sans)]',
         'prose-strong:text-[var(--color-heading)]',
@@ -29,8 +29,8 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
         'prose-code:text-[#93c5fd] prose-code:bg-[#1e2433] prose-code:border prose-code:border-[#252d3d] prose-code:rounded prose-code:px-[5px] prose-code:py-[1px] prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-[12.5px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none',
         'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)]',
         'prose-pre:bg-transparent prose-pre:p-0',
-        '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm [&_pre_code]:rounded-none',
-        '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#e2e8f0] [&_.code-block-wrapper_code]:text-sm [&_.code-block-wrapper_code]:rounded-none',
+        '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-[13px] [&_pre_code]:leading-[1.85] [&_pre_code]:rounded-none',
+        '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#e2e8f0] [&_.code-block-wrapper_code]:text-[13px] [&_.code-block-wrapper_code]:leading-[1.85] [&_.code-block-wrapper_code]:rounded-none',
         '[&_.code-block-wrapper_code]:before:content-none [&_.code-block-wrapper_code]:after:content-none',
         // Task lists
         '[&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-0',

@@ -169,7 +169,7 @@ export default async function ArticlePage({ params }: PageProps) {
       )}
 
       {/* Article content */}
-      <div className="mt-10 font-[family-name:var(--font-newsreader)]">
+      <div className="mt-10 font-[family-name:var(--font-plus-jakarta-sans)]">
         <TiptapRenderer content={post.content} />
       </div>
 

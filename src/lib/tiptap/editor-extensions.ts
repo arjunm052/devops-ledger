@@ -26,6 +26,12 @@ import { Callout } from './callout-extension'
 import { TableOfContents } from './toc-extension'
 import { RawHtml } from './raw-html-extension'
 import { ResizableImage } from './resizable-image-extension'
+import { Analogy } from './analogy-extension'
+import { SummaryBox } from './summary-box-extension'
+import { TaskBox } from './task-box-extension'
+import { FlowItem, FlowList } from './flow-list-extension'
+import { MiniCard, TwoCol } from './two-col-extension'
+import { Diagram } from './diagram-extension'
 import { slugify } from './slugify'
 
 const lowlight = createLowlight(common)
@@ -52,7 +58,7 @@ export function createEditorExtensions(
     }),
     Heading.extend({
       parseHTML() {
-        return [1, 2, 3, 4, 5, 6].map((level) => ({
+        return [1, 2, 3, 4, 5].map((level) => ({
           tag: `h${level}`,
           attrs: { level },
         }))
@@ -62,7 +68,7 @@ export function createEditorExtensions(
         const id = slugify(node.textContent) || `h${level}`
         return [`h${level}`, { ...HTMLAttributes, id }, 0]
       },
-    }).configure({ levels: [1, 2, 3, 4] }),
+    }).configure({ levels: [1, 2, 3, 4, 5] }),
     CodeBlockCustom.configure({
       lowlight,
       defaultLanguage: null,
@@ -91,6 +97,14 @@ export function createEditorExtensions(
     Underline,
     Highlight.configure({ multicolor: false }),
     Callout,
+    MiniCard,
+    TwoCol,
+    FlowItem,
+    FlowList,
+    Analogy,
+    SummaryBox,
+    TaskBox,
+    Diagram,
     TableOfContents,
     RawHtml,
   ]

@@ -32,6 +32,12 @@ import {
   Minus,
   Video,
   ListTree,
+  Sparkles,
+  ClipboardList,
+  FlaskConical,
+  Workflow,
+  Columns2,
+  Shapes,
 } from 'lucide-react'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -230,6 +236,48 @@ function buildItems(): SlashCommandItem[] {
           .deleteRange(range)
           .insertTableOfContents()
           .run(),
+    },
+    {
+      title: 'Analogy box',
+      description: 'Teal analogy callout (study template)',
+      icon: <Sparkles size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setAnalogy().run(),
+    },
+    {
+      title: 'Section summary',
+      description: 'Gradient summary box with bullets',
+      icon: <ClipboardList size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setSummaryBox().run(),
+    },
+    {
+      title: 'Practice task',
+      description: 'Purple task / lab box',
+      icon: <FlaskConical size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setTaskBox().run(),
+    },
+    {
+      title: 'Flow steps',
+      description: 'Numbered step cards',
+      icon: <Workflow size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setFlowList().run(),
+    },
+    {
+      title: 'Two-column cards',
+      description: 'Side-by-side mini cards',
+      icon: <Columns2 size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setTwoCol().run(),
+    },
+    {
+      title: 'Diagram (SVG)',
+      description: 'Titled SVG diagram block',
+      icon: <Shapes size={16} />,
+      command: ({ editor, range }) =>
+        editor.chain().focus().deleteRange(range).setDiagram().run(),
     },
   ]
 }

@@ -187,23 +187,23 @@ describe('callout conversion', () => {
     expect(hasLabel).toBe(false)
   })
 
-  it('converts .analogy to callout tip', () => {
+  it('converts .analogy to analogy node with label attr', () => {
     const html = `<html><body><main class="main"><div class="analogy"><div class="analogy-label">Analogy</div><p>Like a ledger</p></div></main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    expect(content.content[0]).toMatchObject({ type: 'callout', attrs: { type: 'tip' } })
+    expect(content.content[0]).toMatchObject({ type: 'analogy', attrs: { label: 'Analogy' } })
   })
 
-  it('converts .summary-box to callout info', () => {
+  it('converts .summary-box to summaryBox node', () => {
     const html = `<html><body><main class="main"><div class="summary-box"><div class="summary-title">// Summary</div><ul><li>Key point</li></ul></div></main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    expect(content.content[0]).toMatchObject({ type: 'callout', attrs: { type: 'info' } })
+    expect(content.content[0]).toMatchObject({ type: 'summaryBox', attrs: { title: '// Summary' } })
   })
 })
 
 // ─── Flow steps ───────────────────────────────────────────────────────────────
 
 describe('flow conversion', () => {
-  it('converts .flow to orderedList with one item per .flow-step', () => {
+  it('converts .flow to flowList with flowItem per .flow-step', () => {
     const html = `<html><body><main class="main">
       <div class="flow">
         <div class="flow-step"><div class="flow-num">1</div><div class="flow-content"><strong>Init</strong><p>Run terraform init</p></div></div>
@@ -211,8 +211,10 @@ describe('flow conversion', () => {
       </div>
     </main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    expect(content.content[0].type).toBe('orderedList')
+    expect(content.content[0].type).toBe('flowList')
     expect(content.content[0].content).toHaveLength(2)
+    expect(content.content[0].content[0]).toMatchObject({ type: 'flowItem', attrs: { step: 1 } })
+    expect(content.content[0].content[1]).toMatchObject({ type: 'flowItem', attrs: { step: 2 } })
   })
 })
 
@@ -238,7 +240,7 @@ describe('table conversion', () => {
 // ─── Two-col mini cards ───────────────────────────────────────────────────────
 
 describe('two-col mini cards', () => {
-  it('converts each .mini-card to a heading h4 + paragraph', () => {
+  it('converts .two-col to twoCol with miniCard children', () => {
     const html = `<html><body><main class="main">
       <div class="two-col">
         <div class="mini-card"><h5>Card A</h5><p>Content A</p></div>
@@ -246,16 +248,21 @@ describe('two-col mini cards', () => {
       </div>
     </main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    const headings = content.content.filter(n => n.type === 'heading')
-    expect(headings).toHaveLength(2)
-    expect(headings[0]).toMatchObject({ attrs: { level: 4 }, content: [{ type: 'text', text: 'Card A' }] })
+    expect(content.content[0].type).toBe('twoCol')
+    expect(content.content[0].content).toHaveLength(2)
+    expect(content.content[0].content[0].type).toBe('miniCard')
+    expect(content.content[0].content[0].content[0]).toMatchObject({
+      type: 'heading',
+      attrs: { level: 5 },
+      content: [{ type: 'text', text: 'Card A' }],
+    })
   })
 })
 
 // ─── SVG diagram ─────────────────────────────────────────────────────────────
 
 describe('SVG diagram', () => {
-  it('converts .diagram-wrap to rawHtml node containing the svg', () => {
+  it('converts .diagram-wrap to diagram node with svgHtml', () => {
     const html = `<html><body><main class="main">
       <div class="diagram-wrap">
         <div class="diagram-title">Flow</div>
@@ -263,21 +270,33 @@ describe('SVG diagram', () => {
       </div>
     </main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    expect(content.content[0]).toMatchObject({ type: 'rawHtml' })
-    expect(content.content[0].attrs.html).toContain('<svg')
+    expect(content.content[0]).toMatchObject({ type: 'diagram', attrs: { title: 'Flow' } })
+    expect(content.content[0].attrs.svgHtml).toContain('<svg')
   })
 })
 
 // ─── Skipped elements ─────────────────────────────────────────────────────────
 
-describe('skipped elements', () => {
-  it('skips .task-box entirely', () => {
+describe('task box', () => {
+  it('converts .task-box to taskBox with body content', () => {
     const html = `<html><body><main class="main">
       <p>Keep this</p>
-      <div class="task-box"><p>Skip this</p></div>
+      <div class="task-box">
+        <div class="task-header">
+          <span class="task-badge">Lab</span>
+          <span class="task-title">Try it</span>
+          <span class="task-diff diff-2">Medium</span>
+          <span class="task-time">20 min</span>
+        </div>
+        <div class="task-body"><p>Do the thing</p></div>
+      </div>
     </main></body></html>`
     const { content } = convertHtmlToTiptap(html)
-    expect(content.content).toHaveLength(1)
-    expect(content.content[0].type).toBe('paragraph')
+    expect(content.content).toHaveLength(2)
+    expect(content.content[1]).toMatchObject({
+      type: 'taskBox',
+      attrs: { badge: 'Lab', taskTitle: 'Try it', difficulty: '2', timeEstimate: '20 min' },
+    })
+    expect(content.content[1].content[0].type).toBe('paragraph')
   })
 })
