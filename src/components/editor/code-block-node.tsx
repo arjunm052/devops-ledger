@@ -66,22 +66,30 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
 
   const lineCount = node.textContent.split('\n').length
 
+  const language = node.attrs.language as string | null
+  const langDisplay = language ? LANGUAGE_NAMES[language] ?? language.toUpperCase() : null
+
   return (
     <NodeViewWrapper className="code-block-wrapper my-4">
-      <div className="overflow-hidden rounded-lg border border-[#3e4451] bg-[#282c34]">
-        {/* Header: filename only while editing; read-only shows copy only (no language/filename chrome) */}
-        <div
-          className={`flex items-center border-b border-[#3e4451] bg-[#21252b] px-3 py-1.5 ${isEditable ? 'justify-between' : 'justify-end'}`}
-        >
-          {isEditable ? (
-            <div className="flex items-center gap-2">
-              {editingFilename ? (
+      <div className="overflow-hidden rounded-lg border border-[#2a3044] bg-[#0d1117]">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-[#2a3044] bg-[#0d1117] px-3 py-1.5">
+          <div className="flex items-center gap-2" contentEditable={false}>
+            {/* Language badge — always visible when language is known */}
+            {langDisplay && (
+              <span className="font-[family-name:var(--font-jetbrains-mono)] text-[10px] font-medium uppercase tracking-[0.06em] rounded-[3px] bg-[rgba(96,165,250,0.12)] px-[7px] py-[2px] text-[#60a5fa]">
+                {langDisplay}
+              </span>
+            )}
+            {/* Filename (editor only) */}
+            {isEditable && (
+              editingFilename ? (
                 <input
                   ref={filenameRef}
                   type="text"
                   defaultValue={filename}
                   placeholder="filename.ext"
-                  className="bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#abb2bf] outline-none placeholder:text-[#636d83]"
+                  className="bg-transparent font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#e2e8f0] outline-none placeholder:text-[#636d83]"
                   autoFocus
                   onBlur={(e) => {
                     updateAttributes({ filename: e.target.value || null })
@@ -99,29 +107,29 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
                 <button
                   type="button"
                   onClick={() => setEditingFilename(true)}
-                  className="font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#abb2bf] hover:text-[#61afef]"
+                  className="font-[family-name:var(--font-jetbrains-mono)] text-xs text-[#4b5a78] hover:text-[#60a5fa]"
                   contentEditable={false}
                 >
                   {filename || 'Add filename\u2026'}
                 </button>
-              )}
-            </div>
-          ) : null}
+              )
+            )}
+          </div>
           <div className="flex items-center gap-3" contentEditable={false}>
             <button
               type="button"
               onClick={copyCode}
-              className="flex items-center gap-1 text-[11px] text-[#61afef] transition-colors hover:text-[#528bff]"
+              className="rounded-[3px] border border-[#2a3044] px-2 py-[2px] font-[family-name:var(--font-jetbrains-mono)] text-[10px] text-[#4b5a78] transition-colors hover:border-[#60a5fa] hover:text-[#60a5fa]"
             >
-              {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
               {copied ? 'Copied!' : 'Copy'}
+              {copied ? <Check className="ml-1 inline size-3" /> : <Copy className="ml-1 inline size-3" />}
             </button>
           </div>
         </div>
         {/* Code area with line numbers */}
         <div className="flex overflow-x-auto p-4">
           <div
-            className="select-none pr-4 text-right font-[family-name:var(--font-jetbrains-mono)] text-xs leading-[1.7] text-[#636d83]"
+            className="select-none pr-4 text-right font-[family-name:var(--font-jetbrains-mono)] text-xs leading-[1.85] text-[#636d83]"
             contentEditable={false}
             aria-hidden
           >
@@ -131,7 +139,7 @@ export function CodeBlockNodeView({ node, updateAttributes, editor }: NodeViewPr
           </div>
           <NodeViewContent<'code'>
             as="code"
-            className="flex-1 font-[family-name:var(--font-jetbrains-mono)] text-sm leading-[1.7] text-[#abb2bf] outline-none"
+            className="flex-1 font-[family-name:var(--font-jetbrains-mono)] text-sm leading-[1.85] text-[#e2e8f0] outline-none"
           />
         </div>
       </div>

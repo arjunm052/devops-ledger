@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Space_Grotesk, Newsreader, Inter, JetBrains_Mono } from 'next/font/google'
+import { Space_Grotesk, Newsreader, Inter, JetBrains_Mono, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import { Nav } from '@/components/nav'
 import { Footer } from '@/components/footer'
@@ -27,6 +27,11 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 })
 
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-plus-jakarta-sans',
+})
+
 export const metadata: Metadata = {
   title: { default: 'The DevOps Ledger', template: '%s | The DevOps Ledger' },
   description: 'Engineering insights, architecture deep-dives, and DevOps patterns from the trenches.',
@@ -44,7 +49,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={`${spaceGrotesk.variable} ${newsreader.variable} ${inter.variable} ${jetbrainsMono.variable} ${plusJakartaSans.variable}`}>
       <body className="flex min-h-svh flex-col bg-background text-foreground antialiased">
         <ThemeProvider>
           <Nav />

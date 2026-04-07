@@ -505,23 +505,24 @@ export default function PostEditor({
                 // Headings
                 'prose-headings:font-[family-name:var(--font-space-grotesk)] prose-headings:text-[var(--color-heading)]',
                 // Body text
-                'prose-p:font-[family-name:var(--font-newsreader)] prose-p:text-[var(--color-body)] prose-p:leading-[1.8]',
+                'prose-p:font-[family-name:var(--font-plus-jakarta-sans)] prose-p:text-[var(--color-body)] prose-p:leading-[1.7]',
                 // Lists
-                'prose-li:font-[family-name:var(--font-newsreader)] prose-li:text-[var(--color-body)]',
+                'prose-li:font-[family-name:var(--font-plus-jakarta-sans)] prose-li:text-[var(--color-body)]',
+                '[&_ul]:font-[family-name:var(--font-plus-jakarta-sans)] [&_ol]:font-[family-name:var(--font-plus-jakarta-sans)]',
                 'prose-ul:text-[var(--color-body)] prose-ol:text-[var(--color-body)]',
                 // Bold/strong
                 'prose-strong:text-[var(--color-heading)]',
                 // Links
-                'prose-a:text-[var(--color-link)] hover:prose-a:text-[var(--color-link-hover)]',
+                'prose-a:text-[#60a5fa] hover:prose-a:text-[#93c5fd]',
                 // Inline code (only code NOT inside pre)
-                'prose-code:text-[#e8b87a] prose-code:bg-[rgba(232,184,122,0.1)] prose-code:border prose-code:border-[rgba(232,184,122,0.15)] prose-code:rounded-md prose-code:px-1.5 prose-code:py-0.5 prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-[13px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none',
+                'prose-code:text-[#93c5fd] prose-code:bg-[#1e2433] prose-code:border prose-code:border-[#252d3d] prose-code:rounded prose-code:px-[5px] prose-code:py-[1px] prose-code:font-[family-name:var(--font-jetbrains-mono)] prose-code:text-[12.5px] prose-code:font-normal prose-code:before:content-none prose-code:after:content-none',
                 // Code blocks — reset code-inside-pre to not inherit inline code styling
                 'prose-pre:bg-transparent prose-pre:p-0',
                 '[&_pre_code]:bg-transparent [&_pre_code]:border-0 [&_pre_code]:p-0 [&_pre_code]:text-inherit [&_pre_code]:text-sm [&_pre_code]:rounded-none',
-                '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#abb2bf] [&_.code-block-wrapper_code]:text-sm [&_.code-block-wrapper_code]:rounded-none',
+                '[&_.code-block-wrapper_code]:bg-transparent [&_.code-block-wrapper_code]:border-0 [&_.code-block-wrapper_code]:p-0 [&_.code-block-wrapper_code]:text-[#e2e8f0] [&_.code-block-wrapper_code]:text-sm [&_.code-block-wrapper_code]:rounded-none',
                 '[&_.code-block-wrapper_code]:before:content-none [&_.code-block-wrapper_code]:after:content-none',
                 // Blockquote
-                'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)] prose-blockquote:font-[family-name:var(--font-newsreader)]',
+                'prose-blockquote:border-l-[var(--color-link)] prose-blockquote:text-[var(--color-muted-text)] prose-blockquote:font-[family-name:var(--font-plus-jakarta-sans)]',
                 // Task lists
                 '[&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-0',
                 '[&_ul[data-type=taskList]_li]:flex [&_ul[data-type=taskList]_li]:gap-2 [&_ul[data-type=taskList]_li]:items-start',
