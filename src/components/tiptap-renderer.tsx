@@ -37,6 +37,10 @@ export default function TiptapRenderer({ content }: TiptapRendererProps) {
         '[&_ul[data-type=taskList]_li_label]:mt-1 [&_ul[data-type=taskList]_li_input]:pointer-events-none',
         // Highlight
         '[&_mark]:bg-[rgba(255,184,108,0.3)] [&_mark]:rounded-sm [&_mark]:px-0.5',
+        // Images + captions
+        '[&_figure]:my-6 [&_figure]:text-center',
+        '[&_figure_img]:mx-auto [&_figure_img]:h-auto [&_figure_img]:rounded-md',
+        '[&_figure_figcaption]:mt-2 [&_figure_figcaption]:font-[family-name:var(--font-inter)] [&_figure_figcaption]:text-sm [&_figure_figcaption]:italic [&_figure_figcaption]:text-[var(--color-muted-text)]',
       ].join(' ')}
     >
       <EditorContent editor={editor} />

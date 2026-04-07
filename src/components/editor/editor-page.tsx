@@ -18,14 +18,13 @@ import { EditorBubbleMenu } from '@/components/editor/editor-bubble-menu'
 import { WordCountBar } from '@/components/editor/word-count-bar'
 import { DragHandle } from '@/components/editor/drag-handle'
 import { createPost, updatePost } from '@/actions/posts'
-import { uploadPostImage } from '@/actions/post-images'
 import { CoverImageField } from '@/components/article-editor/cover-image-field'
 import {
   ArticlePreviewPane,
   type AuthorPreview,
 } from '@/components/article-editor/article-preview-pane'
 import { StorySettingsDialog } from '@/components/article-editor/story-settings-dialog'
-import { getImageFileFromDataTransfer } from '@/components/article-editor/image-clipboard'
+import { performOptimisticInsert } from '@/lib/tiptap/resizable-image-extension'
 import { Button } from '@/components/ui/button'
 import { Settings2, Eye, PenLine } from 'lucide-react'
 
@@ -147,34 +146,14 @@ export default function PostEditor({
       transformPastedHTML(html) {
         return cleanLlmHtml(html)
       },
-      // Image paste — intercept clipboard images for Supabase upload
-      handlePaste(_view, event) {
-        const dt = event.clipboardData
-        const imageFile = getImageFileFromDataTransfer(dt)
-        if (imageFile) {
-          event.preventDefault()
-          insertImageFromFileRef.current(imageFile)
-          return true
-        }
-        // Everything else (HTML + Markdown) handled by tiptap-markdown extension
-        return false
-      },
     },
   })
 
   const insertImageFromFile = useCallback(
-    async (file: File) => {
+    (file: File) => {
       const ed = editor
-      if (!ed) return
-      const fd = new FormData()
-      fd.set('file', file)
-      const result = await uploadPostImage(fd)
-      if ('error' in result) {
-        toast.error(result.error)
-        return
-      }
-      ed.chain().focus().setImage({ src: result.url }).run()
-      toast.success('Image inserted')
+      if (!ed?.view) return
+      void performOptimisticInsert(ed.view, file)
     },
     [editor]
   )

@@ -1,7 +1,6 @@
 import type { Extensions } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import Heading from '@tiptap/extension-heading'
-import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import { Table } from '@tiptap/extension-table'
 import { TableRow } from '@tiptap/extension-table-row'
@@ -25,6 +24,7 @@ import powershell from 'highlight.js/lib/languages/powershell'
 import { CodeBlockCustom } from './code-block-custom'
 import { Callout } from './callout-extension'
 import { TableOfContents } from './toc-extension'
+import { ResizableImage } from './resizable-image-extension'
 import { slugify } from './slugify'
 
 const lowlight = createLowlight(common)
@@ -74,9 +74,7 @@ export function createEditorExtensions(
         class: 'hljs',
       },
     }),
-    Image.configure({
-      allowBase64: false,
-    }),
+    ResizableImage,
     Link.configure({
       openOnClick: options.linkOpenOnClick,
     }),
