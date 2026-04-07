@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { randomUUID } from 'node:crypto'
 import { readFileSync, existsSync } from 'node:fs'
 import { resolve, basename, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -32,7 +33,8 @@ function extractText(node) {
 
 function estimateReadingTime(content) {
   const words = extractText(content).trim().split(/\s+/).filter(Boolean).length
-  return Math.max(1, Math.ceil(words / 200))
+  const mins = Math.max(1, Math.ceil(words / 200))
+  return Number.isFinite(mins) ? mins : 1
 }
 
 async function main() {
@@ -111,24 +113,28 @@ async function main() {
 
     // ─── 6. Insert post ────────────────────────────────────────────────────────
     const slug = `${slugify(title) || 'untitled'}-${Date.now()}`
+    // Client-generated id so we do not depend on SELECT after INSERT. With RLS, some
+    // projects allow INSERT but not SELECT on the new row; .select().single() then
+    // returns no row and the script falsely reported failure.
+    const postId = randomUUID()
 
-    const { data: post, error: insertError } = await supabase
-      .from('posts')
-      .insert({
-        title,
-        content,
-        excerpt: excerpt || null,
-        slug,
-        status: 'draft',
-        author_id: user.id,
-        reading_time_mins: estimateReadingTime(content),
-        published_at: null,
-      })
-      .select('id, slug')
-      .single()
+    const { error: insertError } = await supabase.from('posts').insert({
+      id: postId,
+      title,
+      content,
+      excerpt: excerpt || null,
+      slug,
+      status: 'draft',
+      author_id: user.id,
+      reading_time_mins: estimateReadingTime(content),
+      published_at: null,
+    })
 
-    if (insertError || !post) {
-      console.error(`Failed to create post: ${insertError?.message ?? 'unknown error'}`)
+    if (insertError) {
+      console.error(`Failed to create post: ${insertError.message}`)
+      if (insertError.details) console.error(`  details: ${insertError.details}`)
+      if (insertError.hint) console.error(`  hint: ${insertError.hint}`)
+      if (insertError.code) console.error(`  code: ${insertError.code}`)
       process.exit(1)
     }
 
@@ -136,15 +142,16 @@ async function main() {
     if (tagIds.length > 0) {
       const { error: tagError } = await supabase
         .from('post_tags')
-        .insert(tagIds.map(tag_id => ({ post_id: post.id, tag_id })))
+        .insert(tagIds.map(tag_id => ({ post_id: postId, tag_id })))
       if (tagError) console.warn(`Warning: tags insert failed: ${tagError.message}`)
     }
 
     // ─── 8. Done ───────────────────────────────────────────────────────────────
     console.log('\n✓ Draft saved!')
-    console.log(`  Title:  ${title}`)
-    console.log(`  Slug:   ${slug}`)
-    console.log(`  Review: https://the-devops-ledger.vercel.app/dashboard`)
+    console.log(`  Post id: ${postId}`)
+    console.log(`  Title:   ${title}`)
+    console.log(`  Slug:    ${slug}`)
+    console.log(`  Review:  https://the-devops-ledger.vercel.app/dashboard`)
   } finally {
     await supabase.auth.signOut()
   }
