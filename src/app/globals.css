@@ -603,7 +603,9 @@
 }
 
 /* Ensure hljs doesn't override our NodeView container bg */
-.code-block-wrapper pre.hljs,
+.code-block-wrapper pre.hljs {
+  background: transparent !important;
+}
 .code-block-wrapper code.hljs {
   background: transparent !important;
   padding: 0 !important;
