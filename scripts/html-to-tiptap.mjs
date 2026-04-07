@@ -236,7 +236,12 @@ function convertSection($, section) {
 export function convertHtmlToTiptap(htmlString) {
   const $ = load(htmlString)
 
-  const title = $('.banner h1').text().replace(/\s+/g, ' ').trim()
+  const titleParts = []
+  $('.banner h1').contents().each((_, node) => {
+    const text = $(node).text().trim()
+    if (text) titleParts.push(text)
+  })
+  const title = titleParts.join(' ').replace(/\s+/g, ' ').trim()
   const excerpt = $('.banner-sub').text().trim()
 
   const tagNames = []

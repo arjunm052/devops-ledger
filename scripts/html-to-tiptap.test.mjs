@@ -29,6 +29,12 @@ describe('metadata extraction', () => {
     expect(title).toBe('Terraform State Management')
   })
 
+  it('inserts a space between span and adjacent text node in h1', () => {
+    const html = `<html><body><div class="banner"><h1><span>AWS Intro &amp; IAM</span>Identity and Access Management</h1></div><main class="main"></main></body></html>`
+    const { title } = convertHtmlToTiptap(html)
+    expect(title).toBe('AWS Intro & IAM Identity and Access Management')
+  })
+
   it('extracts excerpt from .banner-sub', () => {
     const { excerpt } = convertHtmlToTiptap(minimalHtml)
     expect(excerpt).toBe('Understanding how Terraform tracks infrastructure')
