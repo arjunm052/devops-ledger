@@ -4,6 +4,7 @@ import { Plugin, PluginKey } from '@tiptap/pm/state'
 import type { EditorView } from '@tiptap/pm/view'
 import { uploadPostImage } from '@/actions/post-images'
 import { getImageFileFromDataTransfer } from '@/components/article-editor/image-clipboard'
+import { ResizableImageNodeView } from '@/components/editor/resizable-image-node-view'
 
 // ─── Pending upload registry ──────────────────────────────────────────────────
 // Maps blob URL → original File so the NodeView's Retry button can re-upload.
@@ -165,9 +166,6 @@ export const ResizableImage = Node.create({
   },
 
   addNodeView() {
-    // Lazily imported to avoid circular dependency at module load time.
-    // The NodeView component lives in the components layer which imports from here.
-    const { ResizableImageNodeView } = require('@/components/editor/resizable-image-node-view') as typeof import('@/components/editor/resizable-image-node-view')
     return ReactNodeViewRenderer(ResizableImageNodeView)
   },
 

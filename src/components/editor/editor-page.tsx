@@ -10,7 +10,6 @@ import {
 import { useRouter } from 'next/navigation'
 import NextLink from 'next/link'
 import { useEditor, EditorContent } from '@tiptap/react'
-import { toast } from 'sonner'
 import { createEditorExtensions } from '@/lib/tiptap/editor-extensions'
 import { SlashCommands } from '@/components/editor/slash-command-menu'
 import { EditorToolbar } from '@/components/editor/editor-toolbar'
