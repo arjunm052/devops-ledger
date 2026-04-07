@@ -2,8 +2,15 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { z } from 'zod'
+
+const uuidSchema = z.string().uuid()
+const safePathPattern = /^\/[\w\-\/]*$/
 
 export async function toggleBookmark(postId: string, path: string) {
+  if (!uuidSchema.safeParse(postId).success) return { error: 'Invalid post' }
+  if (!safePathPattern.test(path)) return { error: 'Invalid path' }
+
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Must be signed in to bookmark' }

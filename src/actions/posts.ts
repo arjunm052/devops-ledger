@@ -3,6 +3,9 @@
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
+const uuidSchema = z.string().uuid()
 
 function slugify(title: string): string {
   return title
@@ -89,6 +92,8 @@ export interface UpdatePostInput {
 }
 
 export async function updatePost(postId: string, input: UpdatePostInput): Promise<void> {
+  if (!uuidSchema.safeParse(postId).success) return
+
   const supabase = await createServerSupabaseClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -137,6 +142,8 @@ export async function updatePost(postId: string, input: UpdatePostInput): Promis
 }
 
 export async function deletePost(postId: string): Promise<void> {
+  if (!uuidSchema.safeParse(postId).success) return
+
   const supabase = await createServerSupabaseClient()
 
   const { data: { user } } = await supabase.auth.getUser()

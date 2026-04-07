@@ -4,12 +4,12 @@ import { loginSchema, signupSchema, otpSchema } from '@/lib/validations/auth'
 
 describe('loginSchema', () => {
   it('accepts valid email and password', () => {
-    const result = loginSchema.safeParse({ email: 'test@example.com', password: 'password123' })
+    const result = loginSchema.safeParse({ email: 'test@example.com', password: 'Password123' })
     expect(result.success).toBe(true)
   })
 
   it('rejects invalid email', () => {
-    const result = loginSchema.safeParse({ email: 'not-an-email', password: 'password123' })
+    const result = loginSchema.safeParse({ email: 'not-an-email', password: 'Password123' })
     expect(result.success).toBe(false)
   })
 
@@ -23,7 +23,7 @@ describe('signupSchema', () => {
   it('accepts valid signup data', () => {
     const result = signupSchema.safeParse({
       email: 'test@example.com',
-      password: 'password123',
+      password: 'Password123',
       username: 'testuser',
     })
     expect(result.success).toBe(true)
@@ -32,7 +32,7 @@ describe('signupSchema', () => {
   it('rejects username with spaces', () => {
     const result = signupSchema.safeParse({
       email: 'test@example.com',
-      password: 'password123',
+      password: 'Password123',
       username: 'test user',
     })
     expect(result.success).toBe(false)

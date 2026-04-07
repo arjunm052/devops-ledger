@@ -4,6 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { createNotification } from '@/actions/notifications'
+import { rateLimit } from '@/lib/rate-limit'
 
 const commentSchema = z.object({
   postId: z.string().uuid(),
@@ -15,6 +16,9 @@ export async function createComment(input: z.infer<typeof commentSchema>, slug: 
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Must be signed in to comment' }
+
+  const rl = rateLimit(`comment:${user.id}`, { maxRequests: 10, windowMs: 60_000 })
+  if (!rl.success) return { error: 'You are commenting too fast. Please wait a moment.' }
 
   const parsed = commentSchema.safeParse(input)
   if (!parsed.success) return { error: parsed.error.issues[0].message }
@@ -38,6 +42,8 @@ export async function createComment(input: z.infer<typeof commentSchema>, slug: 
 }
 
 export async function deleteComment(commentId: string, slug: string) {
+  if (!z.string().uuid().safeParse(commentId).success) return { error: 'Invalid comment' }
+
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Must be signed in' }

@@ -14,7 +14,8 @@ export async function uploadAvatar(formData: FormData): Promise<{ url: string } 
   if (!file.type.startsWith('image/')) return { error: 'File must be an image' }
   if (file.size > 2 * 1024 * 1024) return { error: 'File must be under 2MB' }
 
-  const ext = file.name.split('.').pop() ?? 'jpg'
+  const rawExt = file.name.split('.').pop()?.toLowerCase()
+  const ext = rawExt && /^[a-z0-9]+$/.test(rawExt) && rawExt.length <= 8 ? rawExt : 'jpg'
   const filePath = `${user.id}/avatar.${ext}`
 
   const { error: uploadError } = await supabase.storage

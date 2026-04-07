@@ -57,6 +57,15 @@ function cleanLlmHtml(html: string): string {
     }
   })
 
+  // Remove dangerous elements that could execute scripts or load external content
+  doc.querySelectorAll('script, iframe, object, embed, meta, link, base, form, svg').forEach((el) => el.remove())
+  // Strip event handler attributes (onclick, onerror, onload, etc.)
+  doc.querySelectorAll('*').forEach((el) => {
+    Array.from(el.attributes).forEach((attr) => {
+      if (attr.name.startsWith('on')) el.removeAttribute(attr.name)
+    })
+  })
+
   // Strip inline styles
   doc.querySelectorAll('[style]').forEach((el) => el.removeAttribute('style'))
   // Strip classes from all elements (they're ChatGPT-specific Tailwind classes)

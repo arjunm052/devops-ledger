@@ -29,6 +29,12 @@ vi.mock('next/navigation', () => ({
   redirect: vi.fn(),
 }))
 
+vi.mock('next/headers', () => ({
+  headers: vi.fn(() =>
+    Promise.resolve(new Map([['x-forwarded-for', '127.0.0.1']]))
+  ),
+}))
+
 vi.stubEnv('NEXT_PUBLIC_APP_URL', 'http://localhost:3000')
 
 beforeEach(() => {
@@ -49,11 +55,11 @@ describe('signInWithEmail', () => {
     })
   })
 
-  it('returns error message on failure', async () => {
+  it('returns generic error message on failure', async () => {
     mockSignInWithPassword.mockResolvedValue({ error: { message: 'Invalid credentials' } })
     const { signInWithEmail } = await import('@/actions/auth')
     const result = await signInWithEmail({ email: 'test@example.com', password: 'wrongpass1' })
-    expect(result?.error).toBe('Invalid credentials')
+    expect(result?.error).toBe('Invalid email or password.')
   })
 })
 

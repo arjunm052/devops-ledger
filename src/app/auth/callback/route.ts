@@ -2,10 +2,28 @@ import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { ensureProfileRow } from '@/lib/supabase/ensure-profile'
 
+/** Ensure the redirect target is a safe, same-origin relative path. */
+function safeRedirectPath(raw: string | null): string {
+  const fallback = '/dashboard'
+  if (!raw) return fallback
+  // Block protocol-relative URLs, backslash tricks, and non-path characters
+  if (!raw.startsWith('/') || raw.startsWith('//') || raw.startsWith('/\\')) {
+    return fallback
+  }
+  try {
+    // Parse against a dummy base — if the host changes, the path escapes our origin
+    const url = new URL(raw, 'http://n')
+    if (url.host !== 'n') return fallback
+  } catch {
+    return fallback
+  }
+  return raw
+}
+
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard'
+  const next = safeRedirectPath(searchParams.get('next'))
 
   if (code) {
     const supabase = await createServerSupabaseClient()

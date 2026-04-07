@@ -3,8 +3,13 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { createNotification } from '@/actions/notifications'
+import { z } from 'zod'
+
+const uuidSchema = z.string().uuid()
 
 export async function clapForPost(postId: string, slug: string) {
+  if (!uuidSchema.safeParse(postId).success) return { error: 'Invalid post' }
+
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Must be signed in to clap' }
