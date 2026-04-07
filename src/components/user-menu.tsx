@@ -109,9 +109,9 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
 
         {/* Sign Out */}
         <div className="p-1.5">
-          <DropdownMenuItem className="rounded-lg px-2.5 py-2 text-[oklch(0.65_0.15_20)] hover:bg-[oklch(0.23_0.05_20)] hover:text-[oklch(0.85_0.15_20)] focus:bg-[oklch(0.23_0.05_20)] focus:text-[oklch(0.85_0.15_20)] cursor-pointer">
+          <DropdownMenuItem className="rounded-lg text-[oklch(0.65_0.15_20)] hover:bg-[oklch(0.23_0.05_20)] hover:text-[oklch(0.85_0.15_20)] focus:bg-[oklch(0.23_0.05_20)] focus:text-[oklch(0.85_0.15_20)] cursor-pointer p-0">
             <form action={signOut} className="w-full">
-              <button type="submit" className="flex w-full items-center gap-2.5 text-left text-inherit">
+              <button type="submit" className="flex w-full items-center gap-2.5 px-2.5 py-2 text-left text-inherit">
                 <svg className="opacity-70 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/>
                 </svg>
