@@ -24,6 +24,7 @@ import powershell from 'highlight.js/lib/languages/powershell'
 import { CodeBlockCustom } from './code-block-custom'
 import { Callout } from './callout-extension'
 import { TableOfContents } from './toc-extension'
+import { RawHtml } from './raw-html-extension'
 import { ResizableImage } from './resizable-image-extension'
 import { slugify } from './slugify'
 
@@ -91,6 +92,7 @@ export function createEditorExtensions(
     Highlight.configure({ multicolor: false }),
     Callout,
     TableOfContents,
+    RawHtml,
   ]
 
   if (options.placeholder !== undefined) {
