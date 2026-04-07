@@ -20,9 +20,11 @@ const CALLOUT_LABEL: Record<CalloutType, string> = {
 
 const TYPE_ORDER: CalloutType[] = ['info', 'warning', 'tip', 'danger']
 
-export function CalloutNodeView({ node, updateAttributes }: NodeViewProps) {
+export function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
   const calloutType = (node.attrs.type || 'info') as CalloutType
+  const customLabel = node.attrs.label as string | null
   const variantClass = CALLOUT_CLASS[calloutType]
+  const editable = editor.isEditable
 
   const cycleType = () => {
     const idx = TYPE_ORDER.indexOf(calloutType)
@@ -30,20 +32,32 @@ export function CalloutNodeView({ node, updateAttributes }: NodeViewProps) {
     updateAttributes({ type: next })
   }
 
+  const displayLabel = customLabel || CALLOUT_LABEL[calloutType]
+
   return (
     <NodeViewWrapper className="my-6">
       <div
         className={`callout ${variantClass}`}
         data-callout-type={calloutType}
       >
-        <button
-          type="button"
-          onClick={cycleType}
-          className="callout-label flex w-full cursor-pointer items-center gap-1.5 text-left hover:opacity-90"
+        <div
+          className="callout-label flex w-full items-center gap-1.5 text-left"
           contentEditable={false}
         >
-          <span>{CALLOUT_LABEL[calloutType]}</span>
-        </button>
+          {editable ? (
+            <>
+              <button
+                type="button"
+                onClick={cycleType}
+                className="cursor-pointer hover:opacity-90"
+              >
+                <span>{displayLabel}</span>
+              </button>
+            </>
+          ) : (
+            <span>{displayLabel}</span>
+          )}
+        </div>
         <NodeViewContent className="callout-content max-w-none [&_p]:text-inherit [&_li]:text-inherit" />
       </div>
     </NodeViewWrapper>

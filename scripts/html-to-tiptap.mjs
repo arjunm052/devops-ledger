@@ -82,6 +82,8 @@ function codeBlockNode($, el) {
 
 function calloutNode($, el, type) {
   const SKIP = ['callout-label']
+  const labelEl = $(el).find('.callout-label').first()
+  const label = labelEl.length ? labelEl.text().trim() : null
   const blockContent = []
 
   $(el).children().each((_, child) => {
@@ -96,7 +98,7 @@ function calloutNode($, el, type) {
     blockContent.push(paragraphFromText(text))
   }
 
-  return { type: 'callout', attrs: { type }, content: blockContent }
+  return { type: 'callout', attrs: { type, label }, content: blockContent }
 }
 
 function analogyNode($, el) {
@@ -264,6 +266,16 @@ function convertBlock($, el) {
   if (cls.includes('section-header')) {
     const h2 = $(el).find('h2')
     return h2.length ? headingNode(h2.text().trim(), 2) : null
+  }
+
+  // Orphan inline elements (e.g. <strong> as direct child of a block container)
+  // Wrap them in a paragraph so they aren't silently dropped.
+  const inlineTags = ['strong', 'b', 'em', 'i', 'a', 'span', 'code']
+  if (inlineTags.includes(tag)) {
+    // Create a virtual <p> wrapper so inlineNodes processes the tag correctly
+    const wrapper = $('<p></p>')
+    wrapper.append($(el).clone())
+    return { type: 'paragraph', content: inlineNodes($, wrapper[0]) }
   }
 
   return null

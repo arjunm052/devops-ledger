@@ -28,6 +28,14 @@ export const Callout = Node.create({
           'data-callout-type': attributes.type,
         }),
       },
+      label: {
+        default: null as string | null,
+        parseHTML: (element) => element.getAttribute('data-callout-label') || null,
+        renderHTML: (attributes) => {
+          if (!attributes.label) return {}
+          return { 'data-callout-label': attributes.label }
+        },
+      },
     }
   },
 
