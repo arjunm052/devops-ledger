@@ -52,9 +52,12 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
       >
         {/* Header */}
         <div className="flex items-center gap-3 border-b border-[oklch(0.27_0.02_250)] bg-gradient-to-br from-[oklch(0.22_0.04_255)] to-[oklch(0.20_0.02_250)] px-4 py-4">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#0045ad] to-[#4a9eff] text-base font-bold text-white shadow-[0_2px_8px_rgba(0,69,173,0.4)]">
-            {initials}
-          </div>
+          <Avatar className="h-11 w-11 shrink-0 rounded-xl shadow-[0_2px_8px_rgba(0,69,173,0.4)]">
+            {avatarUrl && <AvatarImage src={avatarUrl} alt={userName ?? email} />}
+            <AvatarFallback className="rounded-xl bg-gradient-to-br from-[#0045ad] to-[#4a9eff] text-base font-bold text-white">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
           <div className="min-w-0">
             {userName && (
               <p className="truncate text-sm font-semibold text-[oklch(0.93_0_0)]">{userName}</p>
@@ -72,7 +75,7 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
         {isAuthor && (
           <>
             <div className="p-1.5">
-              <DropdownMenuItem className="rounded-lg px-2.5 py-2 text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)] cursor-pointer p-0">
+              <DropdownMenuItem className="rounded-lg p-0 text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)]">
                 <Link href="/dashboard/new" className="flex w-full items-center gap-2.5 px-2.5 py-2">
                   <svg className="opacity-70 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 20h9" /><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
@@ -80,7 +83,7 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
                   New Article
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem className="rounded-lg px-2.5 py-2 text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)] cursor-pointer p-0">
+              <DropdownMenuItem className="rounded-lg p-0 text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)]">
                 <Link href="/dashboard" className="flex w-full items-center gap-2.5 px-2.5 py-2">
                   <svg className="opacity-70 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>
@@ -95,7 +98,7 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
 
         {/* Settings */}
         <div className="p-1.5">
-          <DropdownMenuItem className="rounded-lg text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)] cursor-pointer p-0">
+          <DropdownMenuItem className="rounded-lg p-0 text-[oklch(0.75_0_0)] hover:bg-[oklch(0.26_0.02_250)] hover:text-[oklch(0.93_0_0)] focus:bg-[oklch(0.26_0.02_250)] focus:text-[oklch(0.93_0_0)]">
             <Link href="/dashboard/settings" className="flex w-full items-center gap-2.5 px-2.5 py-2">
               <svg className="opacity-70 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>
@@ -109,7 +112,7 @@ export function UserMenu({ email, userName, avatarUrl, isAuthor }: UserMenuProps
 
         {/* Sign Out */}
         <div className="p-1.5">
-          <DropdownMenuItem className="rounded-lg text-[oklch(0.65_0.15_20)] hover:bg-[oklch(0.23_0.05_20)] hover:text-[oklch(0.85_0.15_20)] focus:bg-[oklch(0.23_0.05_20)] focus:text-[oklch(0.85_0.15_20)] cursor-pointer p-0">
+          <DropdownMenuItem className="rounded-lg p-0 text-[oklch(0.65_0.15_20)] hover:bg-[oklch(0.23_0.05_20)] hover:text-[oklch(0.85_0.15_20)] focus:bg-[oklch(0.23_0.05_20)] focus:text-[oklch(0.85_0.15_20)]">
             <form action={signOut} className="w-full">
               <button type="submit" className="flex w-full items-center gap-2.5 px-2.5 py-2 text-left text-inherit">
                 <svg className="opacity-70 shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
