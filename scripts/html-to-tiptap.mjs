@@ -281,6 +281,26 @@ function convertBlock($, el) {
   return null
 }
 
+function isMcqSection($, section) {
+  return $(section).find('.mcq-section-header, .mcq-card').length > 0
+}
+
+function mcqSectionNode($, section, htmlString) {
+  // Extract the full MCQ section HTML
+  const sectionHtml = $.html(section)
+
+  // Extract the MCQ quiz logic script from the full HTML
+  const scriptMatch = htmlString.match(
+    /\/\/ ── MCQ Quiz Logic ──[\s\S]*?(?=<\/script>)/
+  )
+  const quizScript = scriptMatch ? scriptMatch[0] : ''
+
+  // Build self-contained HTML with embedded script
+  const html = sectionHtml + (quizScript ? `<script>${quizScript}</script>` : '')
+
+  return { type: 'rawHtml', attrs: { html } }
+}
+
 function convertSection($, section) {
   const nodes = []
   $(section).children().each((_, el) => {
@@ -321,7 +341,9 @@ export function convertHtmlToTiptap(htmlString) {
     const tag = el.tagName.toLowerCase()
     const cls = ($(el).attr('class') ?? '').split(' ')
 
-    if (tag === 'section') {
+    if (tag === 'section' && isMcqSection($, el)) {
+      contentNodes.push(mcqSectionNode($, el, htmlString))
+    } else if (tag === 'section') {
       contentNodes.push(...convertSection($, el))
     } else if (cls.includes('two-col')) {
       const n = twoColNode($, el)

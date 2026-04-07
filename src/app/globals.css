@@ -299,56 +299,56 @@
 .callout[data-callout-type="danger"] .callout-label {
   color: #f87171;
 }
-.callout-info p,
-.callout-info li,
-.callout[data-callout-type="info"] p,
-.callout[data-callout-type="info"] li {
+.ProseMirror .callout-info p,
+.ProseMirror .callout-info li,
+.ProseMirror .callout[data-callout-type="info"] p,
+.ProseMirror .callout[data-callout-type="info"] li {
   color: #bfdbfe;
   margin: 0 0 4px;
 }
-.callout-info p strong,
-.callout-info li strong,
-.callout[data-callout-type="info"] p strong,
-.callout[data-callout-type="info"] li strong {
+.ProseMirror .callout-info p strong,
+.ProseMirror .callout-info li strong,
+.ProseMirror .callout[data-callout-type="info"] p strong,
+.ProseMirror .callout[data-callout-type="info"] li strong {
   color: #e0effe;
 }
-.callout-warn p,
-.callout-warn li,
-.callout[data-callout-type="warning"] p,
-.callout[data-callout-type="warning"] li {
+.ProseMirror .callout-warn p,
+.ProseMirror .callout-warn li,
+.ProseMirror .callout[data-callout-type="warning"] p,
+.ProseMirror .callout[data-callout-type="warning"] li {
   color: #fde68a;
   margin: 0 0 4px;
 }
-.callout-warn p strong,
-.callout-warn li strong,
-.callout[data-callout-type="warning"] p strong,
-.callout[data-callout-type="warning"] li strong {
+.ProseMirror .callout-warn p strong,
+.ProseMirror .callout-warn li strong,
+.ProseMirror .callout[data-callout-type="warning"] p strong,
+.ProseMirror .callout[data-callout-type="warning"] li strong {
   color: #fef3c7;
 }
-.callout-danger p,
-.callout-danger li,
-.callout[data-callout-type="danger"] p,
-.callout[data-callout-type="danger"] li {
+.ProseMirror .callout-danger p,
+.ProseMirror .callout-danger li,
+.ProseMirror .callout[data-callout-type="danger"] p,
+.ProseMirror .callout[data-callout-type="danger"] li {
   color: #fecaca;
   margin: 0 0 4px;
 }
-.callout-danger p strong,
-.callout-danger li strong,
-.callout[data-callout-type="danger"] p strong,
-.callout[data-callout-type="danger"] li strong {
+.ProseMirror .callout-danger p strong,
+.ProseMirror .callout-danger li strong,
+.ProseMirror .callout[data-callout-type="danger"] p strong,
+.ProseMirror .callout[data-callout-type="danger"] li strong {
   color: #fee2e2;
 }
-.callout-success p,
-.callout-success li,
-.callout[data-callout-type="tip"] p,
-.callout[data-callout-type="tip"] li {
+.ProseMirror .callout-success p,
+.ProseMirror .callout-success li,
+.ProseMirror .callout[data-callout-type="tip"] p,
+.ProseMirror .callout[data-callout-type="tip"] li {
   color: #bbf7d0;
   margin: 0 0 4px;
 }
-.callout-success p strong,
-.callout-success li strong,
-.callout[data-callout-type="tip"] p strong,
-.callout[data-callout-type="tip"] li strong {
+.ProseMirror .callout-success p strong,
+.ProseMirror .callout-success li strong,
+.ProseMirror .callout[data-callout-type="tip"] p strong,
+.ProseMirror .callout[data-callout-type="tip"] li strong {
   color: #dcfce7;
 }
 
@@ -593,20 +593,333 @@
   color: var(--color-link);
 }
 
-/* ── Editor: Code blocks ── */
-.tiptap pre code,
-.prose pre code {
+/* ── Links ── */
+.ProseMirror a {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.15s;
+}
+.ProseMirror a:hover {
+  color: #93c5fd;
+}
+
+/* ── Inline code (not inside pre/code-block) ── */
+.ProseMirror :not(pre) > code {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 12.5px;
+  background: #1e2433;
+  border: 1px solid #252d3d;
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: #93c5fd;
+}
+
+/* ── Pre / code blocks ── */
+.ProseMirror pre {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+.ProseMirror pre code {
   font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
+  font-size: 13px;
+  line-height: 1.85;
+  color: #e2e8f0;
+  border-radius: 0;
+}
+.ProseMirror pre code::before,
+.ProseMirror pre code::after {
+  content: none;
 }
 
-/* Ensure hljs doesn't override our NodeView container bg */
+/* ── Task lists ── */
+.ProseMirror ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+.ProseMirror ul[data-type="taskList"] li {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+.ProseMirror ul[data-type="taskList"] li label {
+  margin-top: 0.25rem;
+}
+.ProseMirror ul[data-type="taskList"] li input {
+  pointer-events: none;
+}
+
+/* ── Highlight marks ── */
+.ProseMirror mark {
+  background: rgba(255, 184, 108, 0.3);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+
+/* ── Images & figures ── */
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.375rem;
+}
+.ProseMirror figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+.ProseMirror figure img {
+  margin-left: auto;
+  margin-right: auto;
+}
+.ProseMirror figcaption {
+  margin-top: 0.5rem;
+  font-family: var(--font-inter);
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--color-muted-text);
+}
+
+/* ── Ensure hljs doesn't override our NodeView container bg ── */
 .code-block-wrapper pre.hljs {
   background: transparent !important;
 }
 .code-block-wrapper code.hljs {
   background: transparent !important;
   padding: 0 !important;
+}
+.code-block-wrapper code::before,
+.code-block-wrapper code::after {
+  content: none;
+}
+
+/* ── MCQ Quiz Styles (rendered via rawHtml node) ── */
+.ProseMirror .mcq-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #252d3d;
+}
+.ProseMirror .mcq-section-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: #a78bfa;
+  color: #0f1117;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+  font-family: var(--font-jetbrains-mono), monospace;
+}
+.ProseMirror .mcq-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.ProseMirror .mcq-badge {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  color: #a78bfa;
+}
+.ProseMirror .mcq-score-box {
+  margin-left: auto;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 12px;
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.08);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+  padding: 4px 12px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+.ProseMirror .mcq-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  background: rgba(167, 139, 250, 0.08);
+  color: #a78bfa;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ProseMirror .mcq-reset-btn:hover {
+  background: rgba(167, 139, 250, 0.2);
+}
+.ProseMirror .mcq-level-header {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 1.5rem 0 1rem;
+}
+.ProseMirror .mcq-level-beginner {
+  background: rgba(74, 222, 128, 0.08);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.2);
+}
+.ProseMirror .mcq-level-intermediate {
+  background: rgba(251, 191, 36, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+.ProseMirror .mcq-card {
+  background: #161b26;
+  border: 1px solid #252d3d;
+  border-radius: 10px;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.ProseMirror .mcq-card.answered-correct {
+  border-color: rgba(74, 222, 128, 0.4);
+}
+.ProseMirror .mcq-card.answered-wrong {
+  border-color: rgba(248, 113, 113, 0.4);
+}
+.ProseMirror .mcq-q-header {
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.ProseMirror .mcq-q-num {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #a78bfa;
+  background: rgba(167, 139, 250, 0.08);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+.ProseMirror .mcq-q-text {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #e8ecf4;
+  line-height: 1.55;
+}
+.ProseMirror .mcq-options {
+  padding: 0 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.ProseMirror .mcq-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #252d3d;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 13.5px;
+  color: #b0b8c9;
+  background: #0b0e14;
+  user-select: none;
+}
+.ProseMirror .mcq-option:hover:not(.disabled) {
+  border-color: #60a5fa;
+  color: #e8ecf4;
+  background: rgba(96, 165, 250, 0.08);
+}
+.ProseMirror .mcq-option.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+.ProseMirror .mcq-option.correct {
+  background: rgba(74, 222, 128, 0.1);
+  border-color: rgba(74, 222, 128, 0.5);
+  color: #bbf7d0;
+}
+.ProseMirror .mcq-option.wrong {
+  background: rgba(248, 113, 113, 0.1);
+  border-color: rgba(248, 113, 113, 0.4);
+  color: #fecaca;
+}
+.ProseMirror .mcq-option.reveal-correct {
+  background: rgba(74, 222, 128, 0.07);
+  border-color: rgba(74, 222, 128, 0.35);
+  color: #bbf7d0;
+}
+.ProseMirror .opt-letter {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #252d3d;
+  color: #7a8499;
+  transition: all 0.15s;
+  margin-top: 1px;
+}
+.ProseMirror .mcq-option.correct .opt-letter {
+  background: rgba(74, 222, 128, 0.3);
+  color: #4ade80;
+}
+.ProseMirror .mcq-option.wrong .opt-letter {
+  background: rgba(248, 113, 113, 0.25);
+  color: #f87171;
+}
+.ProseMirror .mcq-option.reveal-correct .opt-letter {
+  background: rgba(74, 222, 128, 0.2);
+  color: #4ade80;
+}
+.ProseMirror .mcq-explanation {
+  margin: 0 1.25rem 1rem;
+  padding: 0.85rem 1rem;
+  background: rgba(96, 165, 250, 0.07);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  color: #bfdbfe;
+  line-height: 1.6;
+  display: none;
+}
+.ProseMirror .mcq-explanation.show {
+  display: block;
+}
+.ProseMirror .mcq-explanation strong {
+  color: #e0effe;
+}
+.ProseMirror .mcq-exp-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #60a5fa;
+  margin-bottom: 5px;
 }
