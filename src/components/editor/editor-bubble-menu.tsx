@@ -3,7 +3,7 @@
 import React, { useCallback } from 'react'
 import type { Editor } from '@tiptap/core'
 import { BubbleMenu } from '@tiptap/react/menus'
-import { Bold, Italic, Code, Highlighter, Link2 } from 'lucide-react'
+import { Bold, Italic, Code, Highlighter, Link2, Underline, Strikethrough } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -106,6 +106,28 @@ export function EditorBubbleMenu({ editor }: EditorBubbleMenuProps) {
         }}
       >
         <Highlighter size={13} />
+      </BubbleButton>
+
+      <BubbleButton
+        active={editor.isActive('underline')}
+        title="Underline"
+        onMouseDown={(e) => {
+          e.preventDefault()
+          editor.chain().focus().toggleUnderline().run()
+        }}
+      >
+        <Underline size={13} />
+      </BubbleButton>
+
+      <BubbleButton
+        active={editor.isActive('strike')}
+        title="Strikethrough"
+        onMouseDown={(e) => {
+          e.preventDefault()
+          editor.chain().focus().toggleStrike().run()
+        }}
+      >
+        <Strikethrough size={13} />
       </BubbleButton>
 
       <span className="mx-0.5 h-4 w-px bg-[var(--color-border-subtle)]" />
